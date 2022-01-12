@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+
+        <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+        <!-- jquery 核心 javascript 文件 -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+
+    </head>
+    <body>
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#c1" data-toggle="tab">选项卡1</a></li>
+            <li><a href="#c2" data-toggle="tab">选项卡2</a></li>
+            <li><a href="#c3" data-toggle="tab">选项卡3</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane active" id="c1">内容1</div>
+            <div class="tab-pane" id="c2">内容2</div>
+            <div class="tab-pane" id="c3">内容3</div>
+        </div>
+
+        <hr/>
+
+        <div>
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" >
+                <li  class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
+                <li ><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profile</a></li>
+                <li ><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages</a></li>
+                <li ><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="home">...</div>
+                <div role="tabpanel" class="tab-pane" id="profile">...</div>
+                <div role="tabpanel" class="tab-pane" id="messages">...</div>
+                <div role="tabpanel" class="tab-pane" id="settings">...</div>
+            </div>
+
+        </div>
+    </body>
+</html>

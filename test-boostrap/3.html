@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+
+        <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+        <!-- jquery 核心 javascript 文件 -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+
+    </head>
+    <body>
+        <a class="btn btn-default" data-toggle="modal" data-target="#aa">模态框</a>
+        <input type="text" onblur="toOpen();"/>
+        <!-- Modal -->
+        <div class="modal fade" id="aa" tabindex="-1" >
+            <div class="modal-dialog" >
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" ><span >&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">这是标题</h4>
+                    </div>
+
+                    <div class="modal-body">
+                        这是内容
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-primary">确定</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <script>
+            function toOpen(){
+                $('#aa').modal('show') ;
+            }
+
+            $('#aa').on('hide.bs.modal',function(){
+                alert("bye bye !!!")
+            });
+        </script>
+    </body>
+</html>
