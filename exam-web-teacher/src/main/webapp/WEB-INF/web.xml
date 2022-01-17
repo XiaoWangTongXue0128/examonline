@@ -24,9 +24,8 @@
         <dispatcher>INCLUDE</dispatcher>
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
-    
-    
-    
+
+
     <!-- web服务监听器，启动spring容器 -->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>

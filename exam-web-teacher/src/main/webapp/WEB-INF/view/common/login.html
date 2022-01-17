@@ -6,13 +6,9 @@
         <!-- @{/} thymeleaf的根目录就是工程根目录 8080/examonline/ -->
         <!-- / 服务器根目录 8080/ -->
         <base th:href="@{/}" />
-        <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
 
-        <!-- jquery 核心 javascript 文件 -->
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+        <th:block th:include="common::link"></th:block>
+
 
         <link rel="stylesheet" type="text/css" href="css/login.css"  />
         <script src="js/login.js"></script>
@@ -23,6 +19,7 @@
             <form>
                 <div class="form-group">
                     <h2 algin="center" th:text="#{login_label}"></h2>
+                    <div id="msg"></div>
                 </div>
 
                 <div class="form-group">
@@ -50,13 +47,13 @@
                         <input type="checkbox"> <span th:text="#{remember_label}"></span>
                     </label>
                 </div>
-                <button type="submit" class="btn btn-info btn-block" th:text="#{login_btn_label}"></button>
+                <button onclick="login.toLogin()" type="button" class="btn btn-info btn-block" th:text="#{login_btn_label}"></button>
             </form>
         </div>
 
         <footer>
-            <a href="login.html?lang=zh_CN" th:text="#{zh_label}"></a>
-            <a href="login.html?lang=en_US" th:text="#{en_label}">英文</a>
+            <a href="common/login.html?lang=zh_CN" th:text="#{zh_label}"></a>
+            <a href="common/login.html?lang=en_US" th:text="#{en_label}">英文</a>
         </footer>
     </body>
 </html>
