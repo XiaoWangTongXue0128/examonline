@@ -43,3 +43,27 @@ main.updatePwd = function(){
     });
 
 }
+
+/**
+ * eg.
+ * showDialog({
+ *      title:'新建教师信息',
+ *      content:ajax-view,
+ *      submit:function(){
+ *
+ *      }
+ * });
+ * @param config {title , content , submit}
+ */
+main.showDialog = function(config){
+    $('#common-modal-title').html(config.title);
+    $('#common-modal-body').html(config.content);
+    $('#common-modal-submit').click(function(){
+        config.submit();
+    });
+    $('#common-modal').modal('show') ;
+}
+
+main.closeDialog = function(){
+    $('#common-modal').modal('hide') ;
+}

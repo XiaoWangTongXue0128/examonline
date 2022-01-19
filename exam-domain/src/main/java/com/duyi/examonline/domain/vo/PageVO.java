@@ -30,8 +30,8 @@ public class PageVO implements Serializable {
     public int getEndPage(){
         if(curr > 2 && curr + 2 < max){
             return curr+2 ;
-        }else if(curr <= 2){
-            return 5;
+        }else if(curr <= 2 && max > 5){
+            return 5 ;
         }else{
             //curr + 2>=max
             return max ;

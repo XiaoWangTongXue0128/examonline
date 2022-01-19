@@ -82,7 +82,7 @@
                     </li>
 
                     <li >
-                        <a href="#">
+                        <a href="student/student.html">
                             <span class="glyphicon glyphicon-user"></span> 学生管理
                         </a>
                     </li>
@@ -121,9 +121,31 @@
         </div>
     </div>
 
-
     <div th:fragment="footer" class="footer-box">
         © 2020 渡一科技有限公司
+        <a href="javascript:void(0)" style="float:right;margin-right: 20px;" onclick="document.body.scrollTop=0;document.documentElement.scrollTop=0;">返回顶部</a>
     </div>
 
+    <!-- 一个隐藏的公共的对话框窗口，具体的内容由具体的操作决定 -->
+    <div th:fragment="modal" class="modal fade" id="common-modal" tabindex="-1">
+        <div class="modal-dialog" >
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" ><span >&times;</span></button>
+                    <h4 class="modal-title" id="common-modal-title">...</h4>
+                </div>
+
+                <div class="modal-body" id="common-modal-body">
+                    ...
+                </div>
+
+                <div class="modal-footer" id="common-modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="common-modal-submit" >提交</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </html>

@@ -51,3 +51,7 @@
 .right{
     float:right ;
 }
+
+.form-sm .form-control{
+    width:120px;
+}
