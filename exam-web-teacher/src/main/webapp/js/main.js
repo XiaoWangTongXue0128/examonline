@@ -67,3 +67,39 @@ main.showDialog = function(config){
 main.closeDialog = function(){
     $('#common-modal').modal('hide') ;
 }
+
+/*富文本编辑器全局设置*/
+var E = window.wangEditor ;
+
+/**
+* 完成编辑器的一些初始设置，主要针对于菜单栏和图片上传
+* 默认： height:200
+*       uploadImgServer:'common/editor-upload-img'
+*       uploadFileName:'imgs'
+*       excludeMenus:[
+            'emoticon',
+            'link',
+            'list',
+            'todo',
+            'justify',
+            'quote',
+            'video'
+        ]
+*
+* */
+function editorDefaultInit(editor,config){
+    config = config?config:{};
+    editor.config.height = config.height?config.height:200 ;
+    editor.config.uploadImgServer = config.uploadImgServer?config.uploadImgServer:'common/editor-upload-img' ;
+    editor.config.uploadFileName = config.uploadFileName?config.uploadFileName:'imgs' ;
+    editor.config.excludeMenus = config.excludeMenus?config.excludeMenus:[
+        'emoticon',
+        'link',
+        'list',
+        'todo',
+        'justify',
+        'quote',
+        'video'
+    ];
+}
+

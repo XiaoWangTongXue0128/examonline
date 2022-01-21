@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>编辑器</title>
+        <script src="https://cdn.jsdelivr.net/npm/wangeditor@4.7.11/dist/wangEditor.js"></script>
+    </head>
+    <body>
+        <button type="button" onclick="t1()">取值</button>
+        <button type="button" onclick="t2()">赋值</button>
+        <button type="button" onclick="t3()">增加输入框</button>
+        <div id="d1" style="width:800px;"></div>
+
+        <img src="f:/z/4.jpg"/>
+        <hr/>
+    </body>
+</html>
+<script>
+    var E = window.wangEditor ;
+    const { $, BtnMenu, DropListMenu, PanelMenu, DropList, Panel, Tooltip } = E
+    class BlankMenu extends BtnMenu {
+        constructor(editor) {
+            const $elem = E.$(
+                `<div class="w-e-menu" data-title="填空">
+                <button>Blank</button>
+            </div>`
+            )
+            super($elem, editor)
+        }
+        // 菜单点击事件
+        clickHandler() {
+            this.editor.txt.append('<span>【】</span>');
+        }
+        tryChangeActive() {
+            this.active()
+        }
+    }
+    // 菜单 key ，各个菜单不能重复
+    const menuKey = 'blank'
+    // 注册菜单
+    E.registerMenu(menuKey, BlankMenu)
+
+
+    var editor = new E('#d1');
+
+    editor.config.height =200 ;
+
+
+    editor.config.excludeMenus = [
+        'emoticon',
+        'link',
+        'list',
+        'todo',
+        'justify',
+        'quote',
+        'video'
+    ];
+
+    editor.config.uploadImgServer = 'upload-img'
+
+    editor.create();
+
+
+    editor.txt.eventHooks.changeEvents.push(function(){
+        var text = editor.txt.text();
+        var i =0 ;
+        var count = 0 ;//记录空的个数
+        while(true){
+            i = text.indexOf('【】');
+            if(i == -1){
+                break ;
+            }
+            count++ ;
+            text = text.substring(i+1) ;
+        }
+
+        var inputs = document.getElementsByTagName('input');
+        if(inputs.length == count){
+            return ;
+        }
+        if(inputs.length > count){
+            while(inputs.length != count){
+                document.body.removeChild(inputs[inputs.length-1]);
+            }
+            return ;
+        }
+        if(inputs.length < count){
+            while(inputs.length != count){
+                t3();
+            }
+            return ;
+        }
+    });
+
+    editor.txt.eventHooks.keyupEvents.push(function(){
+        var text = editor.txt.text();
+        var i =0 ;
+        var count = 0 ;//记录空的个数
+        while(true){
+            i = text.indexOf('【】');
+            if(i == -1){
+                break ;
+            }
+            count++ ;
+            text = text.substring(i+1) ;
+        }
+
+        var inputs = document.getElementsByTagName('input');
+        if(inputs.length == count){
+            return ;
+        }
+        if(inputs.length > count){
+           while(inputs.length != count){
+               document.body.removeChild(inputs[inputs.length-1]);
+           }
+           return ;
+        }
+        if(inputs.length < count){
+            while(inputs.length != count){
+                t3();
+            }
+            return ;
+        }
+
+    });
+
+
+
+    function t1(){
+        alert(editor.txt.html());
+    }
+
+    function t2(){
+        editor.txt.html('<ul><li>aa</li><li>bb</li><li>cc</li></ul>');
+    }
+
+    function t3(){
+        var input = document.createElement('input') ;
+        var br = document.createElement('br');
+        document.body.appendChild(input);
+        document.body.appendChild(br);
+
+    }
+</script>

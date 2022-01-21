@@ -174,11 +174,8 @@
       <if test="yl4 != null">
         yl4 = #{yl4,jdbcType=VARCHAR},
       </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
       <if test="updateTime != null">
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
+        update_time = now(),
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -196,8 +193,7 @@
       yl2 = #{yl2,jdbcType=VARCHAR},
       yl3 = #{yl3,jdbcType=VARCHAR},
       yl4 = #{yl4,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = now()
     where id = #{id,jdbcType=BIGINT}
   </update>
 

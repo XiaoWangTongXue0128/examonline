@@ -10,4 +10,10 @@ public interface DictionaryService {
      */
     List<String> findMajors();
 
+    /**
+     * 查询所有的课程信息
+     * @return
+     */
+    List<String> findCourses();
+
 }

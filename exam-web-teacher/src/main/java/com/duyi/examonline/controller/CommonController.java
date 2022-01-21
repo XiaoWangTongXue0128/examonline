@@ -4,14 +4,21 @@ package com.duyi.examonline.controller;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.duyi.examonline.domain.Teacher;
 import com.duyi.examonline.service.TeacherService;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import java.io.*;
+import java.util.*;
 
 /**
  * 提供一些基本功能处理
@@ -98,5 +105,47 @@ public class CommonController {
         return true ;
     }
 
+    /**
+     * 存储图片的位置固定，f:/exam-img/
+     * @param files
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping("/common/editor-upload-img")
+    @ResponseBody
+    public Map<String,Object> editorUploadImg(MultipartFile[] files) throws IOException {
+
+        Map<String,Object> results= new HashMap<String,Object>();
+
+        results.put("errno","0");
+        List data= new ArrayList();
+        results.put("data",data);
+
+        for(MultipartFile file : files){
+            String prefix = UUID.randomUUID().toString().replace("-", "");
+            String filename = prefix+"_"+file.getOriginalFilename();
+            OutputStream os= new FileOutputStream("f:/exam-img/"+filename);
+            os.write(file.getBytes());
+            os.close();
+
+            Map map = new HashMap();
+            map.put("url","common/editor-img?file="+filename);
+            map.put("alt","");
+            map.put("href","");
+
+            data.add(map);
+        }
+
+        return results ;
+    }
+
+
+    @RequestMapping("/common/editor-img")
+    public ResponseEntity<byte[]> editorImg(String file) throws IOException {
+        InputStream is = new FileInputStream("f:/exam-img/"+file);
+        byte[] bytes = IOUtils.toByteArray(is);
+
+        return new ResponseEntity<byte[]>(bytes,new HttpHeaders(), HttpStatus.OK);
+    }
 
 }

@@ -45,7 +45,7 @@
       #{question1,jdbcType=VARCHAR}, #{question2,jdbcType=VARCHAR}, #{question3,jdbcType=VARCHAR}, 
       #{question4,jdbcType=VARCHAR}, #{question5,jdbcType=VARCHAR}, #{totalScore,jdbcType=INTEGER}, 
       #{status,jdbcType=VARCHAR}, #{tid,jdbcType=BIGINT}, #{yl1,jdbcType=VARCHAR}, #{yl2,jdbcType=VARCHAR}, 
-      #{yl3,jdbcType=VARCHAR}, #{yl4,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{yl3,jdbcType=VARCHAR}, #{yl4,jdbcType=VARCHAR}, now(),
       #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.duyi.examonline.domain.Template">

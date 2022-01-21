@@ -18,4 +18,9 @@ public class DictionaryServiceImpl implements DictionaryService {
     public List<String> findMajors() {
         return dictionaryMapper.findMajors();
     }
+
+    @Override
+    public List<String> findCourses() {
+        return dictionaryMapper.findCourses();
+    }
 }

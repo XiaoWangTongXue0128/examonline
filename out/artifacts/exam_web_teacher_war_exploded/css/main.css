@@ -1,3 +1,10 @@
+ul,li{
+    list-style:none;
+    margin: 0;
+    padding:0;
+}
+
+
 .header-box{
     height:60px;
     background:linear-gradient(to right,#eee 0% , #ccc 100%) ;

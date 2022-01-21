@@ -21,4 +21,6 @@ public interface DictionaryMapper {
 
     List<String> findMajors() ;
 
+    List<String> findCourses() ;
+
 }

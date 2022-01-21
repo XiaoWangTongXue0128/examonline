@@ -11,4 +11,9 @@ public interface CommonData {
 
     String DEFAULT_PASS = "123" ;
 
+    String DEFAULT_TEMPLATE_STATUS = "私有" ;
+
+    String SEPARATOR = "}-|-{" ;
+
+
 }

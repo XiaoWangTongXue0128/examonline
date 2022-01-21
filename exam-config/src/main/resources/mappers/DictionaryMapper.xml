@@ -80,7 +80,15 @@
     order by name
   </select>
 
-
+  <select id="findCourses" resultType="string">
+    select
+      name
+    from
+      t_dictionary
+    where
+      type = '课程'
+    order by name
+  </select>
 
 
 
