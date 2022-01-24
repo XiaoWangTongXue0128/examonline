@@ -107,13 +107,13 @@ public class CommonController {
 
     /**
      * 存储图片的位置固定，f:/exam-img/
-     * @param files
+     * @param imgs
      * @return
      * @throws IOException
      */
     @RequestMapping("/common/editor-upload-img")
     @ResponseBody
-    public Map<String,Object> editorUploadImg(MultipartFile[] files) throws IOException {
+    public Map<String,Object> editorUploadImg(MultipartFile[] imgs) throws IOException {
 
         Map<String,Object> results= new HashMap<String,Object>();
 
@@ -121,7 +121,7 @@ public class CommonController {
         List data= new ArrayList();
         results.put("data",data);
 
-        for(MultipartFile file : files){
+        for(MultipartFile file : imgs){
             String prefix = UUID.randomUUID().toString().replace("-", "");
             String filename = prefix+"_"+file.getOriginalFilename();
             OutputStream os= new FileOutputStream("f:/exam-img/"+filename);

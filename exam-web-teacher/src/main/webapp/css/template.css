@@ -116,3 +116,17 @@
 .left-option.active{
     background: #09f;
 }
+
+
+.question-template .row{
+    margin:10px 0;
+}
+
+.remove-option-btn{
+    padding:4px 7px;
+    border-radius: 15px;
+}
+
+.question3 .question3-option{
+    font-size:20px;
+}

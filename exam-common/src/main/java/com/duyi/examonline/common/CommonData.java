@@ -13,7 +13,11 @@ public interface CommonData {
 
     String DEFAULT_TEMPLATE_STATUS = "私有" ;
 
+    String DEFAULT_QUESTION_STATUS = DEFAULT_TEMPLATE_STATUS ;
+
     String SEPARATOR = "}-|-{" ;
+
+    String SPLIT_SEPARATOR = "\\}-\\|-\\{" ;
 
 
 }

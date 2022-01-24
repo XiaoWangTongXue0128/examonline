@@ -2,8 +2,10 @@ package com.duyi.examonline.controller;
 
 import com.duyi.examonline.common.BaseController;
 import com.duyi.examonline.common.CommonData;
+import com.duyi.examonline.domain.Question;
 import com.duyi.examonline.domain.Teacher;
 import com.duyi.examonline.domain.Template;
+import com.duyi.examonline.domain.vo.QuestionVO;
 import com.duyi.examonline.service.DictionaryService;
 import com.duyi.examonline.service.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -101,4 +105,53 @@ public class TemplateController extends BaseController {
         }
 
     }
+
+    @RequestMapping("/questionTemplate.html")
+    public String toQuestionTemplate(){
+        return "template/questionTemplate.html" ;
+    }
+
+    /**
+     * 注意：缓存试题信息，并返回试题信息展示的图示模板
+     * @param question
+     * @param session
+     * @param model
+     * @return
+     */
+    @RequestMapping("/cacheQuestion")
+    public String cacheQuestion(Question question,HttpSession session,Model model){
+        //question缺少 course，status，tid
+        question.setStatus(CommonData.DEFAULT_QUESTION_STATUS);
+
+        Teacher teacher = (Teacher) session.getAttribute("loginTeacher");
+        question.setTid(teacher.getId());
+
+        //将这个question装入缓存
+        //人为规定缓存就是session
+        //人为规定session.key = questionCache
+        List<Question> questionCache = (List<Question>) session.getAttribute("questionCache");
+        if(questionCache == null){
+            questionCache = new ArrayList<>();
+            session.setAttribute("questionCache",questionCache);
+        }
+        questionCache.add(question) ;
+
+        //此时缓存完毕。需要回显。回显时需要组成VO对象
+        QuestionVO questionVO = new QuestionVO();
+        //原来cache中有10条记录，当前这个就是第11个，序号也应该是11，恰好是cache.size()
+        questionVO.setIndex( questionCache.size() );
+        questionVO.setSubject( question.getSubject() );
+        questionVO.setType( question.getType() );
+
+        String[] optionArray = question.getOptions().split(CommonData.SPLIT_SEPARATOR);
+        questionVO.setOptionList( Arrays.asList(optionArray) );
+
+        String[] answerArray = question.getAnswer().split(CommonData.SPLIT_SEPARATOR);
+        questionVO.setAnswerList( Arrays.asList(answerArray) );
+
+        model.addAttribute("question",questionVO) ;
+
+        return "template/questionViewTemplate" ;
+    }
+
 }
