@@ -113,6 +113,19 @@
     cursor: default;
 }
 
+.left-options li{
+    overflow: hidden;
+    clear: both;
+}
+
+.left-option , .left-option-text{
+    float:left;
+}
+
+.left-option-text{
+    line-height: 30px;
+}
+
 .left-option.active{
     background: #09f;
 }

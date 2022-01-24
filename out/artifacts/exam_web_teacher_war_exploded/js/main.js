@@ -58,7 +58,7 @@ main.updatePwd = function(){
 main.showDialog = function(config){
     $('#common-modal-title').html(config.title);
     $('#common-modal-body').html(config.content);
-    $('#common-modal-submit').click(function(){
+    $('#common-modal-submit').off('click').click(function(){
         config.submit();
     });
     $('#common-modal').modal('show') ;

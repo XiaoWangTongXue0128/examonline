@@ -19,5 +19,7 @@ public interface CommonData {
 
     String SPLIT_SEPARATOR = "\\}-\\|-\\{" ;
 
+    String OPTION_STR = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" ;
+
 
 }

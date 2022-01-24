@@ -457,37 +457,40 @@ template.static.cacheQuestion = function(){
             var e = option_editors[i] ;
             options += e.txt.html() + separator;
         }
-        alert(options) ;
     }
 
 
     //处理答案
     if(param.type =='单选题'){
-        answer = $('input[name="question1-option"]:checked').val();
+        answer = $('#question-template input[name="question1-option"]:checked').val();
     }
     if(param.type == '多选题'){
-        $('input[name="question2-option"]:checked').each(function(i,input){
+        $('#question-template input[name="question2-option"]:checked').each(function(i,input){
             answer += input.value + separator ;
         });
     }
     if(param.type == '判断题'){
-        answer = $('input[name="question3-option"]:checked').val();
+        answer = $('#question-template input[name="question3-option"]:checked').val();
     }
     var f = true ;
     if(param.type =='填空题'){
-        $('input[name="question4-option"]').each(function(i,input){
-            if(!input.value){
+        $('#question-template input[name="question4-option"]').each(function(i,input){
+            if(input.value == ''){
                 f = false ;
+                return ;
             }
             answer += input.value + separator ;
         });
     }
 
+    console.log(answer);
+    console.log(f);
+
     if(param.type == '综合题'){
         answer = answer_editor.txt.html();
     }
 
-    if(!answer | !f){
+    if(!answer || (param.type=='填空题' &&!f )){
         alert('请选择答案') ;
         return ;
     }
@@ -495,9 +498,10 @@ template.static.cacheQuestion = function(){
     param.options = options ;
     param.answer = answer ;
 
-    $.post('template/cacheQuestion',param,function(){
+    $.post('template/cacheQuestion',param,function(view){
         alert('试题添加成功') ;
         main.closeDialog();
+        $('.static-left-box .left-part:last').before(view) ;
     });
 
 }
