@@ -66,6 +66,7 @@
     background: #eee;
     overflow: hidden;
     padding:10px;
+    min-height:600px;
 }
 
 
@@ -96,9 +97,9 @@
     border-bottom:1px solid #aaa ;
 }
 
-.left-part.bottom-part{
+.bottom-part{
     text-align: center;
-    bottom-border:0;
+    border-bottom:0;
 }
 
 .left-title,.left-subject,.left-options,.left-options li{

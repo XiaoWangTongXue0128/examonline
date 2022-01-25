@@ -483,9 +483,6 @@ template.static.cacheQuestion = function(){
         });
     }
 
-    console.log(answer);
-    console.log(f);
-
     if(param.type == '综合题'){
         answer = answer_editor.txt.html();
     }

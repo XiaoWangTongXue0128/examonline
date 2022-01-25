@@ -34,7 +34,25 @@ public class TemplateController extends BaseController {
     private TemplateService templateService ;
 
     @RequestMapping("/add.html")
-    public String toAdd(Model model){
+    public String toAdd(Model model,HttpSession session){
+        //现在因为完成了静态模板的试题添加（缓存）
+        //所以在没有保存和取消之前，每次访问这个静态模板页时
+        //需要将之前缓存的试题信息一同展示在网页上
+        List<Question> questionCache = (List<Question>) session.getAttribute("questionCache");
+        if(questionCache == null){
+            //首次访问模板页面，还没有缓存，构建一个
+            questionCache = new ArrayList<>() ;
+        }
+        //将question 转换成 questionVO
+        List<QuestionVO> questions = new ArrayList<>();
+        int index = 1 ;
+        for(Question question : questionCache){
+            QuestionVO questionVO = questionCast(question,index++) ;
+            questions.add(questionVO) ;
+        }
+        model.addAttribute("questions",questions) ;
+
+
         //查询，并携带课程信息
         List<String> courses = dictionaryService.findCourses();
         model.addAttribute("courses",courses) ;
@@ -137,9 +155,23 @@ public class TemplateController extends BaseController {
         questionCache.add(question) ;
 
         //此时缓存完毕。需要回显。回显时需要组成VO对象
+        QuestionVO questionVO = questionCast(question,questionCache.size()) ;
+
+        //因为在toAdd方法中，每次访问模板页面，都需要携带之前缓存的试题信息，默认展示
+        //从而网页模板中，需要对集合进行处理
+        //此次单一试题缓存，利用的也是同一个模板
+        //为了实现公用性，也需要将一个试题组成集合
+        List<QuestionVO> questions = new ArrayList<>();
+        questions.add(questionVO);
+        model.addAttribute("questions",questions) ;
+
+        return "template/questionViewTemplate::questionView" ;
+    }
+
+    private QuestionVO questionCast(Question question,int index){
         QuestionVO questionVO = new QuestionVO();
         //原来cache中有10条记录，当前这个就是第11个，序号也应该是11，恰好是cache.size()
-        questionVO.setIndex( questionCache.size() );
+        questionVO.setIndex( index );
         questionVO.setSubject( question.getSubject() );
         questionVO.setType( question.getType() );
 
@@ -149,9 +181,7 @@ public class TemplateController extends BaseController {
         String[] answerArray = question.getAnswer().split(CommonData.SPLIT_SEPARATOR);
         questionVO.setAnswerList( Arrays.asList(answerArray) );
 
-        model.addAttribute("question",questionVO) ;
-
-        return "template/questionViewTemplate" ;
+        return questionVO ;
     }
 
 }
