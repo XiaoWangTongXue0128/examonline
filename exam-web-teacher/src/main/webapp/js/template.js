@@ -499,7 +499,71 @@ template.static.cacheQuestion = function(){
         alert('试题添加成功') ;
         main.closeDialog();
         $('.static-left-box .left-part:last').before(view) ;
+
+        template.static.calculate();
     });
+
+}
+
+template.static.calculate = function(){
+    var count1 = 0 ;
+    var count2 = 0 ;
+    var count3 = 0 ;
+    var count4 = 0 ;
+    var count5 = 0 ;
+
+    var total1 = 0 ;
+    var total2 = 0 ;
+    var total3 = 0 ;
+    var total4 = 0 ;
+    var total5 = 0 ;
+
+
+    $('.static-question-type').each(function(i,span){
+        var type = span.innerText.trim() ;
+        switch(type){
+            case '单选题':count1++;break ;
+            case '多选题':count2++;break ;
+            case '判断题':count3++;break ;
+            case '填空题':count4++;break ;
+            case '综合题':count5++;break ;
+        }
+    });
+
+    var score1 = $('#static-form-question1-score').val();
+    var score2 = $('#static-form-question2-score').val();
+    var score3 = $('#static-form-question3-score').val();
+    var score4 = $('#static-form-question4-score').val();
+    var score5 = $('#static-form-question5-score').val();
+    score1 = parseInt(score1) ;
+    score2 = parseInt(score2) ;
+    score3 = parseInt(score3) ;
+    score4 = parseInt(score4) ;
+    score5 = parseInt(score5) ;
+
+    total1 = score1 * count1 ;
+    total2 = score2 * count2 ;
+    total3 = score3 * count3 ;
+    total4 = score4 * count4 ;
+    total5 = score5 * count5 ;
+
+    $('#static-question1-total').html(total1);
+    $('#static-question1-count').html(count1);
+
+    $('#static-question2-total').html(total2);
+    $('#static-question2-count').html(count2);
+
+    $('#static-question3-total').html(total3);
+    $('#static-question3-count').html(count3);
+
+    $('#static-question4-total').html(total4);
+    $('#static-question4-count').html(count4);
+
+    $('#static-question5-total').html(total5);
+    $('#static-question5-count').html(count5);
+
+    var totalScore = total1 + total2 + total3 + total4 + total5 ;
+    $('#static-form-totalScore').html(totalScore) ;
 
 }
 

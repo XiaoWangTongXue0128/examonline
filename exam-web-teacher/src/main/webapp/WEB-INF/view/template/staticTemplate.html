@@ -36,7 +36,7 @@
                 <div class="right-part">
                     <label>单选题</label>
                     <div>
-                        <span>每题 <input id="static-form-question1-score" value="2" /> 分</span>
+                        <span>每题 <input id="static-form-question1-score" value="2" class="score-input" /> 分</span>
                         <span class="right"><b id="static-question1-total">0</b> 分</span>
                         <span class="right"><b id="static-question1-count">0</b> 题</span>
                     </div>
@@ -45,7 +45,7 @@
                 <div class="right-part">
                     <label>多选题</label>
                     <div>
-                        <span>每题 <input id="static-form-question2-score" value="2" /> 分</span>
+                        <span>每题 <input id="static-form-question2-score" value="2" class="score-input" /> 分</span>
                         <span class="right"><b id="static-question2-total">0</b> 分</span>
                         <span class="right"><b id="static-question2-count">0</b> 题</span>
                     </div>
@@ -54,7 +54,7 @@
                 <div class="right-part">
                     <label>判断题</label>
                     <div>
-                        <span>每题 <input id="static-form-question3-score" value="2" /> 分</span>
+                        <span>每题 <input id="static-form-question3-score" value="2" class="score-input" /> 分</span>
                         <span class="right"><b id="static-question3-total">0</b> 分</span>
                         <span class="right"><b id="static-question3-count">0</b> 题</span>
                     </div>
@@ -63,7 +63,7 @@
                 <div class="right-part">
                     <label>填空题</label>
                     <div>
-                        <span>每题 <input id="static-form-question4-score" value="2" /> 分</span>
+                        <span>每题 <input id="static-form-question4-score" value="2" class="score-input" /> 分</span>
                         <span class="right"><b id="static-question4-total">0</b> 分</span>
                         <span class="right"><b id="static-question4-count">0</b> 题</span>
                     </div>
@@ -72,7 +72,7 @@
                 <div class="right-part">
                     <label>综合题</label>
                     <div>
-                        <span>每题 <input id="static-form-question5-score" value="5" /> 分</span>
+                        <span>每题 <input id="static-form-question5-score" class="score-input" value="5" /> 分</span>
                         <span class="right"><b id="static-question5-total">0</b> 分</span>
                         <span class="right"><b id="static-question5-count">0</b> 题</span>
                     </div>
@@ -232,5 +232,16 @@
 
         </div>
 
+        <script>
+            $(function(){
+                //初始化，缓存考题的分数计算
+                template.static.calculate() ;
+
+                //初始化，单一分数的改变事件，每次改变都重新计算
+                $('.score-input').change(function(){
+                    template.static.calculate();
+                });
+            });
+        </script>
     </div>
 </html>
