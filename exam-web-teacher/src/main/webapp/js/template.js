@@ -567,3 +567,65 @@ template.static.calculate = function(){
 
 }
 
+template.static.removeQuestion = function(btn){
+    if(!confirm('是否确认移除当前试题')){
+        return ;
+    }
+
+    //var index = $(btn).parent().parent().children().children().children('.static-question-index').html().trim();
+    var left_title = $(btn).parent().parent();
+    var index = $('.static-question-index',left_title).html().trim();
+
+    //需要将后台缓存中对应考题也删除
+    $.post('template/removeQuestion',{index:index},function(){
+        alert('考题移除成功');
+        //在页面中删除这道题，只需要找到其对应的 .left-part标签部分，remove即可
+        $(btn).parent().parent().parent().remove() ;
+
+        //页面需要重新计算考题序号
+        template.static.questionSort();
+
+        //重新计算分数
+        template.static.calculate() ;
+    })
+
+}
+
+template.static.questionSort = function(){
+    $('#static-left-box .static-question-index').each(function(i,span){
+        span.innerHTML=i+1;
+        $(span).prev().val(i+1);
+    });
+}
+
+template.static.checkAll = function(btn){
+    var f = btn.checked ;
+    $('#static-left-box .left-title :checkbox').prop('checked',f) ;
+}
+
+template.static.removeQuestions = function(){
+    var indexes = '' ;
+    $('#static-left-box .left-title :checked').each(function(i,checkbox){
+        indexes += checkbox.value +',';
+    });
+    if(indexes == ''){
+        alert('请选择要移出的考题') ;
+        return ;
+    }
+    if(!confirm('是否确认移除选中的考题')){
+        return  ;
+    }
+
+    $.post('template/removeQuestions',{indexes:indexes},function(){
+        alert('考题移除成功') ;
+
+        //移除页面考题
+        $('#static-left-box .left-title :checked').parent().parent().parent().parent().remove()
+
+        template.static.questionSort() ;
+
+        template.static.calculate() ;
+    });
+
+}
+

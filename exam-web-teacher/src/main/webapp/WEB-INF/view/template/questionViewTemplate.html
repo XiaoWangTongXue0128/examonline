@@ -4,14 +4,14 @@
         <div class="left-part" th:each="question:${questions}">
             <div class="left-title form-inline">
                 <div class="form-group">
-                    <label><input type="checkbox" /> <span th:text="${question.index}"></span>.<span class="static-question-type" th:text="${question.type}"></span></label>
+                    <label><input type="checkbox" th:value="${question.index}" /> <span class="static-question-index" th:text="${question.index}"></span>.<span class="static-question-type" th:text="${question.type}"></span></label>
                 </div>
                 <div class="form-group right">
                     <button class="btn btn-link btn-sm">
                         <span></span> 编辑
                     </button>
 
-                    <button class="btn btn-link btn-sm">
+                    <button class="btn btn-link btn-sm" th:onclick="template.static.removeQuestion(this)">
                         <span></span> 删除
                     </button>
                 </div>

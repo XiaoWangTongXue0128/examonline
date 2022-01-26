@@ -21,4 +21,15 @@ public class Test3 {
         System.out.println(Arrays.toString(ss));
     }
 
+    /**
+     * 字符串数组的排序
+     */
+    @Test
+    public void t2(){
+        String[] indexArray = {"5","1","4","2"};
+        System.out.println(Arrays.toString(indexArray));
+        Arrays.sort(indexArray);
+        System.out.println(Arrays.toString(indexArray));
+    }
+
 }

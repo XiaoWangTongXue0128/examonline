@@ -86,12 +86,12 @@
                 <div class="left-part form-inline search-box">
 
                     <div class="form-group">
-                        <input type="checkbox" id="static-checkall-btn">
+                        <input type="checkbox" id="static-checkall-btn" onclick="template.static.checkAll(this)">
                         <label for="static-checkall-btn">全选</label>
                     </div>
 
                     <div class="form-group">
-                        <a class="btn btn-link">
+                        <a class="btn btn-link" onclick="template.static.removeQuestions()">
                             <span class="glyphicon glyphicon-trash"></span> 删除
                         </a>
                     </div>

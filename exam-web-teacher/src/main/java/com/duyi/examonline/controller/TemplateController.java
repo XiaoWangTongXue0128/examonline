@@ -168,6 +168,39 @@ public class TemplateController extends BaseController {
         return "template/questionViewTemplate::questionView" ;
     }
 
+    @RequestMapping("/removeQuestion")
+    @ResponseBody
+    public void removeQuestion(int index,HttpSession session){
+        List<Question> questionCache = (List<Question>) session.getAttribute("questionCache");
+        questionCache.remove(index-1) ;
+    }
+
+
+    @RequestMapping("/removeQuestions")
+    @ResponseBody
+    public void removeQuestions(String indexes,HttpSession session){
+        List<Question> questionCache = (List<Question>) session.getAttribute("questionCache");
+
+        String[] indexArray = indexes.split(",");
+        //因为ArrayList集合内部，删除某一个位置的元素后，后面的元素，会向前移动
+        //从而接下来要删除的元素的位置就发生了变化
+        //所以我们考虑从后向前删除  1,2,5
+        //Arrays.sort(indexArray);
+        for(int i=indexArray.length-1;i>=0;i--){
+            int index = Integer.parseInt( indexArray[i] );
+            questionCache.remove(index-1);
+        }
+
+    }
+
+
+
+
+
+
+
+
+
     private QuestionVO questionCast(Question question,int index){
         QuestionVO questionVO = new QuestionVO();
         //原来cache中有10条记录，当前这个就是第11个，序号也应该是11，恰好是cache.size()
