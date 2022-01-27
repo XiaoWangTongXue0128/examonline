@@ -772,3 +772,58 @@ template.static.editQuestionInit = function(index){
     },'json');
 }
 
+template.static.toImportQuestions = function() {
+    var uploading = false ;
+    $.post('template/importsTemplate.html', {}, function (view) {
+        main.showDialog({
+            title:'导入考题信息',
+            content:view,
+            submit:function(){
+                var fileInfo = $('#import-excel').val();
+                if(!fileInfo){
+                    alert('请选择要上传的excel文件');
+                    return ;
+                }
+                if(uploading){
+                    alert("文件正在上传中，请稍候");
+                    return false;
+                }
+                $.ajax({
+                    url: 'template/importQuestions',
+                    type: 'POST',
+                    cache: false,
+                    data: new FormData($('#static-question-import-form')[0]),
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function () {
+                        uploading = true;
+                    },
+                    success: function (view) {
+                        uploading = false;
+
+                        $('#static-left-box .bottom-part').before(view);
+
+                        var msg = $('.static-question-import-msg:last').val();
+                        main.closeDialog();
+                        msg = msg.replace(/\|/g,"\r\n");
+                        alert(msg);
+                    }
+                });
+            }
+        })
+
+    });
+}
+
+template.static.chanageFile = function(){
+    var fileInfo = $('#import-excel').val();
+    if(fileInfo.endsWith('.xls') || fileInfo.endsWith('.xlsx')){
+        //展示
+        $('#fileMsg').html(fileInfo);
+    }else{
+        alert('请选择正确的excel文件') ;
+    }
+}
+
+
+

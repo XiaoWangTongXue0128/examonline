@@ -1,6 +1,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
     <div th:fragment="questionView">
+        <!-- 只对考题导入有效 -->
+        <input type="hidden" class="static-question-import-msg" th:value="${msg}" />
+
         <div class="left-part" th:each="question:${questions}">
             <div class="left-title form-inline">
                 <div class="form-group">
