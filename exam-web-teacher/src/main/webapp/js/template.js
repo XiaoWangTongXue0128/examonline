@@ -807,6 +807,8 @@ template.static.toImportQuestions = function() {
                         main.closeDialog();
                         msg = msg.replace(/\|/g,"\r\n");
                         alert(msg);
+
+                        template.static.calculate();
                     }
                 });
             }
@@ -825,5 +827,44 @@ template.static.chanageFile = function(){
     }
 }
 
+template.static.cancelSave = function(){
+    if(!confirm('取消后试题清空，是否确认取消')){
+        return ;
+    }
+    //清空前台信息
+    template.static.clearView();
+    //清空后台缓存
+    $.post('template/cancelSave',{},function(){
+        alert('操作成功') ;
+    });
+}
+template.static.clearView = function(){
+    $('#static-form-name').val('');
+    $('#static-form-course').val('');
+    $('#static-left-box .left-part:gt(0)').not(':last').remove();
+    template.static.calculate() ;
+}
 
+template.static.save = function(){
+    var param = {
+        type : '静态模板',
+        name : $('#static-form-name').val(),
+        course : $('#static-form-course').val(),
+        totalScore : $('#static-form-totalScore').html().trim(),
+        question1:$('#static-form-question1-score').val(),
+        question2:$('#static-form-question2-score').val(),
+        question3:$('#static-form-question3-score').val(),
+        question4:$('#static-form-question4-score').val(),
+        question5:$('#static-form-question5-score').val(),
+    }
+
+    $.post('template/static/save',param,function(f){
+        if(f == true){
+            alert('模板保存成功，请继续') ;
+            template.static.clearView();
+        }else{
+            alert('模板名称重复，保存失败')
+        }
+    });
+}
 

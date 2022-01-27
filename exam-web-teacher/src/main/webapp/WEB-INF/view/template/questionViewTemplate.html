@@ -1,9 +1,10 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
     <div th:fragment="questionView">
-        <!-- 只对考题导入有效 -->
+        <!-- 只对考题导入有效,每次利用这个模板，都会有这个隐藏框
+             所以通过找指定class的最后一个last来获得msg信息
+        -->
         <input type="hidden" class="static-question-import-msg" th:value="${msg}" />
-
         <div class="left-part" th:each="question:${questions}">
             <div class="left-title form-inline">
                 <div class="form-group">

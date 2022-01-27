@@ -9,6 +9,7 @@ import com.duyi.examonline.domain.Teacher;
 import com.duyi.examonline.domain.Template;
 import com.duyi.examonline.domain.vo.QuestionVO;
 import com.duyi.examonline.service.DictionaryService;
+import com.duyi.examonline.service.QuestionService;
 import com.duyi.examonline.service.TemplateService;
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -44,6 +45,9 @@ public class TemplateController extends BaseController {
 
     @Autowired
     private TemplateService templateService ;
+
+    @Autowired
+    private QuestionService questionService ;
 
     @RequestMapping("/add.html")
     public String toAdd(Model model,HttpSession session){
@@ -300,7 +304,7 @@ public class TemplateController extends BaseController {
                         msg.append("第【"+no+"】号试题，答案格式有问题|") ;
                         continue question;
                     }
-                    answer += String.valueOf(an) + CommonData.SEPARATOR ;
+                    answer += String.valueOf(flag) + CommonData.SEPARATOR ;
                 }
             }
 
@@ -311,7 +315,7 @@ public class TemplateController extends BaseController {
                     msg.append("第【"+no+"】号试题，答案格式有问题|") ;
                     continue;
                 }
-                answer = String.valueOf($answer);
+                answer = String.valueOf(flag);
             }
 
             if("填空题".equals(type)){
@@ -369,6 +373,54 @@ public class TemplateController extends BaseController {
         model.addAttribute("msg",msg);
         return "template/questionViewTemplate::questionView" ;
     }
+
+
+    @RequestMapping("/cancelSave")
+    @ResponseBody
+    public void cancelSave(HttpSession session){
+        List list = (List) session.getAttribute("questionCache");
+        list.clear();
+        //session.removeAttribute("questionCache");
+    }
+
+    @RequestMapping("/static/save")
+    @ResponseBody
+    public boolean staticSave(String course,Template template,HttpSession session){
+        Teacher teacher = (Teacher) session.getAttribute("loginTeacher");
+        //完善模板
+        template.setStatus(CommonData.DEFAULT_TEMPLATE_STATUS);
+        template.setTid( teacher.getId() );
+        template.setYl1(course);
+
+        List<Question> questionCache = (List<Question>) session.getAttribute("questionCache");
+        //先存储考题，获得id，再存模板
+        for(Question question : questionCache){
+            question.setCourse( template.getYl1() );
+            questionService.save(question);
+            switch(question.getType()){
+                case "单选题": template.setQuestion1( template.getQuestion1() + CommonData.SEPARATOR + question.getId() ); ;break ;
+                case "多选题": template.setQuestion2( template.getQuestion2() + CommonData.SEPARATOR + question.getId() ); ;break ;
+                case "判断题": template.setQuestion3( template.getQuestion3() + CommonData.SEPARATOR + question.getId() ); ;break ;
+                case "填空题": template.setQuestion4( template.getQuestion4() + CommonData.SEPARATOR + question.getId() ); ;break ;
+                case "综合题": template.setQuestion5( template.getQuestion5() + CommonData.SEPARATOR + question.getId() ); ;break ;
+            }
+        }
+
+        try{
+            templateService.save(template);
+            //缓存的数据就需要清空
+            questionCache.clear();
+            //session.removeAttribute("questionCache");
+            return true ;
+        }catch (DuplicateKeyException e){
+            return false ;
+        }
+
+    }
+
+
+
+
 
 
     /**

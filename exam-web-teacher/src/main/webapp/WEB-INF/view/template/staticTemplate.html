@@ -11,17 +11,20 @@
 
                 <div class="form-group">
                     <label for="static-form-course">关联课程</label>
-                    <input type="text" class="form-control" id="static-form-course">
+                    <input type="text" class="form-control" id="static-form-course" list="static-form-course-list">
+                    <datalist id="static-form-course-list">
+                        <option th:each="course:${courses}" th:text="${course}"></option>
+                    </datalist>
                 </div>
 
                 <div class="form-group right">
-                    <button type="button" class="btn btn-primary" onclick="student.deleteClasses()">
+                    <button type="button" class="btn btn-primary" onclick="template.static.save()">
                         <span class="glyphicon glyphicon-ok"></span> 保存
                     </button>
                 </div>
 
-                <div class="form-group right">
-                    <button type="button" class="btn btn-primary" onclick="student.deleteClasses()">
+                <div class="form-group right" >
+                    <button type="button" class="btn btn-primary" onclick="template.static.cancelSave()">
                         <span class="glyphicon glyphicon-remove"></span> 取消
                     </button>
                 </div>
