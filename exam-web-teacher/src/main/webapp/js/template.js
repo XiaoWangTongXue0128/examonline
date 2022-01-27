@@ -170,7 +170,14 @@ var subject_editor  ;
 var option_editors = [] ;
 var answer_editor ; //综合题答案编辑器
 
+template.static.editorReset = function(){
+    subject_editor = null ;
+    answer_editor = null ;
+    option_editors = [] ;
+}
+
 template.static.toAddQuestion = function(){
+    template.static.editorReset();
     $('.modal-dialog').addClass('modal-lg');
     $.post('template/questionTemplate.html',{},function(view){
         main.showDialog({
@@ -226,8 +233,7 @@ template.static.changeQuestion = function(){
 //添加考题时，切换至单选题
 template.static.changeQuestion1 = function() {
     //清空题干内容（需要重新填写）
-    subject_editor.txt.html('');
-
+    //subject_editor.txt.html('');
     //增加选项（默认4个）
     //哪来的选项？（questin-clone-box)
     for (var i = 0; i < 4; i++) {
@@ -300,11 +306,10 @@ template.static.removeOption1 = function(curr_a){
     template.static.optionSort('.question1-option');
 }
 
-
 //切换至多选题
 template.static.changeQuestion2 = function() {
     //清空题干内容（需要重新填写）
-    subject_editor.txt.html('');
+    //subject_editor.txt.html('');
 
     //增加选项（默认4个）
     //哪来的选项？（questin-clone-box)
@@ -440,9 +445,10 @@ template.static.changeQuestion4 = function() {
     });
 }
 
-//将此次录入的考题存入服务器缓存（session）
+//将此次录入/编辑的考题存入服务器缓存（session）
 template.static.cacheQuestion = function(){
     var param = {
+        index:$('#static-form-question-index').val(),
         type : $('#static-form-question-type').val(),
         level : $('#static-form-question-level').val(),
         subject : subject_editor.txt.html()
@@ -496,11 +502,17 @@ template.static.cacheQuestion = function(){
     param.answer = answer ;
 
     $.post('template/cacheQuestion',param,function(view){
-        alert('试题添加成功') ;
+        if(param.index && param.index != ''){
+            //编辑操作
+            alert('考题编辑成功')
+            $('#static-left-box .left-part').eq(param.index).replaceWith(view);
+        }else{
+            //添加操作
+            alert('考题添加成功') ;
+            $('.static-left-box .left-part:last').before(view) ;
+            template.static.calculate();
+        }
         main.closeDialog();
-        $('.static-left-box .left-part:last').before(view) ;
-
-        template.static.calculate();
     });
 
 }
@@ -627,5 +639,127 @@ template.static.removeQuestions = function(){
         template.static.calculate() ;
     });
 
+}
+
+template.static.toEditQuestion = function(btn){
+    template.static.editorReset();
+
+    $('.modal-dialog').addClass('modal-lg');
+    $.post('template/questionTemplate.html',{},function(view){
+        main.showDialog({
+            title:'编辑试题',
+            content:view,
+            submit:function(){
+                template.static.cacheQuestion();
+            }
+        });
+
+        //初始化文本编辑器
+        //题干
+        subject_editor = new E('#static-question-subject') ;
+        editorDefaultInit(subject_editor) ;
+        subject_editor.create() ;
+
+        //默认初始化待编辑的考题
+
+        var left_title = $(btn).parent().parent();
+        var index = $('.static-question-index',left_title).html().trim();
+        template.static.editQuestionInit(index);
+    });
+}
+
+//在编辑考题时，将待编辑的考题信息，展示在页面中。
+template.static.editQuestionInit = function(index){
+
+    //获取指定题号的考题
+    $.post('template/editQuestion',{index:index},function(question){
+        console.log(question) ;
+
+        $('#static-form-question-index').val(index) ;
+
+        $('#static-form-question-type').prop('disabled',true) ;
+
+        $('#static-form-question-type').val(question.type);
+
+        subject_editor.txt.html( question.subject );
+        if(question.type=='单选题'){
+            template.static.changeQuestion1();
+
+            var count = question.optionList.length;
+            if(count < 4){
+                //减少选项
+                while(count != $('#question-template .question1').length ){
+                    $('#question-template .question1:last').remove();
+                }
+            }else if(count > 4){
+                //增加选项
+                while(count != $('#question-template .question1').length ){
+                    template.static.addOption1() ;
+                }
+            }
+
+            //代码至此，选项数量一致了。
+            var value = question.answerList[0];
+            $('#question-template [name="question1-option"]').eq(value).prop('checked',true);
+
+            //将选项的文本内容加入对应的编辑器
+            for(var i=0;i<question.optionList.length;i++){
+                var content = question.optionList[i];
+                option_editors[i].txt.html(content);
+            }
+        }else if(question.type=='多选题'){
+            template.static.changeQuestion2();
+
+            var count = question.optionList.length;
+            if(count < 4){
+                //减少选项
+                while(count != $('#question-template .question2').length ){
+                    $('#question-template .question2:last').remove();
+                }
+            }else if(count > 4){
+                //增加选项
+                while(count != $('#question-template .question2').length ){
+                    template.static.addOption2() ;
+                }
+            }
+
+            //代码至此，选项数量一致了。
+            for(var i=0;i<question.answerList.length;i++){
+                var value = question.answerList[i];
+                $('#question-template [name="question2-option"]').eq(value).prop('checked',true);
+            }
+            //将选项的文本内容加入对应的编辑器
+            for(var i=0;i<question.optionList.length;i++){
+                var content = question.optionList[i];
+                option_editors[i].txt.html(content);
+            }
+
+        }else if(question.type=='判断题'){
+            template.static.changeQuestion3();
+            //装载答案
+            var value = question.answerList[0];
+            $('#question-template [name="question3-option"][value="'+value+'"]').prop('checked',true) ;
+        }else if(question.type=='填空题'){
+            template.static.changeQuestion4();
+            //此时编辑器发生了变化（自定义填空按钮）
+            //装载答案，让输入框处理一会（延迟加载）
+            window.setTimeout(function(){
+                while($('#question-template [name="question4-option"]').length == question.answerList.length ) {
+                    for (var i = 0; i < question.answerList.length; i++) {
+                        var value = question.answerList[i];
+                        $('#question-template [name="question4-option"]').eq(i).val(value);
+                    }
+                    break ;
+                }
+            },50);
+
+        }else if(question.type=='综合题'){
+            template.static.changeQuestion5();
+            //装载答案,综合题的答案需要写在一个编辑器中，answer_editor
+            var value = question.answerList[0];
+            answer_editor.txt.html(value);
+        }
+
+    },'json');
 }
 

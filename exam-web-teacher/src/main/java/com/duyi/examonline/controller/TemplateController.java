@@ -137,12 +137,14 @@ public class TemplateController extends BaseController {
      * @return
      */
     @RequestMapping("/cacheQuestion")
-    public String cacheQuestion(Question question,HttpSession session,Model model){
-        //question缺少 course，status，tid
-        question.setStatus(CommonData.DEFAULT_QUESTION_STATUS);
-
-        Teacher teacher = (Teacher) session.getAttribute("loginTeacher");
-        question.setTid(teacher.getId());
+    public String cacheQuestion(@RequestParam(name="index",defaultValue = "0") int index ,Question question,HttpSession session,Model model){
+        if(index == 0){
+            //添加考题
+            //question缺少 course，status，tid
+            question.setStatus(CommonData.DEFAULT_QUESTION_STATUS);
+            Teacher teacher = (Teacher) session.getAttribute("loginTeacher");
+            question.setTid(teacher.getId());
+        }
 
         //将这个question装入缓存
         //人为规定缓存就是session
@@ -152,10 +154,23 @@ public class TemplateController extends BaseController {
             questionCache = new ArrayList<>();
             session.setAttribute("questionCache",questionCache);
         }
-        questionCache.add(question) ;
+        if(index == 0){
+            //添加考题，直接将其追加到缓存末尾
+            questionCache.add(question) ;
+        }else{
+            //编辑考题，修改考题信息
+            Question old_question = questionCache.get(index-1) ;
+            old_question.setLevel( question.getLevel() );
+            old_question.setSubject( question.getSubject() );
+            old_question.setOptions( question.getOptions() );
+            old_question.setAnswer( question.getAnswer() );
+
+            question = old_question ;
+        }
 
         //此时缓存完毕。需要回显。回显时需要组成VO对象
-        QuestionVO questionVO = questionCast(question,questionCache.size()) ;
+        index = index==0?questionCache.size():index ;
+        QuestionVO questionVO = questionCast(question,index) ;
 
         //因为在toAdd方法中，每次访问模板页面，都需要携带之前缓存的试题信息，默认展示
         //从而网页模板中，需要对集合进行处理
@@ -180,7 +195,6 @@ public class TemplateController extends BaseController {
     @ResponseBody
     public void removeQuestions(String indexes,HttpSession session){
         List<Question> questionCache = (List<Question>) session.getAttribute("questionCache");
-
         String[] indexArray = indexes.split(",");
         //因为ArrayList集合内部，删除某一个位置的元素后，后面的元素，会向前移动
         //从而接下来要删除的元素的位置就发生了变化
@@ -190,9 +204,17 @@ public class TemplateController extends BaseController {
             int index = Integer.parseInt( indexArray[i] );
             questionCache.remove(index-1);
         }
-
     }
 
+    @RequestMapping("/editQuestion")
+    @ResponseBody
+    public QuestionVO editQuestion(int index,HttpSession session){
+        List<Question> questionCache = (List<Question>) session.getAttribute("questionCache");
+        Question question = questionCache.get(index-1) ;
+
+        QuestionVO questionVO = questionCast(question,index);
+        return questionVO ;
+    }
 
 
 
