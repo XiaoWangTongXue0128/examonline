@@ -510,8 +510,8 @@ template.static.cacheQuestion = function(){
             //添加操作
             alert('考题添加成功') ;
             $('.static-left-box .left-part:last').before(view) ;
-            template.static.calculate();
         }
+        template.static.calculate();
         main.closeDialog();
     });
 
@@ -522,6 +522,7 @@ template.static.calculate = function(){
     var count2 = 0 ;
     var count3 = 0 ;
     var count4 = 0 ;
+    var blank_count4 = 0 ;
     var count5 = 0 ;
 
     var total1 = 0 ;
@@ -537,7 +538,13 @@ template.static.calculate = function(){
             case '单选题':count1++;break ;
             case '多选题':count2++;break ;
             case '判断题':count3++;break ;
-            case '填空题':count4++;break ;
+            case '填空题':
+                {
+                    count4++;
+                    var left_part = $(span).parent().parent().parent().parent();
+                    blank_count4 += $('.left-option', left_part).length ;
+                }
+                break ;
             case '综合题':count5++;break ;
         }
     });
@@ -556,7 +563,7 @@ template.static.calculate = function(){
     total1 = score1 * count1 ;
     total2 = score2 * count2 ;
     total3 = score3 * count3 ;
-    total4 = score4 * count4 ;
+    total4 = score4 * blank_count4 ;
     total5 = score5 * count5 ;
 
     $('#static-question1-total').html(total1);
@@ -569,7 +576,8 @@ template.static.calculate = function(){
     $('#static-question3-count').html(count3);
 
     $('#static-question4-total').html(total4);
-    $('#static-question4-count').html(count4);
+    $('#static-question4-count').html(count4);;
+    $('#static-question4-blank-count').html(blank_count4);
 
     $('#static-question5-total').html(total5);
     $('#static-question5-count').html(count5);
@@ -742,6 +750,7 @@ template.static.editQuestionInit = function(index){
         }else if(question.type=='填空题'){
             template.static.changeQuestion4();
             //此时编辑器发生了变化（自定义填空按钮）
+            subject_editor.txt.html(question.subject) ;
             //装载答案，让输入框处理一会（延迟加载）
             window.setTimeout(function(){
                 while($('#question-template [name="question4-option"]').length == question.answerList.length ) {
