@@ -87,7 +87,7 @@
 }
 
 .right-part span{
-    margin:0 10px;
+    margin:0 5px;
 }
 
 
@@ -143,4 +143,8 @@
 
 .question3 .question3-option{
     font-size:20px;
+}
+
+#part-1,#part-2{
+    margin-bottom:30px;
 }

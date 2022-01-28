@@ -231,4 +231,76 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <select id="find" resultMap="templateMap">
+    select
+      distinct
+	  <include refid="Base_Column_List"></include>
+    from 
+      (
+      select
+          t.* ,
+          '私有' g_status
+      from
+          t_template t
+      where
+          tid = #{tid}
+          
+      union
+      
+      select
+          t.*,
+          '公有' g_status
+      from
+          t_template t
+      where
+          tid != #{tid}
+          and status = '公有'
+      
+      union
+      
+      select
+          t.*,
+          '被分享' g_status
+      from 
+          t_template t
+      where
+          t.id in (select template_id from t_template_teacher where tid = #{tid})
+      ) tab
+    <where>
+      <if test="name != null and name != ''">
+        and name like concat('%',#{name},'%')
+      </if>
+      <if test="course != null and course != ''">
+        and course = #{course}
+      </if>
+      <if test="type != null and type != ''">
+        and `type` = #{type}
+      </if>
+      <choose>
+        <when test="shareid != null and shareid != ''">
+          and tid = #{shareid}
+          and g_status = '被分享'
+        </when>
+        <otherwise>
+          <choose>
+            <when test="status == '私有'">
+              and tid = #{tid}
+              and status = '私有'
+            </when>
+            <when test="status == '公有'">
+              and status = '公有'
+            </when>
+            <when test="status == '被分享'">
+              and g_status = '被分享'
+            </when>
+            <when test="丢弃">
+              and status = '丢弃'
+            </when>
+          </choose>
+        </otherwise>
+      </choose>
+    </where>
+    order by create_time desc
+  </select>
 </mapper>

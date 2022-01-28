@@ -51,4 +51,12 @@ public interface TeacherService {
 
     List<Teacher> findAll();
 
+
+    /**
+     * 找到为指定老师分享过考试模板的那些老师信息
+     * @param id
+     * @return
+     */
+    List<Teacher> findByShare(Long id) ;
+
 }

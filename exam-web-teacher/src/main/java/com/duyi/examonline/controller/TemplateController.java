@@ -7,9 +7,11 @@ import com.duyi.examonline.common.CommonData;
 import com.duyi.examonline.domain.Question;
 import com.duyi.examonline.domain.Teacher;
 import com.duyi.examonline.domain.Template;
+import com.duyi.examonline.domain.vo.PageVO;
 import com.duyi.examonline.domain.vo.QuestionVO;
 import com.duyi.examonline.service.DictionaryService;
 import com.duyi.examonline.service.QuestionService;
+import com.duyi.examonline.service.TeacherService;
 import com.duyi.examonline.service.TemplateService;
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -48,6 +50,9 @@ public class TemplateController extends BaseController {
 
     @Autowired
     private QuestionService questionService ;
+
+    @Autowired
+    private TeacherService teacherService ;
 
     @RequestMapping("/add.html")
     public String toAdd(Model model,HttpSession session){
@@ -420,9 +425,6 @@ public class TemplateController extends BaseController {
 
 
 
-
-
-
     /**
      * 检测填空题答案和空的数量是否匹配
      * @return
@@ -495,6 +497,30 @@ public class TemplateController extends BaseController {
         questionVO.setAnswerList( Arrays.asList(answerArray) );
 
         return questionVO ;
+    }
+
+
+    //--------------------------
+    // --------------------------------------------------
+
+    @RequestMapping("/template.html")
+    public String toTemplate(HttpSession session,@RequestParam Map condition,Model model){
+        //查询基本信息， 课程信息（过滤），分享老师（过滤），模板信息（展示）
+        List<String> courses = dictionaryService.findCourses();
+        model.addAttribute("courses",courses) ;
+
+        //zzt  有 3个模板（301,302,303），将301分享给我，最终存储（301,1）
+        //如何获得分享给当前我这个老师模板的那些老师  当前老师id  找到被分享的模板id，在根据模板id找到其所属的老师id
+        Teacher teacher = (Teacher) session.getAttribute("loginTeacher");
+        List<Teacher> teachers = teacherService.findByShare(teacher.getId());
+        model.addAttribute("teachers",teachers);
+
+        //查当前模板信息
+        condition.put("tid",teacher.getId());
+        PageVO pageVO = templateService.find(CommonData.DEFAULT_PAGE, CommonData.DEFAULT_ROWS, condition);
+        model.addAttribute("pageVO",pageVO);
+
+        return "template/template" ;
     }
 
 }

@@ -28,4 +28,6 @@ public interface TeacherMapper {
     List<Teacher> find(@Param("start")int start , @Param("length")int length ,@Param("tname") String tname);
 
     List<Teacher> findAll();
+
+    List<Teacher> findByShare(Long id) ;
 }

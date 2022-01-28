@@ -143,4 +143,9 @@ public class TeacherServiceImpl implements TeacherService {
     public List<Teacher> findAll() {
         return teacherMapper.findAll();
     }
+
+    @Override
+    public List<Teacher> findByShare(Long id) {
+        return teacherMapper.findByShare(id);
+    }
 }

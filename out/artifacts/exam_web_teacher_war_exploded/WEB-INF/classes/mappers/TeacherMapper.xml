@@ -197,4 +197,27 @@
       t_teacher
     order by tname asc
   </select>
+
+
+
+  <select id="findByShare" resultMap="teacherMap">
+    select
+      <include refid="Base_Column_List"></include>
+    from
+    t_teacher
+    where
+    id in
+      (
+        select
+        tid
+        from
+        t_template
+        where
+          id in
+            (
+              select template_id from t_template_teacher where teacher_id=#{id}
+            )
+      )
+
+  </select>
 </mapper>
