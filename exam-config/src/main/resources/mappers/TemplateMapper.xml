@@ -265,7 +265,7 @@
       from 
           t_template t
       where
-          t.id in (select template_id from t_template_teacher where tid = #{tid})
+          t.id in (select template_id from t_template_teacher where teacher_id = #{tid})
       ) tab
     <where>
       <if test="name != null and name != ''">

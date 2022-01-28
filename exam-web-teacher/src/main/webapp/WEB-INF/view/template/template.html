@@ -103,14 +103,21 @@
                                 <td th:text="${template.yl1}"></td>
                                 <td th:text="${template.totalScore}"></td>
                                 <td th:text="${template.status}"></td>
-                                <td th:text="${template.tid}"></td>
-                                <td th:text="${template.tid}"></td>
+                                <td th:text="${template.teacher.tname}"></td>
+                                <td>
+                                    <select class="form-control" th:if="${template.shareTeachers != null and template.shareTeachers.size() != 0}">
+                                        <option th:each="teacher:${template.shareTeachers}" th:text="${teacher.tname}"></option>
+                                    </select>
+                                    <select class="form-control" th:unless="${template.shareTeachers != null and template.shareTeachers.size() != 0}">
+                                        <option>无</option>
+                                    </select>
+                                </td>
                                 <td th:text="${#dates.format(template.createTime,'yyyy-MM-dd HH:mm')}"></td>
                                 <td>
-                                    <button class="btn btn-warning">
+                                    <button class="btn btn-warning btn-sm">
                                         <span></span> 编辑
                                     </button>
-                                    <button class="btn btn-danger">
+                                    <button class="btn btn-danger btn-sm">
                                         <span></span> 删除
                                     </button>
                                 </td>

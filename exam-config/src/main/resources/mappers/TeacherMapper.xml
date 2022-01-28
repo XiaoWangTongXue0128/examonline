@@ -200,7 +200,7 @@
 
 
 
-  <select id="findByShare" resultMap="teacherMap">
+  <select id="findByShareFrom" resultMap="teacherMap">
     select
       <include refid="Base_Column_List"></include>
     from
@@ -219,5 +219,14 @@
             )
       )
 
+  </select>
+
+
+  <select id="findByShareTo" resultMap="teacherMap">
+    select
+      <include refid="Base_Column_List"></include>
+    from
+      t_teacher
+    where id in (select teacher_id from t_template_teacher where template_id=#{templateId})
   </select>
 </mapper>

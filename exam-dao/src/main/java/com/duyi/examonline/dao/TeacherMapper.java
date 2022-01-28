@@ -29,5 +29,17 @@ public interface TeacherMapper {
 
     List<Teacher> findAll();
 
-    List<Teacher> findByShare(Long id) ;
+    /**
+     * 根据指定的老师id，找到哪些老师为当前这个老师分享过模板
+     * @param id tid
+     * @return
+     */
+    List<Teacher> findByShareFrom(Long id) ;
+
+    /**
+     * 根据指定的模板id，找到当前这个模板分享给了哪些老师
+     * @param templateId
+     * @return
+     */
+    List<Teacher> findByShareTo(Long templateId);
 }
