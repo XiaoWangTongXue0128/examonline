@@ -166,6 +166,7 @@ public class TemplateController extends BaseController {
             //编辑
             cacheKey +=id ;
         }
+        question.setId(null);
         if(index == 0){
             //添加考题
             //question缺少 course，status，tid
@@ -726,4 +727,44 @@ public class TemplateController extends BaseController {
 
     }
 
+
+    @RequestMapping("/static/update")
+    @ResponseBody
+    public boolean staticUpdate(String course,Template template,HttpSession session){
+        String cacheKey = "questionCache"+template.getId();
+        Teacher teacher = (Teacher) session.getAttribute("loginTeacher");
+        //完善模板
+        template.setYl1(course);
+
+        List<Question> questionCache = (List<Question>) session.getAttribute(cacheKey);
+        //先存储考题，获得id，再存模板
+        for(Question question : questionCache){
+            question.setCourse( template.getYl1() );
+            if(question.getId() != null){
+                //对原考题的修改
+                questionService.update(question);
+            }else{
+                //一个新的考题
+                questionService.save(question);
+            }
+            switch(question.getType()){
+                case "单选题": template.setQuestion1( template.getQuestion1() + CommonData.SEPARATOR + question.getId() ); ;break ;
+                case "多选题": template.setQuestion2( template.getQuestion2() + CommonData.SEPARATOR + question.getId() ); ;break ;
+                case "判断题": template.setQuestion3( template.getQuestion3() + CommonData.SEPARATOR + question.getId() ); ;break ;
+                case "填空题": template.setQuestion4( template.getQuestion4() + CommonData.SEPARATOR + question.getId() ); ;break ;
+                case "综合题": template.setQuestion5( template.getQuestion5() + CommonData.SEPARATOR + question.getId() ); ;break ;
+            }
+        }
+
+        try{
+            templateService.update(template);
+            //缓存的数据就需要清空
+            questionCache.clear();
+            //session.removeAttribute("questionCache");
+            return true ;
+        }catch (DuplicateKeyException e){
+            return false ;
+        }
+
+    }
 }

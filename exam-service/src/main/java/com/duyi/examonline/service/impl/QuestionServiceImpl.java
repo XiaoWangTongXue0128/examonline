@@ -21,4 +21,9 @@ public class QuestionServiceImpl implements QuestionService {
     public Question findById(Long id) {
         return questionMapper.selectByPrimaryKey(id);
     }
+
+    @Override
+    public void update(Question question) {
+        questionMapper.updateByPrimaryKeySelective(question);
+    }
 }

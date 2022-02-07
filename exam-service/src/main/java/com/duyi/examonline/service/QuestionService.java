@@ -8,4 +8,5 @@ public interface QuestionService {
 
     Question findById(Long id);
 
+    void update(Question question);
 }

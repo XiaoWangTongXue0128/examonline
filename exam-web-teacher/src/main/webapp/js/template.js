@@ -892,12 +892,30 @@ template.static.save = function(){
         question5:$('#static-form-question5-score').val(),
     }
 
-    $.post('template/static/save',param,function(f){
+    var id = $('#static-form-id').val();
+    var url = '' ;
+    var msg = '' ;
+    if(id != ''){
+        //修改
+        url = 'template/static/update';
+        param.id = id ;
+        msg = '模板修改成功' ;
+    }else{
+        //保存
+        url = 'template/static/save';
+        msg = '模板保存成功，请继续';
+    }
+
+    $.post(url,param,function(f){
         if(f == true){
-            alert('模板保存成功，请继续') ;
-            template.static.clearView();
+            alert(msg) ;
+            if(id != ''){
+                location.href='template/template.html';
+            }else{
+                template.static.clearView();
+            }
         }else{
-            alert('模板名称重复，保存失败')
+            alert('模板名称重复，操作失败')
         }
     });
 }
