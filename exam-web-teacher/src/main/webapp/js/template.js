@@ -117,7 +117,6 @@ template.dynamic.save = function(){
     var count53 = $('#dynamic-form-question5-level3').val();
 
     //正常还需要有验证，  name，course ， totalScore
-
     var param = {
         type:'动态模板',
         name : $('#dynamic-form-name').val(),
@@ -150,19 +149,43 @@ template.dynamic.save = function(){
         count53:count53?count53:0
     }
 
-    $.post('template/dynamic/save',param,function(f){
+
+    var id = $('#dynamic-form-id').val();
+    var url = '' ;
+    var msg = '' ;
+    if(id == ''){
+        //没有id，保存
+        url = 'template/dynamic/save';
+        msg = '保存成功，继续添加' ;
+    }else{
+        //有id，修改
+        url = 'template/dynamic/update'
+        param.id=id;
+        msg = '修改成功' ;
+    }
+
+    $.post(url,param,function(f){
         if(f == true){
-            alert('保存成功') ;
+            alert(msg) ;
             //需要清空组件数据
-            $('.dynamic-box .form-control:lt(2)').val('');
-            $('.dynamic-box .form-control:gt(1)').val(0);
-            //清空徽章信息（每道题数量和总分）
-            $('.dynamic-box .badge:even').html('0 题');
-            $('.dynamic-box .badge:odd').html('0 分');
+            if(id==''){
+                //保存成功，重置页面，准备下一次添加
+                $('.dynamic-box .form-control:lt(2)').val('');
+                $('.dynamic-box .form-control:gt(1)').val(0);
+                //清空徽章信息（每道题数量和总分）
+                $('.dynamic-box .badge:even').html('0 题');
+                $('.dynamic-box .badge:odd').html('0 分');
+            }else{
+                //修改成功，返回列表页
+                location.href='template/template.html';
+            }
+
         }else{
-            alert('保存失败，请检查名称是否重复');
+            alert('修改保存失败，请检查名称是否重复');
         }
     });
+
+
 }
 //-----------------------动静分离----------------------------------------
 var separator = '}-|-{' ;

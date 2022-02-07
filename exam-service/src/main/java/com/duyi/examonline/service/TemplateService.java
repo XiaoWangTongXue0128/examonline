@@ -33,4 +33,7 @@ public interface TemplateService {
     void shareTemplate(Long templateId , Long teacherId) ;
 
     Template findById(Long id);
+
+    void update(Template template);
+
 }

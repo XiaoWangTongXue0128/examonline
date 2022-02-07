@@ -240,8 +240,14 @@ public class TemplateFormVO {
         this.createTime = template.getCreateTime();
         this.updateTime = template.getUpdateTime();
         this.type = template.getType() ;
-
-
+        this.name = template.getName() ;
+        this.tid = template.getTid();
+        this.yl1 = template.getYl1() ;
+        this.yl2 = template.getYl2() ;
+        this.yl3 = template.getYl3() ;
+        this.yl4 = template.getYl4();
+        this.totalScore = template.getTotalScore();
+        this.status = template.getStatus();
 
         // 2}{1}{2}{3}
         {

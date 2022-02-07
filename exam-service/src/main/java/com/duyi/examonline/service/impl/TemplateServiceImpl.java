@@ -121,4 +121,9 @@ public class TemplateServiceImpl implements TemplateService {
     public Template findById(Long id) {
         return templateMapper.selectByPrimaryKey(id);
     }
+
+    @Override
+    public void update(Template template) {
+        templateMapper.updateByPrimaryKeySelective(template);
+    }
 }
