@@ -31,4 +31,6 @@ public interface TemplateService {
     void changeStatus(Long id,String status) ;
 
     void shareTemplate(Long templateId , Long teacherId) ;
+
+    Template findById(Long id);
 }

@@ -838,6 +838,7 @@ template.static.cancelSave = function(){
         alert('操作成功') ;
     });
 }
+
 template.static.clearView = function(){
     $('#static-form-name').val('');
     $('#static-form-course').val('');
@@ -1020,5 +1021,14 @@ template.toSetLeave = function(id){
         alert('设置成功') ;
         template.refresh();
     });
+}
+
+template.toEdit = function(id,tname,currName){
+    if(tname != currName){
+        //不是自己的模板，不能改
+        alert('只能编辑修改自己的模板');
+        return ;
+    }
+    location.href='template/edit.html?id='+id;
 }
 

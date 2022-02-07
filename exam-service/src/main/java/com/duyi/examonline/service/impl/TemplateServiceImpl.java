@@ -116,4 +116,9 @@ public class TemplateServiceImpl implements TemplateService {
             log.warn("repeat share");
         }
     }
+
+    @Override
+    public Template findById(Long id) {
+        return templateMapper.selectByPrimaryKey(id);
+    }
 }

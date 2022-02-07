@@ -127,7 +127,7 @@
                                 </td>
                                 <td th:text="${#dates.format(template.createTime,'yyyy-MM-dd HH:mm')}"></td>
                                 <td>
-                                    <button class="btn btn-warning btn-sm">
+                                    <button class="btn btn-warning btn-sm" th:onclick="template.toEdit([[${template.id}]],[[${template.teacher.tname}]],[[${session.loginTeacher.tname}]])">
                                         <span class="glyphicon glyphicon-pencil"></span> 编辑
                                     </button>
                                     <button class="btn btn-danger btn-sm" th:onclick="template.toDelete([[${template.id}]])">

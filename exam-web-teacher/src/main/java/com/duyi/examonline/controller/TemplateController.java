@@ -9,6 +9,7 @@ import com.duyi.examonline.domain.Teacher;
 import com.duyi.examonline.domain.Template;
 import com.duyi.examonline.domain.vo.PageVO;
 import com.duyi.examonline.domain.vo.QuestionVO;
+import com.duyi.examonline.domain.vo.TemplateFormVO;
 import com.duyi.examonline.service.DictionaryService;
 import com.duyi.examonline.service.QuestionService;
 import com.duyi.examonline.service.TeacherService;
@@ -578,6 +579,17 @@ public class TemplateController extends BaseController {
         templateService.shareTemplate(templateId,teacherId);
 
         return true ;
+    }
+
+    @RequestMapping("/edit.html")
+    public String toEdit(Long id,Model model){
+        Template template = templateService.findById(id);
+
+        //对template做一些处理，使得可以在页面进行展示。例如对question的拆分。
+        TemplateFormVO vo = new TemplateFormVO(template);
+        model.addAttribute("template",vo);
+
+        return "template/edit";
     }
 
 }
