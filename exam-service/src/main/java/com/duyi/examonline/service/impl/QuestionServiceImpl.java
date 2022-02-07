@@ -16,4 +16,9 @@ public class QuestionServiceImpl implements QuestionService {
     public void save(Question question) {
         questionMapper.insert(question);
     }
+
+    @Override
+    public Question findById(Long id) {
+        return questionMapper.selectByPrimaryKey(id);
+    }
 }

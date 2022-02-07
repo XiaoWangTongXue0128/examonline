@@ -160,7 +160,12 @@ public class TemplateController extends BaseController {
      * @return
      */
     @RequestMapping("/cacheQuestion")
-    public String cacheQuestion(@RequestParam(name="index",defaultValue = "0") int index ,Question question,HttpSession session,Model model){
+    public String cacheQuestion(@RequestParam(name="index",defaultValue = "0") int index ,String id,Question question,HttpSession session,Model model){
+        String cacheKey = "questionCache" ;
+        if(id != null && !"".equals(id)){
+            //编辑
+            cacheKey +=id ;
+        }
         if(index == 0){
             //添加考题
             //question缺少 course，status，tid
@@ -172,10 +177,10 @@ public class TemplateController extends BaseController {
         //将这个question装入缓存
         //人为规定缓存就是session
         //人为规定session.key = questionCache
-        List<Question> questionCache = (List<Question>) session.getAttribute("questionCache");
+        List<Question> questionCache = (List<Question>) session.getAttribute(cacheKey);
         if(questionCache == null){
             questionCache = new ArrayList<>();
-            session.setAttribute("questionCache",questionCache);
+            session.setAttribute(cacheKey,questionCache);
         }
         if(index == 0){
             //添加考题，直接将其追加到缓存末尾
@@ -208,16 +213,26 @@ public class TemplateController extends BaseController {
 
     @RequestMapping("/removeQuestion")
     @ResponseBody
-    public void removeQuestion(int index,HttpSession session){
-        List<Question> questionCache = (List<Question>) session.getAttribute("questionCache");
+    public void removeQuestion(int index,String id,HttpSession session){
+        String cacheKey = "questionCache" ;
+        if(id != null && !"".equals(id)){
+            //编辑
+            cacheKey +=id ;
+        }
+        List<Question> questionCache = (List<Question>) session.getAttribute(cacheKey);
         questionCache.remove(index-1) ;
     }
 
 
     @RequestMapping("/removeQuestions")
     @ResponseBody
-    public void removeQuestions(String indexes,HttpSession session){
-        List<Question> questionCache = (List<Question>) session.getAttribute("questionCache");
+    public void removeQuestions(String indexes,String id,HttpSession session){
+        String cacheKey = "questionCache" ;
+        if(id != null && !"".equals(id)){
+            //编辑
+            cacheKey +=id ;
+        }
+        List<Question> questionCache = (List<Question>) session.getAttribute(cacheKey);
         String[] indexArray = indexes.split(",");
         //因为ArrayList集合内部，删除某一个位置的元素后，后面的元素，会向前移动
         //从而接下来要删除的元素的位置就发生了变化
@@ -231,8 +246,13 @@ public class TemplateController extends BaseController {
 
     @RequestMapping("/editQuestion")
     @ResponseBody
-    public QuestionVO editQuestion(int index,HttpSession session){
-        List<Question> questionCache = (List<Question>) session.getAttribute("questionCache");
+    public QuestionVO editQuestion(int index,String id,HttpSession session){
+        String cacheKey = "questionCache" ;
+        if(id != null && !"".equals(id)){
+            //编辑
+            cacheKey +=id ;
+        }
+        List<Question> questionCache = (List<Question>) session.getAttribute(cacheKey);
         Question question = questionCache.get(index-1) ;
 
         QuestionVO questionVO = questionCast(question,index);
@@ -259,8 +279,13 @@ public class TemplateController extends BaseController {
     }
 
     @RequestMapping("/importQuestions")
-    public String importQuestions(MultipartFile excel,HttpSession session,Model model) throws IOException {
-        List<Question> questionCache = (List<Question>) session.getAttribute("questionCache");
+    public String importQuestions(MultipartFile excel,String id,HttpSession session,Model model) throws IOException {
+        String cacheKey = "questionCache" ;
+        if(id != null && !"".equals(id)){
+            //编辑
+            cacheKey +=id ;
+        }
+        List<Question> questionCache = (List<Question>) session.getAttribute(cacheKey);
         Teacher teacher = (Teacher) session.getAttribute("loginTeacher");
         //默认读取第一个sheet表数据
         ExcelReader reader = ExcelUtil.getReader(excel.getInputStream());
@@ -383,8 +408,13 @@ public class TemplateController extends BaseController {
 
     @RequestMapping("/cancelSave")
     @ResponseBody
-    public void cancelSave(HttpSession session){
-        List list = (List) session.getAttribute("questionCache");
+    public void cancelSave(HttpSession session,String id){
+        String cacheKey = "questionCache" ;
+        if(id != null && !"".equals(id)){
+            //编辑
+            cacheKey +=id ;
+        }
+        List list = (List) session.getAttribute(cacheKey);
         list.clear();
         //session.removeAttribute("questionCache");
     }
@@ -582,7 +612,9 @@ public class TemplateController extends BaseController {
     }
 
     @RequestMapping("/edit.html")
-    public String toEdit(Long id,Model model){
+    public String toEdit(Long id,Model model,HttpSession session){
+        String cacheKey = "questionCache"+id;
+
         Template template = templateService.findById(id);
 
         //对template做一些处理，使得可以在页面进行展示。例如对question的拆分。
@@ -591,6 +623,42 @@ public class TemplateController extends BaseController {
 
         List<String> courses = dictionaryService.findCourses();
         model.addAttribute("courses",courses) ;
+
+
+        //如果是静态模板，模板中存储着关联的考题信息
+        //只需要将这些考题信息存入session缓存，以后就都可以展示了
+        //要将vo中存储的题号，变成考题
+        List<QuestionVO> questions = new ArrayList<QuestionVO>();
+        List<Question> questionCache = (List<Question>) session.getAttribute(cacheKey);
+        if(questionCache != null && questionCache.size() > 0){
+            //之前已经有缓存了
+            int index = 1 ;
+            for(Question question : questionCache){
+                QuestionVO questionVO = questionCast(question, index++);
+                questions.add(questionVO);
+            }
+        }else{
+            //之前没有缓存，这是第一次
+            questionCache = new ArrayList<>();
+            session.setAttribute(cacheKey,questionCache);
+            List<Integer> qids = new ArrayList<>();
+            qids.addAll(vo.getQuestion1());
+            qids.addAll(vo.getQuestion2());
+            qids.addAll(vo.getQuestion3());
+            qids.addAll(vo.getQuestion4());
+            qids.addAll(vo.getQuestion5());
+            for(Integer qid : qids){
+                Question question = questionService.findById(qid.longValue());
+                questionCache.add(question);
+
+                //将question->questionVO 在面展示
+                QuestionVO questionVO = questionCast(question, questionCache.size());
+                questions.add(questionVO);
+            }
+        }
+
+
+        model.addAttribute("questions",questions);
 
         return "template/edit";
     }

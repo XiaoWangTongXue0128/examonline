@@ -6,4 +6,6 @@ public interface QuestionService {
 
     void save(Question question) ;
 
+    Question findById(Long id);
+
 }

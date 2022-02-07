@@ -471,6 +471,7 @@ template.static.changeQuestion4 = function() {
 //将此次录入/编辑的考题存入服务器缓存（session）
 template.static.cacheQuestion = function(){
     var param = {
+        id:$('#static-form-id').val(),
         index:$('#static-form-question-index').val(),
         type : $('#static-form-question-type').val(),
         level : $('#static-form-question-level').val(),
@@ -620,7 +621,7 @@ template.static.removeQuestion = function(btn){
     var index = $('.static-question-index',left_title).html().trim();
 
     //需要将后台缓存中对应考题也删除
-    $.post('template/removeQuestion',{index:index},function(){
+    $.post('template/removeQuestion',{index:index,id:$('#static-form-id').val()},function(){
         alert('考题移除成功');
         //在页面中删除这道题，只需要找到其对应的 .left-part标签部分，remove即可
         $(btn).parent().parent().parent().remove() ;
@@ -659,7 +660,7 @@ template.static.removeQuestions = function(){
         return  ;
     }
 
-    $.post('template/removeQuestions',{indexes:indexes},function(){
+    $.post('template/removeQuestions',{indexes:indexes,id:$('#static-form-id').val()},function(){
         alert('考题移除成功') ;
 
         //移除页面考题
@@ -703,7 +704,7 @@ template.static.toEditQuestion = function(btn){
 template.static.editQuestionInit = function(index){
 
     //获取指定题号的考题
-    $.post('template/editQuestion',{index:index},function(question){
+    $.post('template/editQuestion',{index:index,id:$('#static-form-id').val()},function(question){
         console.log(question) ;
 
         $('#static-form-question-index').val(index) ;
@@ -811,11 +812,13 @@ template.static.toImportQuestions = function() {
                     alert("文件正在上传中，请稍候");
                     return false;
                 }
+                var formData = new FormData($('#static-question-import-form')[0]) ;
+                formData.append('id',$('#static-form-id').val());
                 $.ajax({
                     url: 'template/importQuestions',
                     type: 'POST',
                     cache: false,
-                    data: new FormData($('#static-question-import-form')[0]),
+                    data: formData,
                     processData: false,
                     contentType: false,
                     beforeSend: function () {
@@ -854,11 +857,18 @@ template.static.cancelSave = function(){
     if(!confirm('取消后试题清空，是否确认取消')){
         return ;
     }
-    //清空前台信息
-    template.static.clearView();
+
     //清空后台缓存
-    $.post('template/cancelSave',{},function(){
+    var id = $('#static-form-id').val();
+    $.post('template/cancelSave',{id:id},function(){
         alert('操作成功') ;
+        if(id != ''){
+            //编辑操作，取消后，回显列表
+            location.href='template/template.html';
+        }else{
+            //添加操作，取消后，清空前台页面
+            template.static.clearView();
+        }
     });
 }
 
