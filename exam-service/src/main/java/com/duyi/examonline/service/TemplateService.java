@@ -26,4 +26,9 @@ public interface TemplateService {
     PageVO find(int page , int rows, Map condition) ;
 
 
+    boolean delete(Long id , Long tid);
+
+    void changeStatus(Long id,String status) ;
+
+    void shareTemplate(Long templateId , Long teacherId) ;
 }

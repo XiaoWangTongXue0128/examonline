@@ -91,4 +91,29 @@ public class TemplateServiceImpl implements TemplateService {
 
         return pageVO ;
     }
+
+    @Override
+    public boolean delete(Long id, Long tid) {
+
+        int count = templateMapper.delete(id, tid);
+
+        return count > 0;
+    }
+
+    @Override
+    public void changeStatus(Long id, String status) {
+        Template template = new Template() ;
+        template.setId(id);
+        template.setStatus(status);
+        templateMapper.updateByPrimaryKeySelective(template);
+    }
+
+    @Override
+    public void shareTemplate(Long templateId, Long teacherId) {
+        try{
+            templateMapper.share(templateId,teacherId);
+        }catch (DuplicateKeyException e){
+            log.warn("repeat share");
+        }
+    }
 }

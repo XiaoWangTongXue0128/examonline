@@ -523,4 +523,61 @@ public class TemplateController extends BaseController {
         return "template/template" ;
     }
 
+    @RequestMapping("/templateGrid.html")
+    public String toTemplateGrid(@RequestParam  Map condition,HttpSession session,Model model){
+        Teacher teacher = (Teacher) session.getAttribute("loginTeacher");
+        //查当前模板信息
+        condition.put("tid",teacher.getId());
+        PageVO pageVO = templateService.find(CommonData.DEFAULT_PAGE, CommonData.DEFAULT_ROWS, condition);
+        model.addAttribute("pageVO",pageVO);
+
+        return "template/template::#part-2" ;
+    }
+
+    @RequestMapping("/delete")
+    @ResponseBody
+    public boolean delete(Long id , HttpSession session ){
+        Teacher teacher = (Teacher) session.getAttribute("loginTeacher");
+
+        return templateService.delete(id,teacher.getId());
+
+    }
+
+    @RequestMapping("/changeLeave")
+    @ResponseBody
+    public void changeLeave(Long id){
+        templateService.changeStatus(id,"丢弃");
+    }
+
+
+    @RequestMapping("/changePublic")
+    @ResponseBody
+    public void changePublic(Long id){
+        templateService.changeStatus(id,"公有");
+    }
+
+
+    @RequestMapping("/teacherGrid.html")
+    public String toTeacherGrid(
+            @RequestParam(name="pageNo",defaultValue = "1") int pageNo ,
+            String tname,
+            Model model){
+        PageVO pageVO = teacherService.find(pageNo, CommonData.DEFAULT_ROWS, tname);
+        model.addAttribute("pageVO",pageVO);
+        return "template/teacherGridTemplate" ;
+    }
+
+    @RequestMapping("/shareTemplate")
+    @ResponseBody
+    public boolean shareTemplate(Long templateId , Long teacherId,HttpSession session){
+        Teacher teacher = (Teacher) session.getAttribute("loginTeacher");
+        if(teacher.getId().equals(teacherId)){
+            return false ;
+        }
+
+        templateService.shareTemplate(templateId,teacherId);
+
+        return true ;
+    }
+
 }

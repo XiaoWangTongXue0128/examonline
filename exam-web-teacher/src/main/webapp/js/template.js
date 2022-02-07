@@ -868,3 +868,157 @@ template.static.save = function(){
     });
 }
 
+/**===========================================================================*/
+
+template.toQuery = function(pageNo){
+    pageNo = pageNo?pageNo:1 ;
+
+    var param = {
+        pageNo : pageNo ,
+        name:$('#search-name').val(),
+        course:$('#search-course').val(),
+        type:$('#search-type').val(),
+        status:$('#search-status').val(),
+        shareid:$('#search-share').val()
+    }
+
+    $.post('template/templateGrid.html',param,function(view){
+        $('#part-2').replaceWith(view);
+    });
+
+
+}
+
+template.toClearQuery = function(){
+    $('.search-box .form-control').val('');
+    template.toQuery() ;
+}
+
+template.toPageQuery = function(pageNo){
+    template.toQuery(pageNo) ;
+}
+
+template.refresh = function(){
+    var pageNo = $('.pagination .active').text().trim();
+    template.toQuery(pageNo);
+}
+
+template.toDelete = function(id){
+    if(!confirm('是否确认删除')){
+        return ;
+    }
+
+    $.post('template/delete',{id:id},function(flag){
+        if(flag==true){
+            alert('删除成功') ;
+
+            template.refresh();
+
+            return ;
+        }else{
+            alert('只能删除私有的模板') ;
+        }
+    });
+}
+
+template.toSetStatus = function(id,ev){
+    var e = ev || event ;
+    var x = e.clientX ;
+    var y = e.clientY ;
+    var div = $('<div></div>') ;
+    div.css({
+        position:'absolute',
+        width:130,
+        height:110,
+        left:x-5,
+        top:y-5,
+        background:'#fff',
+        border:'1px solid #ccc',
+        borderRadius:5,
+        boxShadow:'2px 2px 2px #ccc'
+    });
+    $('body').append(div);
+
+    div.html(`
+        <a class="btn btn-link" onclick="template.toSetPublic(${id})"><span class="glyphicon glyphicon-duplicate"></span> 设置公有</a>
+        <a class="btn btn-link" onclick="template.toSetShare(${id})"><span class="glyphicon glyphicon-level-up"></span> 设置分享</a>
+        <a class="btn btn-link" onclick="template.toSetLeave(${id})"><span class="glyphicon glyphicon-ban-circle"></span> 设置丢弃</a>
+    `);
+
+    div.mouseleave(function(){
+        div.remove();
+    });
+
+    return false ;
+}
+
+template.toSetPublic = function(id){
+    if(!confirm('是否确认设置模板为公有状态')){
+        return ;
+    }
+    $.post('template/changePublic',{id:id},function(){
+        alert('设置成功') ;
+        template.refresh();
+    });
+}
+
+template.toSetShare = function(id){
+
+
+    $.post('template/teacherGrid.html',{},function(view){
+        main.showDialog({
+            title:'选择分享教师',
+            content:view,
+            submit:function(){
+                main.closeDialog();
+            }
+        });
+
+        $('#template-id').val(id);
+
+        template.teacherHandleForShare();
+
+    });
+
+}
+
+template.teacherHandleForShare = function(){
+    $('#teacherGrid tr td:nth-child(6)').remove();
+    $('#teacherGrid tr th:nth-child(6)').remove();
+
+    $('#teacherGrid tbody tr').dblclick(function(){
+        var teacherId = $('input' ,$(this)).val();
+        var templateId = $('#template-id').val();
+
+        var tname = $('td:eq(2)',$(this)).text().trim();
+
+        if(!confirm('是否确认将模板分享给【'+tname+'】教师')){
+            return ;
+        }
+
+        $.post('template/shareTemplate',{templateId:templateId,teacherId:teacherId},function(flag){
+            if(flag == true){
+                alert('分享成功') ;
+
+                main.closeDialog();
+
+                template.refresh();
+            }else {
+                alert('不能分享给自己')
+                return ;
+            }
+        });
+
+    });
+}
+
+template.toSetLeave = function(id){
+    if(!confirm('是否确认设置模板为丢弃状态')){
+        return ;
+    }
+    $.post('template/changeLeave',{id:id},function(){
+        alert('设置成功') ;
+        template.refresh();
+    });
+}
+

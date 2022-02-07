@@ -202,12 +202,8 @@
       <if test="yl4 != null">
         yl4 = #{yl4,jdbcType=VARCHAR},
       </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateTime != null">
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
+
+      update_time = now()
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -303,4 +299,13 @@
     </where>
     order by create_time desc
   </select>
+
+
+  <delete id="delete" >
+    delete from t_template where id=#{id} and status = '私有' and tid=#{tid} and id not in (select template_id from t_template_teacher)
+  </delete>
+
+  <insert id="share">
+    insert into t_template_teacher values(#{templateId},#{teacherId})
+  </insert>
 </mapper>

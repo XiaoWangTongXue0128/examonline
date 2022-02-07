@@ -11,6 +11,18 @@ teacher.toTeacherQuery = function(pageNo){
 
     $.post('teacher/pageTemplate.html',param,function(view){
         $('#pageTemplate').replaceWith(view) ;
+
+        //当前这个方法有2用可能。
+        // 一个就是teacher自己使用不需要任何处理。
+        // 另一个就是可能在模板的教师分享中也会使用，需要对教师表格做处理（增加双击，去掉操作列）
+        try{
+            //没有异常，证明teacher.js和template.js在同一个模块中（模板分享操作）
+            template.teacherHandleForShare();
+            console.log('template module');
+        }catch(e){
+            //有异常，证明没有template。就只有teacher模块。不做任何处理
+            console.log('teacher module');
+        }
     });
 
 }

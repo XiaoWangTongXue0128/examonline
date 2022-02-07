@@ -62,3 +62,7 @@ ul,li{
 .form-sm .form-control{
     width:120px;
 }
+
+.label{
+    cursor: default;
+}
