@@ -556,11 +556,11 @@ public class TemplateController extends BaseController {
     }
 
     @RequestMapping("/templateGrid.html")
-    public String toTemplateGrid(@RequestParam  Map condition,HttpSession session,Model model){
+    public String toTemplateGrid(int pageNo ,@RequestParam  Map condition,HttpSession session,Model model){
         Teacher teacher = (Teacher) session.getAttribute("loginTeacher");
         //查当前模板信息
         condition.put("tid",teacher.getId());
-        PageVO pageVO = templateService.find(CommonData.DEFAULT_PAGE, CommonData.DEFAULT_ROWS, condition);
+        PageVO pageVO = templateService.find(pageNo, CommonData.DEFAULT_ROWS, condition);
         model.addAttribute("pageVO",pageVO);
 
         return "template/template::#part-2" ;

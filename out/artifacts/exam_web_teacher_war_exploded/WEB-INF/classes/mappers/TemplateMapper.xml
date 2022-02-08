@@ -290,7 +290,7 @@
             <when test="status == '被分享'">
               and g_status = '被分享'
             </when>
-            <when test="丢弃">
+            <when test="status=='丢弃'">
               and status = '丢弃'
             </when>
           </choose>
