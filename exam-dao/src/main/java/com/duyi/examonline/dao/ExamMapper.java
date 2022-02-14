@@ -2,6 +2,9 @@ package com.duyi.examonline.dao;
 
 import com.duyi.examonline.domain.Exam;
 
+import java.util.List;
+import java.util.Map;
+
 public interface ExamMapper {
     int deleteByPrimaryKey(Long id);
 
@@ -14,4 +17,8 @@ public interface ExamMapper {
     int updateByPrimaryKeySelective(Exam record);
 
     int updateByPrimaryKey(Exam record);
+
+
+
+    List<Exam> find(Map condition) ;
 }

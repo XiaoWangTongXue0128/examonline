@@ -1,0 +1,123 @@
+<!doctype html>
+<html  xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>考试信息管理 渡一教育集团</title>
+        <base th:href="@{/}" />
+
+        <th:block th:include="common::link"></th:block>
+
+        <script src="js/exam.js"></script>
+
+    </head>
+    <body>
+    <div th:replace="common::header"></div>
+
+    <div th:replace="common::nav"></div>
+
+    <div class="content-box">
+
+        <div id="part-1">
+            <div class="form-inline search-box">
+                <div class="form-group form-sm">
+                    <label for="search-name">考试名称</label>
+                    <input type="text" class="form-control" id="search-name">
+                </div>
+
+
+                <div class="form-group form-sm">
+                    <label for="search-type">考试类型</label>
+                    <select  class="form-control" id="search-type">
+                        <option value="">=请选择=</option>
+                        <option>期中</option>
+                        <option>期末</option>
+                        <option>补考</option>
+                        <option>重修</option>
+                        <option>测试</option>
+                    </select>
+                </div>
+
+                <div class="form-group form-sm">
+                    <label for="search-status">考试状态</label>
+                    <select  class="form-control" id="search-status">
+                        <option value="">=请选择=</option>
+                        <option>未发布</option>
+                        <option>未考试</option>
+                        <option>考试中</option>
+                        <option>完成考试</option>
+                        <option>丢弃</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>考试时间</label>
+                    <input type="datetime-local" id="search-start-time" class="form-control" style="width:200px;">
+                    -
+                    <input type="datetime-local" id="search-end-time" class="form-control" style="width:200px;">
+                </div>
+
+
+                <div class="form-group">
+                    <button type="button" class="btn btn-default" onclick="template.toQuery()">
+                        <span class="glyphicon glyphicon-zoom-in"></span> 查询
+                    </button>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-default" onclick="template.toClearQuery()">
+                        <span class="glyphicon glyphicon-zoom-out"></span> 清空查询
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 即是当前网页的一部分，也是一个模板，可以单独访问刷新 -->
+        <div id="part-2">
+            <table class="table table-striped table-hover ">
+                <thead>
+                    <tr>
+                        <th width="6%"><input type="checkbox" /></th>
+                        <th width="10%" >序号</th>
+                        <th width="24%" >考试名称</th>
+                        <th width="20%" >考试时间</th>
+                        <th width="10%" >考试状态</th>
+                        <th width="30%" >操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+
+            <nav>
+                <ul class="pagination">
+
+                    <li th:if="${pageVO.curr==1}" class="disabled">
+                        <a href="javascript:void(0)" ><span >&laquo;</span></a>
+                    </li>
+                    <li th:unless="${pageVO.curr==1}">
+                        <a href="javascript:void(0)" th:onclick="template.toPageQuery('[[${pageVO.curr-1}]]')"><span >&laquo;</span></a>
+                    </li>
+
+                    <li th:each="page:${#numbers.sequence(pageVO.startPage,pageVO.endPage)}" th:class="${page==pageVO.curr}?'active':''">
+                        <a href="javascript:void(0);" th:text="${page}" th:onclick="template.toPageQuery([[${page}]])"></a>
+                    </li>
+
+
+                    <li th:if="${pageVO.curr == pageVO.max}" class="disabled">
+                        <a href="javascript:void(0)" ><span >&raquo;</span></a>
+                    </li>
+                    <li th:unless="${pageVO.curr == pageVO.max}">
+                        <a href="javascript:void(0)" th:onclick="template.toPageQuery('[[${pageVO.curr+1}]]')" ><span >&raquo;</span></a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+    </div>
+
+    <div th:replace="common::footer"></div>
+
+    <div th:replace="common::modal"></div>
+    </body>
+</html>

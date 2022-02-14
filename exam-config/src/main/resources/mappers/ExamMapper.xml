@@ -207,4 +207,13 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+
+  <select id="find" resultMap="examMap">
+    select
+      <include refid="Base_Column_List"></include>
+    from
+      t_exam
+  </select>
+
 </mapper>

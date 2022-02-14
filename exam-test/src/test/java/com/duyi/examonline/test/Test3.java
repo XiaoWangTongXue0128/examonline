@@ -3,6 +3,7 @@ package com.duyi.examonline.test;
 import com.duyi.examonline.common.CommonData;
 import org.junit.Test;
 
+import java.sql.Connection;
 import java.util.Arrays;
 
 /**
@@ -19,6 +20,7 @@ public class Test3 {
         //System.out.println(s);
         String[] ss = s.split(CommonData.SPLIT_SEPARATOR);
         System.out.println(Arrays.toString(ss));
+        Connection conn = null ;
     }
 
     /**

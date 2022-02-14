@@ -2,6 +2,7 @@
     <!-- 添加和编辑共用 -->
 
     <div th:fragment="dynamicTemplate">
+
         <input type="hidden" id="dynamic-form-id" th:value="${template!=null?template.id:''}" />
         <div class="form-horizontal dynamic-box" >
 

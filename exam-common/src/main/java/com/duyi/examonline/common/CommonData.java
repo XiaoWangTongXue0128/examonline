@@ -1,5 +1,8 @@
 package com.duyi.examonline.common;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 存储一些公共常量
  */
@@ -20,6 +23,8 @@ public interface CommonData {
     String SPLIT_SEPARATOR = "\\}-\\|-\\{" ;
 
     String OPTION_STR = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" ;
+
+    Map DEFAULT_CONDITION = new HashMap();
 
 
 }
