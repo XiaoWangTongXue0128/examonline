@@ -86,7 +86,20 @@ student.toClassQuery = function(pageNo){
 
     $.post("student/classesTemplate.html",param,function(view){
         $('#classesTemplate').replaceWith(view);
+
+        //多模块逻辑处理
+        try{
+            exam.classesHandleForSelectClasses();
+            console.log('exam+student module')
+        }catch(e){
+            console.log('exam object not defined -- student module');
+        }
+
     });
+
+
+
+
 }
 
 student.toClearClass = function(){
@@ -128,6 +141,14 @@ student.toStudentQuery = function(){
 
     $.post('student/studentsTemplate.html',param,function(view){
         $('#studentGrid').replaceWith(view);
+
+        //多模块逻辑处理
+        try{
+            exam.studentsHandleForSelectClasses();
+        }catch(e){
+
+        }
+
     });
 }
 

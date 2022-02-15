@@ -1,5 +1,6 @@
 package com.duyi.examonline.controller;
 
+import com.duyi.examonline.common.BaseController;
 import com.duyi.examonline.common.CommonData;
 import com.duyi.examonline.common.CommonUtil;
 import com.duyi.examonline.domain.Exam;
@@ -20,12 +21,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Controller
 @RequestMapping("/exam")
-public class ExamController {
+public class ExamController extends BaseController {
 
     @Autowired
     private ExamService examService ;
@@ -163,5 +165,45 @@ public class ExamController {
     public String toSelectClasses(){
         return "student/student::#exam-use-classes-students" ;
     }
+
+    @RequestMapping("/bindClasses")
+    @ResponseBody
+    public void bindClasses(Long id , String classNames,HttpSession session){
+        String cacheKey = "classesCache"+id ;
+        Map<String,String> classesCache = (Map<String, String>) session.getAttribute(cacheKey);
+        if(classesCache == null){
+            classesCache = new HashMap<>();
+            session.setAttribute(cacheKey,classesCache);
+        }
+
+
+        log.debug("binding start:" + cacheKey + " " + classesCache);
+
+        String[] classNameArray = classNames.split(",");
+        for(String className : classNameArray){
+            classesCache.put(className,"ALL");
+        }
+
+        log.debug("binding end:" + cacheKey + " " + classesCache);
+    }
+
+    @RequestMapping("/unbindClasses")
+    @ResponseBody
+    public void unbindClasses(Long id , String classNames,HttpSession session){
+        String cacheKey = "classesCache"+id ;
+        Map<String,String> classesCache = (Map<String, String>) session.getAttribute(cacheKey);
+
+
+        log.debug("unbinding start:" + cacheKey + " " + classesCache);
+
+        String[] classNameArray = classNames.split(",");
+        for(String className : classNameArray){
+            classesCache.remove(className);
+        }
+
+        log.debug("unbinding end:" + cacheKey + " " + classesCache);
+    }
+
+
 
 }

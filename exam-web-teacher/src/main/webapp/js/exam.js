@@ -200,6 +200,67 @@ exam.initHandleForSelectClasses = function(){
 exam.classesHandleForSelectClasses = function(){
    for(var i=1;i<=2;i++)
     $('#classGrid tr td:nth-child(5) button:nth-child(1)').remove();
+
+   exam.classesBindingHandle();
+
+}
+
+//班级的绑定与解绑
+exam.classesBindingHandle = function(){
+    //全选按钮
+    var classAllBtn = $('#classGrid thead tr th:eq(0) input:checkbox');
+    classAllBtn.click(function(){
+        var classNames = '' ;
+        $('#classGrid tbody tr td:nth-child(1) input:checkbox').each(function(i,cb){
+            classNames += cb.value+',';
+        });
+
+        var param = {
+            classNames:classNames,
+            id:$('#fill-form-id').val()
+        }
+
+        var f = classAllBtn.prop('checked');
+        if(f){
+            //绑定当前表格中所有班级
+            exam.classesBinding(param);
+        }else{
+            //解绑当前表格中的所有班级
+            exam.classesUnbinding(param);
+        }
+    });
+
+    //单选按钮
+    $('#classGrid tbody tr td:nth-child(1) input:checkbox').click(function(){
+        var className = $(this).val();
+        var param = {
+            classNames:className,
+            id:$('#fill-form-id').val()
+        }
+
+        var f = $(this).prop('checked') ;
+        if(f){
+            exam.classesBinding(param);
+        }else{
+            exam.classesUnbinding(param);
+        }
+
+    });
+
+}
+exam.classesBinding = function(param){
+
+    $.post('exam/bindClasses',param,function(){
+        alert('班级绑定成功') ;
+        //刷新外部的班级表格
+    });
+}
+exam.classesUnbinding = function(param){
+
+    $.post('exam/unbindClasses',param,function(){
+        alert('班级解绑成功') ;
+        //刷新外部的班级表格
+    });
 }
 
 exam.studentsHandleForSelectClasses = function(){
