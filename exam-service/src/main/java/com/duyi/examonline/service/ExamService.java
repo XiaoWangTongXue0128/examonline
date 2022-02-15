@@ -18,4 +18,10 @@ public interface ExamService {
 
     Exam findById(Long id) ;
 
+    /**
+     * @param exam
+     * @Throws DuplicateKeyException 当考试名称重复时抛出该异常
+     */
+    void update(Exam exam);
+
 }

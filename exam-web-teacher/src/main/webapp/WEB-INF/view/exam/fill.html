@@ -15,12 +15,13 @@
     <div th:replace="common::nav"></div>
 
     <div class="content-box">
+        <input type="hidden" id="fill-form-id" th:value="${exam.id}" />
 
         <div id="part-1" class="fill-part-1 alert alert-info">
-            <b th:text="${exam.name}"></b>
+            <b id="fill-exam-name" th:text="${exam.name}"></b>
 
             <span class="right">
-                <a href="">编辑</a>
+                <a href="javascript:exam.toEdit()">编辑</a>
                 |
                 <a href="">返回</a>
             </span>

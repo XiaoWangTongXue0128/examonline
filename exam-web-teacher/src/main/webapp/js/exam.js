@@ -50,17 +50,46 @@ exam.toAdd = function(){
 
 }
 
-exam.save = function(){
-    $.post('exam/save',{name:$('#exam-form-name').val()},function(f){
-        if(f == true){
-            alert('保存成功') ;
+exam.save = function(id){
+    var param = {
+        name:$('#exam-form-name').val()
+    } ;
+    var url  ;
+    if(id){
+        url = 'exam/update' ;
+        param.id = id ;
+    }else{
+        url = 'exam/save' ;
+    }
 
+    $.post(url,param,function(f){
+        if(f == true){
+            alert('操作成功') ;
             main.closeDialog() ;
 
-            exam.toClearQuery();
+            if(id){
+                //编辑，刷新fill填充页的名称展示部分
+                $('#fill-exam-name').html(param.name) ;
+            }else{
+                //保存，刷新表格
+                exam.toClearQuery();
+            }
 
         }else{
-            alert('名称重复，保存失败');
+            alert('名称重复，操作失败');
         }
+    });
+}
+
+exam.toEdit = function(){
+    var id=$('#fill-form-id').val()
+    $.post("exam/form.html",{id:id},function(view){
+        main.showDialog({
+            title:'编辑考试名称',
+            content:view,
+            submit:function(){
+                exam.save(id);
+            }
+        })
     });
 }

@@ -47,8 +47,12 @@ public class ExamController {
 
 
     @RequestMapping("/form.html")
-    public String toForm(){
-
+    public String toForm(Long id,Model model){
+        if(id != null){
+            //编辑时页面访问，需要获取原始数据
+            Exam exam = examService.findById(id);
+            model.addAttribute("exam",exam);
+        }
         return "exam/form" ;
     }
 
@@ -72,6 +76,19 @@ public class ExamController {
         Exam exam = examService.findById(id);
         model.addAttribute("exam",exam);
         return "exam/fill" ;
+    }
+
+
+    @RequestMapping("/update")
+    @ResponseBody
+    public boolean update(Exam exam){
+        try{
+            examService.update(exam);
+            return true;
+        }catch (DuplicateKeyException e){
+            e.printStackTrace();
+            return false ;
+        }
     }
 
 }

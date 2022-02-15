@@ -40,4 +40,9 @@ public class ExamServiceImpl implements ExamService {
     public Exam findById(Long id) {
         return examMapper.selectByPrimaryKey(id);
     }
+
+    @Override
+    public void update(Exam exam) {
+        examMapper.updateByPrimaryKeySelective(exam);
+    }
 }
