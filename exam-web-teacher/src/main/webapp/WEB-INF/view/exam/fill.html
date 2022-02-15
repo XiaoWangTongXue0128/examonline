@@ -7,6 +7,7 @@
 
         <th:block th:include="common::link"></th:block>
         <link rel="stylesheet" type="text/css" href="css/exam.css" />
+        <link rel="stylesheet" type="text/css" href="css/template.css" />
         <script src="js/exam.js"></script>
         <script src="js/template.js"></script>
     </head>
@@ -42,7 +43,7 @@
                 <input type="hidden" id="fill-form-template-id" />
                 <input class="form-control" readonly="readonly" id="fill-form-template-name" />
                 <a href="javascript:exam.toSelectTemplate()" class="btn btn-link">关联模板</a>
-                <a href="" class="btn btn-link">模板详情</a>
+                <a href="javascript:exam.toShowTemplateDetail()" class="btn btn-link">模板详情</a>
 
             </div>
 

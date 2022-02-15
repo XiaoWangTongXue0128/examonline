@@ -1,13 +1,15 @@
 package com.duyi.examonline.controller;
 
 import com.duyi.examonline.common.CommonData;
+import com.duyi.examonline.common.CommonUtil;
 import com.duyi.examonline.domain.Exam;
+import com.duyi.examonline.domain.Question;
 import com.duyi.examonline.domain.Teacher;
+import com.duyi.examonline.domain.Template;
 import com.duyi.examonline.domain.vo.PageVO;
-import com.duyi.examonline.service.DictionaryService;
-import com.duyi.examonline.service.ExamService;
-import com.duyi.examonline.service.TeacherService;
-import com.duyi.examonline.service.TemplateService;
+import com.duyi.examonline.domain.vo.QuestionVO;
+import com.duyi.examonline.domain.vo.TemplateFormVO;
+import com.duyi.examonline.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +35,8 @@ public class ExamController {
     private TeacherService teacherService ;
     @Autowired
     private TemplateService templateService ;
-
+    @Autowired
+    private QuestionService questionService ;
     @RequestMapping("/exam.html")
     public String toExam(Model model ,HttpSession session){
         Teacher teacher = (Teacher) session.getAttribute("loginTeacher");
@@ -119,6 +123,40 @@ public class ExamController {
         model.addAttribute("pageVO",pageVO);
 
         return "template/template::#exam-use-template" ;
+    }
+
+    @RequestMapping("/templateDetail.html")
+    public String toTemplateDetail(Long templateId,Model model){
+        Template template = templateService.findById(templateId);
+
+        //对template做一些处理，使得可以在页面进行展示。例如对question的拆分。
+        TemplateFormVO vo = new TemplateFormVO(template);
+        model.addAttribute("template",vo);
+
+
+        //如果是静态模板，模板中存储着关联的考题信息
+
+        if(vo.getType().equals("静态模板")) {
+            //要将vo中存储的题号，变成考题
+            List<QuestionVO> questions = new ArrayList<QuestionVO>();
+            List<Integer> qids = new ArrayList<>();
+            qids.addAll(vo.getQuestion1());
+            qids.addAll(vo.getQuestion2());
+            qids.addAll(vo.getQuestion3());
+            qids.addAll(vo.getQuestion4());
+            qids.addAll(vo.getQuestion5());
+            int index = 1 ;
+            for (Integer qid : qids) {
+                Question question = questionService.findById(qid.longValue());
+
+                //将question->questionVO 在面展示
+                QuestionVO questionVO = CommonUtil.questionCast(question, index++);
+                questions.add(questionVO);
+            }
+            model.addAttribute("questions", questions);
+        }
+
+        return "template/edit::#exam-use-template-info";
     }
 
 }

@@ -99,8 +99,8 @@ exam.toSelectTemplate = function(){
         main.showLgDialog({
             title:'选择模板',
             content:view,
-            onsubmit:function(){
-
+            submit:function(){
+                main.closeDialog();
             }
         });
         exam.defaultTemplate();
@@ -123,5 +123,41 @@ exam.defaultTemplate = function(){
         main.closeDialog();
     });
 
+
+}
+
+exam.toShowTemplateDetail = function(){
+    var templateId = $('#fill-form-template-id').val();
+    if(!templateId){
+        //没有选择
+        alert('请先选择考试模板');
+        return ;
+    }
+
+    $.post('exam/templateDetail.html',{templateId:templateId},function(view){
+        main.showLgDialog({
+            title:'模板详情',
+            content:view,
+            submit:function(){
+                main.closeDialog();
+            }
+        });
+        //处理默认状态
+        exam.defaultTemplateDetail();
+    });
+
+}
+
+exam.defaultTemplateDetail = function(){
+    $('#template-edit-back-btn').remove();
+
+    $('#dynamic-pane .form-control').prop('readOnly',true);
+    $('#dynamic-pane input').prop('readOnly',true);
+    $('#dynamic-pane .btn').remove();
+
+
+    $('#static-pane .form-control').prop('readOnly',true);
+    $('#static-pane input').prop('readOnly',true);
+    $('#static-pane .btn').remove();
 
 }
