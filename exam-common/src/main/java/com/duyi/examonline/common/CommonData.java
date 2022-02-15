@@ -26,5 +26,6 @@ public interface CommonData {
 
     Map DEFAULT_CONDITION = new HashMap();
 
+    String DEFAULT_EXAM_STATUS = "未发布" ;
 
 }

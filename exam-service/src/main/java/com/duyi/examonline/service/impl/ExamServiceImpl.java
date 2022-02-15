@@ -30,4 +30,14 @@ public class ExamServiceImpl implements ExamService {
 
         return CommonUtil.pageCast(info,condition);
     }
+
+    @Override
+    public void save(Exam exam) {
+        examMapper.insert(exam);
+    }
+
+    @Override
+    public Exam findById(Long id) {
+        return examMapper.selectByPrimaryKey(id);
+    }
 }
