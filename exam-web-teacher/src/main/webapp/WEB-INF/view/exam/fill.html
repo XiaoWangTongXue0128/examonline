@@ -48,7 +48,7 @@
             </div>
 
             <div class="form-inline">
-                <label>填写考试区间：<input type="radio" name="fill-form-time" checked /></label>
+                <label>填写考试区间：<input type="radio" name="fill-form-time" checked onclick="exam.selectTime(1)" /></label>
                 <div>
                     <label for="fill-form-start-time">开始时间：</label>
                     <input type="datetime-local" class="form-control" id="fill-form-start-time" />
@@ -60,10 +60,10 @@
             </div>
 
             <div class="form-inline">
-                <label>填写考试时长：<input type="radio" name="fill-form-time" /></label>
+                <label>填写考试时长：<input type="radio" name="fill-form-time" onclick="exam.selectTime(2)" /></label>
                 <div>
-                    <label for="fill-form-start-time">考试时长：</label>
-                    <select class="form-control" disabled >
+                    <label for="fill-form-duration">考试时长：</label>
+                    <select id="fill-form-duration" class="form-control" disabled >
                         <option value="30">30分钟</option>
                         <option value="45">45分钟</option>
                         <option value="60">60分钟</option>

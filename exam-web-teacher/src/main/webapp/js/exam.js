@@ -161,3 +161,19 @@ exam.defaultTemplateDetail = function(){
     $('#static-pane .btn').remove();
 
 }
+
+exam.selectTime = function(no){
+    if(no == 1){
+        //选择区间方式
+        $('#fill-form-duration').val('30').prop('disabled',true);
+
+        $('#fill-form-start-time').val('').prop('disabled',false);
+        $('#fill-form-end-time').val('').prop('disabled',false);
+    }else{
+        //选择了时长方式
+        $('#fill-form-start-time').val('').prop('disabled',true);
+        $('#fill-form-end-time').val('').prop('disabled',true);
+
+        $('#fill-form-duration').val('30').prop('disabled',false);
+    }
+}
