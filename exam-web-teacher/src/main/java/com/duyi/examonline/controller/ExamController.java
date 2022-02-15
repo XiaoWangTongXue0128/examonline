@@ -3,10 +3,7 @@ package com.duyi.examonline.controller;
 import com.duyi.examonline.common.BaseController;
 import com.duyi.examonline.common.CommonData;
 import com.duyi.examonline.common.CommonUtil;
-import com.duyi.examonline.domain.Exam;
-import com.duyi.examonline.domain.Question;
-import com.duyi.examonline.domain.Teacher;
-import com.duyi.examonline.domain.Template;
+import com.duyi.examonline.domain.*;
 import com.duyi.examonline.domain.vo.PageVO;
 import com.duyi.examonline.domain.vo.QuestionVO;
 import com.duyi.examonline.domain.vo.TemplateFormVO;
@@ -20,10 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/exam")
@@ -39,6 +33,10 @@ public class ExamController extends BaseController {
     private TemplateService templateService ;
     @Autowired
     private QuestionService questionService ;
+    @Autowired
+    private StudentService studentService ;
+
+
     @RequestMapping("/exam.html")
     public String toExam(Model model ,HttpSession session){
         Teacher teacher = (Teacher) session.getAttribute("loginTeacher");
@@ -205,5 +203,63 @@ public class ExamController extends BaseController {
     }
 
 
+    @RequestMapping("/bindStudent")
+    @ResponseBody
+    public void bindStudent(Long id,String className , Long studentId,HttpSession session){
+        String cacheKey = "classesCache"+id;
+
+        Map<String,String> classesCache = (Map<String, String>) session.getAttribute(cacheKey);
+        if(classesCache == null){
+            classesCache = new HashMap<>();
+            session.setAttribute(cacheKey,classesCache);
+        }
+
+        log.debug("binding start:" + cacheKey + " " + classesCache);
+
+        String classNameInfo = classesCache.get(className) ;
+        if(classNameInfo == null){
+            //首次绑定这个班级，这个班级目前只有这一个学生。
+            classesCache.put(className,String.valueOf(studentId));
+        }else{
+            //这个班级存在，增加这个学生
+            classesCache.put(className, classNameInfo+","+studentId);
+        }
+
+        log.debug("binding end:" + cacheKey + " " + classesCache);
+
+    }
+
+
+    @RequestMapping("/unbindStudent")
+    @ResponseBody
+    public void unbindStudent(Long id,String className , Long studentId,HttpSession session){
+        String cacheKey = "classesCache"+id;
+
+        Map<String,String> classesCache = (Map<String, String>) session.getAttribute(cacheKey);
+
+        log.debug("unbinding start:" + cacheKey + " " + classesCache);
+
+        String classNameInfo = classesCache.get(className) ;
+        if(classNameInfo.equals("ALL")){
+            //之前绑定了所有的学生，现在解绑一个，存储信息就需要从ALL ->1,2,4,5,6
+            //需要先将ALL->完整的id字符串 1,2,3,4,5,6 -> 再移除 1,2,4,5,6
+            String studentStr = studentService.findStudentIdsExcludeId(className, studentId);
+            classesCache.put(className,studentStr);
+        }else{
+            //之前也是绑定一部分学生（1,2,3,4,5）
+            List<String> list = Arrays.asList(classNameInfo.split(","));
+            Set<String> set = new HashSet<>(list);
+            set.remove( String.valueOf(studentId) );
+            String studentStr = "" ;
+            for(String sid:set){
+                studentStr += sid + "," ;
+            }
+            studentStr = studentStr.substring(0,studentStr.length()-1);
+            classesCache.put(className,studentStr);
+        }
+
+        log.debug("unbinding end:" + cacheKey + " " + classesCache);
+
+    }
 
 }

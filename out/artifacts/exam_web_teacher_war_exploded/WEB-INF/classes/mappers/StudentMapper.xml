@@ -278,4 +278,15 @@
     </where>
     order by major asc , grade desc ,class_no asc, code asc
   </select>
+
+
+  <select id="findStudentIdsExcludeId" resultType="string">
+    select
+      group_concat(id)
+    from
+      t_student
+    where
+      concat(grade,'-',major,'-',class_no) = #{className}
+      and id != #{id}
+  </select>
 </mapper>

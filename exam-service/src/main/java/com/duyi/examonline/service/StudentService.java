@@ -58,4 +58,10 @@ public interface StudentService {
     void deleteStudents(String ids) ;
 
     List<Student> findStudentsByClasses(Map condition);
+
+    /**
+     * 获得某一个班级中，排除某一个学生后的，其他所有学生的id组合
+     * 考试信息模块使用的功能
+     */
+    String findStudentIdsExcludeId(String className , Long studentId);
 }

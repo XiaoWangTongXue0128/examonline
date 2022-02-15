@@ -15,4 +15,5 @@ public interface StudentExamMapper {
     int updateByPrimaryKeySelective(StudentExam record);
 
     int updateByPrimaryKey(StudentExam record);
+
 }

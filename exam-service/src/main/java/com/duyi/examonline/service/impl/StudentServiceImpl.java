@@ -129,4 +129,10 @@ public class StudentServiceImpl implements StudentService {
     public List<Student> findStudentsByClasses(Map condition) {
         return studentMapper.findStudentsByClasses(condition);
     }
+
+
+    @Override
+    public String findStudentIdsExcludeId(String className, Long studentId) {
+        return studentMapper.findStudentIdsExcludeId(className,studentId);
+    }
 }

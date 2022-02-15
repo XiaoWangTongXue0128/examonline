@@ -1,6 +1,7 @@
 package com.duyi.examonline.dao;
 
 import com.duyi.examonline.domain.Student;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -33,4 +34,7 @@ public interface StudentMapper {
     void deletes(String ids) ;
 
     List<Student> findStudentsByClasses(Map condition) ;
+
+    String findStudentIdsExcludeId(@Param("className")String className, @Param("id")Long id);
+
 }

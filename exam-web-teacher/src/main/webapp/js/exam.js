@@ -266,4 +266,55 @@ exam.classesUnbinding = function(param){
 exam.studentsHandleForSelectClasses = function(){
     $('#studentGrid tr td:nth-last-child(1)').remove();
     $('#studentGrid tr th:nth-last-child(1)').remove();
+
+    exam.studentsBindingHandle();
+}
+
+exam.studentsBindingHandle = function(){
+    //全选按钮
+    var studentAllBtn = $('#studentGrid thead tr th:eq(0) input:checkbox') ;
+    studentAllBtn.click(function(){
+        //全选学生，就相当于选单一班级
+        var param = {
+            classNames:$('#search-className').val(),
+            id:$('#fill-form-id').val()
+        }
+
+        var f = studentAllBtn.prop('checked');
+        if(f){
+            exam.classesBinding(param);
+        }else{
+            exam.classesUnbinding(param);
+        }
+    });
+
+    //单选按钮
+    $('#studentGrid tbody tr td:nth-child(1) input:checkbox').click(function(){
+        var param = {
+            id:$('#fill-form-id').val(),
+            className:$('#search-className').val(),
+            studentId:$(this).val()
+        }
+
+        var f = $(this).prop('checked');
+        if(f){
+            //选中了这个学生
+            exam.studentBinding(param);
+        }else{
+            //解绑了这个学生
+            exam.studentUnbinding(param);
+        }
+    });
+}
+
+exam.studentBinding = function(param){
+    $.post('exam/bindStudent',param,function(){
+        alert('学生绑定成功');
+    });
+}
+
+exam.studentUnbinding = function(param){
+    $.post('exam/unbindStudent',param,function(){
+        alert('学生解绑成功');
+    });
 }
