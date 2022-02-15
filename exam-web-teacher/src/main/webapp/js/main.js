@@ -64,6 +64,15 @@ main.showDialog = function(config){
     $('#common-modal').modal('show') ;
 }
 
+main.showLgDialog = function(config){
+    $('.modal .modal-dialog').addClass('modal-lg');
+    main.showDialog(config);
+}
+main.showDefaultDialog = function(config){
+    $('.modal .modal-dialog').removeClass('modal-lg');
+    main.showDialog(config);
+}
+
 main.closeDialog = function(){
     $('#common-modal').modal('hide') ;
 }

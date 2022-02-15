@@ -84,7 +84,7 @@ exam.save = function(id){
 exam.toEdit = function(){
     var id=$('#fill-form-id').val()
     $.post("exam/form.html",{id:id},function(view){
-        main.showDialog({
+        main.showDefaultDialog({
             title:'编辑考试名称',
             content:view,
             submit:function(){
@@ -92,4 +92,36 @@ exam.toEdit = function(){
             }
         })
     });
+}
+
+exam.toSelectTemplate = function(){
+    $.post('exam/templateSelect.html',{},function(view){
+        main.showLgDialog({
+            title:'选择模板',
+            content:view,
+            onsubmit:function(){
+
+            }
+        });
+        exam.defaultTemplate();
+
+    });
+}
+
+exam.defaultTemplate = function(){
+    $('#templateGrid tr td:nth-child(11)').remove();
+    $('#templateGrid tr th:nth-child(11)').remove();
+
+
+    $('#templateGrid tr td:nth-child(7) span').removeAttr('onContextMenu');
+
+    $('#templateGrid tr').dblclick(function(){
+        var templateId = $('td:eq(0) input',$(this)).val();
+        var templateName = $('td:eq(4)',$(this)).text().trim();
+        $('#fill-form-template-name').val(templateName);
+        $('#fill-form-template-id').val(templateId);
+        main.closeDialog();
+    });
+
+
 }

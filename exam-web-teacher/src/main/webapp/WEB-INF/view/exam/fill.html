@@ -8,6 +8,7 @@
         <th:block th:include="common::link"></th:block>
         <link rel="stylesheet" type="text/css" href="css/exam.css" />
         <script src="js/exam.js"></script>
+        <script src="js/template.js"></script>
     </head>
     <body>
     <div th:replace="common::header"></div>
@@ -17,29 +18,30 @@
     <div class="content-box">
         <input type="hidden" id="fill-form-id" th:value="${exam.id}" />
 
-        <div id="part-1" class="fill-part-1 alert alert-info">
+        <div id="fill-part-1" class="fill-part-1 alert alert-info">
             <b id="fill-exam-name" th:text="${exam.name}"></b>
 
             <span class="right">
                 <a href="javascript:exam.toEdit()">编辑</a>
                 |
-                <a href="">返回</a>
+                <a href="javascript:void(0)" onclick="history.go(-1)">返回</a>
             </span>
         </div>
 
-        <div id="part-2" class="fill-part-2">
+        <div id="fill-part-2" class="fill-part-2">
             <button class="btn btn-primary right">
                 <span></span> 保存
             </button>
         </div>
 
-        <div id="part-3" class="fill-part-3">
+        <div id="fill-part-3" class="fill-part-3">
 
             <div class="form-inline">
 
                 <label>关联模板：</label>
+                <input type="hidden" id="fill-form-template-id" />
                 <input class="form-control" readonly="readonly" id="fill-form-template-name" />
-                <a href="" class="btn btn-link">关联模板</a>
+                <a href="javascript:exam.toSelectTemplate()" class="btn btn-link">关联模板</a>
                 <a href="" class="btn btn-link">模板详情</a>
 
             </div>

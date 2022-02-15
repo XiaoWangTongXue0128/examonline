@@ -20,66 +20,67 @@
 
         <div class="content-box">
 
-            <div id="part-1" >
-                <div class="form-inline search-box">
-                    <div class="form-group form-sm">
-                        <label for="search-name">模板名称</label>
-                        <input type="text" class="form-control" id="search-name">
-                    </div>
+            <!-- exam-use-template  这个div只在考试信心填充中选择模板时生效 -->
+            <div id="exam-use-template">
+                <div id="part-1" >
+                    <div class="form-inline search-box">
+                        <div class="form-group form-sm">
+                            <label for="search-name">模板名称</label>
+                            <input type="text" class="form-control" id="search-name">
+                        </div>
 
-                    <div class="form-group">
-                        <label for="search-course">关联课程</label>
-                        <input type="text" class="form-control" id="search-course" list="search-course-list">
-                        <datalist id="search-course-list">
-                            <option th:each="course:${courses}" th:text="${course}"></option>
-                        </datalist>
-                    </div>
+                        <div class="form-group">
+                            <label for="search-course">关联课程</label>
+                            <input type="text" class="form-control" id="search-course" list="search-course-list">
+                            <datalist id="search-course-list">
+                                <option th:each="course:${courses}" th:text="${course}"></option>
+                            </datalist>
+                        </div>
 
-                    <div class="form-group form-sm">
-                        <label for="search-type">模板类型</label>
-                        <select  class="form-control" id="search-type">
-                            <option value="">=请选择=</option>
-                            <option>静态模板</option>
-                            <option>动态模板</option>
-                        </select>
-                    </div>
+                        <div class="form-group form-sm">
+                            <label for="search-type">模板类型</label>
+                            <select  class="form-control" id="search-type">
+                                <option value="">=请选择=</option>
+                                <option>静态模板</option>
+                                <option>动态模板</option>
+                            </select>
+                        </div>
 
-                    <div class="form-group form-sm">
-                        <label for="search-status">模板状态</label>
-                        <select  class="form-control" id="search-status">
-                            <option value="">=请选择=</option>
-                            <option>私有</option>
-                            <option>公有</option>
-                            <option>被分享</option>
-                            <option>丢弃</option>
-                        </select>
-                    </div>
+                        <div class="form-group form-sm">
+                            <label for="search-status">模板状态</label>
+                            <select  class="form-control" id="search-status">
+                                <option value="">=请选择=</option>
+                                <option>私有</option>
+                                <option>公有</option>
+                                <option>被分享</option>
+                                <option>丢弃</option>
+                            </select>
+                        </div>
 
-                    <div class="form-group form-sm">
-                        <label for="search-share">分享教师</label>
-                        <select class="form-control" id="search-share">
-                            <option value="">=请选择=</option>
-                            <option th:each="teacher:${teachers}" th:value="${teacher.id}" th:text="${teacher.tname}"></option>
-                        </select>
-                    </div>
+                        <div class="form-group form-sm">
+                            <label for="search-share">分享教师</label>
+                            <select class="form-control" id="search-share">
+                                <option value="">=请选择=</option>
+                                <option th:each="teacher:${teachers}" th:value="${teacher.id}" th:text="${teacher.tname}"></option>
+                            </select>
+                        </div>
 
-                    <div class="form-group">
-                        <button type="button" class="btn btn-default" onclick="template.toQuery()">
-                            <span class="glyphicon glyphicon-zoom-in"></span> 查询
-                        </button>
-                    </div>
-                    <div class="form-group">
-                        <button type="button" class="btn btn-default" onclick="template.toClearQuery()">
-                            <span class="glyphicon glyphicon-zoom-out"></span> 清空查询
-                        </button>
-                    </div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-default" onclick="template.toQuery()">
+                                <span class="glyphicon glyphicon-zoom-in"></span> 查询
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-default" onclick="template.toClearQuery()">
+                                <span class="glyphicon glyphicon-zoom-out"></span> 清空查询
+                            </button>
+                        </div>
 
+                    </div>
                 </div>
 
-            </div>
-
-            <div id="part-2" style="width:100%;">
-                <table class="table table-striped table-hover ">
+                <div id="part-2" style="width:100%;">
+                <table id="templateGrid" class="table table-striped table-hover ">
                     <thead>
                         <tr>
                             <th width="40"><input type="checkbox" /></th>
@@ -163,7 +164,7 @@
                     </ul>
                 </nav>
             </div>
-
+            </div>
         </div>
 
         <div th:replace="common::footer"></div>
