@@ -159,4 +159,9 @@ public class ExamController {
         return "template/edit::#exam-use-template-info";
     }
 
+    @RequestMapping("/selectClasses.html")
+    public String toSelectClasses(){
+        return "student/student::#exam-use-classes-students" ;
+    }
+
 }

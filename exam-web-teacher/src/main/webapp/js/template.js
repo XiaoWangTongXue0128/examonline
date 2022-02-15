@@ -936,15 +936,18 @@ template.toQuery = function(pageNo){
 
     $.post('template/templateGrid.html',param,function(view){
         $('#part-2').replaceWith(view);
+
+        try{
+            //没有异常，可以使用exam，证明template 和examl在一起，证明是考试信息填充页
+            exam.defaultTemplate() ;
+        }catch(e){
+            //有异常，不能使用exam，证明就是template单独页面
+            console.log('exam object not defined')
+        }
+
     });
 
-    try{
-        //没有异常，可以使用exam，证明template 和examl在一起，证明是考试信息填充页
-        exam.defaultTemplate() ;
-    }catch(e){
-        //有异常，不能使用exam，证明就是template单独页面
-        console.log('exam object not defined')
-    }
+
 
 }
 

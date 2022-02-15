@@ -177,3 +177,32 @@ exam.selectTime = function(no){
         $('#fill-form-duration').val('30').prop('disabled',false);
     }
 }
+
+exam.toSelectClasses = function(){
+    $.post('exam/selectClasses.html',{},function(view){
+        main.showLgDialog({
+            title:'选择班级',
+            content:view,
+            submit:function(){
+
+            }
+        });
+        exam.initHandleForSelectClasses();
+    });
+}
+
+exam.initHandleForSelectClasses = function(){
+    $('#exam-use-classes-students .part-1 .search-box .right').remove();
+    $('#exam-use-classes-students .part-2 .search-box .form-group:not(:eq(2))').remove();
+    $('#search-className').prop('readOnly',true);
+}
+
+exam.classesHandleForSelectClasses = function(){
+   for(var i=1;i<=2;i++)
+    $('#classGrid tr td:nth-child(5) button:nth-child(1)').remove();
+}
+
+exam.studentsHandleForSelectClasses = function(){
+    $('#studentGrid tr td:nth-last-child(1)').remove();
+    $('#studentGrid tr th:nth-last-child(1)').remove();
+}

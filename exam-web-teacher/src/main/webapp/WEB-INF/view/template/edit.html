@@ -29,6 +29,7 @@
                 <div id="dynamic-pane" th:if="${template.type=='动态模板'}" th:include="~{template/dynamicTemplate::dynamicTemplate}">动态</div>
                 <div id="static-pane" th:if="${template.type=='静态模板'}" th:include="~{template/staticTemplate::staticTemplate}">静态</div>
             </div>
+
         </div>
 
         <div th:replace="common::footer"></div>
