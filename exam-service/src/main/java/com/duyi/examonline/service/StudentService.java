@@ -72,4 +72,9 @@ public interface StudentService {
      * @return
      */
     List<Map> findClassesByNames(String classNames) ;
+
+    List<Student> findExistStudent(List<Student> studentList) ;
+
+    boolean isExistClass(String className) ;
+
 }

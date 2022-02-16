@@ -140,4 +140,14 @@ public class StudentServiceImpl implements StudentService {
     public List<Map> findClassesByNames(String classNames) {
         return studentMapper.findClassesByNames(classNames);
     }
+
+    @Override
+    public List<Student> findExistStudent(List<Student> studentList) {
+        return studentMapper.findExistStudent(studentList);
+    }
+
+    @Override
+    public boolean isExistClass(String className) {
+        return studentMapper.classCountByName(className) > 0;
+    }
 }

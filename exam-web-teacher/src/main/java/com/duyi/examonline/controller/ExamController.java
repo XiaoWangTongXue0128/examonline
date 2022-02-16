@@ -1,5 +1,7 @@
 package com.duyi.examonline.controller;
 
+import cn.hutool.poi.excel.ExcelReader;
+import cn.hutool.poi.excel.ExcelUtil;
 import com.duyi.examonline.common.BaseController;
 import com.duyi.examonline.common.CommonData;
 import com.duyi.examonline.common.CommonUtil;
@@ -15,9 +17,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 @Controller
@@ -382,4 +387,68 @@ public class ExamController extends BaseController {
         classesCache.put(className,"x") ;
         return true ;
     }
+
+
+    @RequestMapping(value="/importClasses",produces = "text/html;charset=utf-8")
+    @ResponseBody
+    public String importClasses(Long id,MultipartFile excel,HttpSession session) throws IOException {
+        String cacheKey = cacheKey_prefix + id ;
+        Map<String,String> classesCache = (Map<String, String>) session.getAttribute(cacheKey);
+
+        String msg = "" ;
+        int count1 = 0 ;
+        int count2 = 0 ;
+
+        InputStream is = excel.getInputStream();
+        ExcelReader reader = ExcelUtil.getReader(is);
+
+        reader.addHeaderAlias("学号","code") ;
+        reader.addHeaderAlias("姓名","sname") ;
+
+        List<String> sheetNames = reader.getSheetNames();
+        for(int i=1;i<sheetNames.size();i++){
+            String sheetName = sheetNames.get(i) ;
+            //默认读取第一个sheet表。
+            reader.setSheet(sheetName) ;
+
+            List<Student> studentList = reader.readAll(Student.class);
+            //此时读取了一个班级的学生信息
+            //info存储班级学生的编号字符串
+            String info = "" ;
+            List<Student> existStudent = studentService.findExistStudent(studentList);
+            for(Student student :existStudent){
+                info += student.getId() + ",";
+            }
+            info = info.substring(0,info.length()-1);
+
+
+            //判断当前班级是否存在。如果存在就正常拼装info，如果不存在，说明是一个自定义班级，需要以x开头
+            if(!studentService.isExistClass(sheetName)){
+                info = "x,"+info;
+            }
+
+            //不考虑缓存中已有该班级情况，如果存在，直接覆盖，以导入为主。
+            classesCache.put(sheetName,info);
+
+            //处理反馈问题。 处理存在和不存在学生
+            for(Student student : studentList){
+                //循环的是导入的学生（存在，保存在）
+                if(existStudent.contains(student)){
+                    //list集合的contains方法底层用equals比较是否相等。
+                    //student默认equals比较地址。
+                    //我们认为code和sname相等的就是相等。需要重写equals方法
+                    count1++ ;
+                }else{
+                    msg += "【"+student.getCode()+"-"+student.getSname()+"】存储失败"+"|" ;
+                    count2++ ;
+                }
+            }
+
+        }
+
+        msg = "共导入【"+(count1+count2)+"】学生|成功导入【"+count1+"】学生|失败导入【"+count2+"】学生|" + msg ;
+
+        return msg ;
+    }
+
 }

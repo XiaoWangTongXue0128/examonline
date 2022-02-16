@@ -39,4 +39,8 @@ public interface StudentMapper {
 
 
     List<Map> findClassesByNames(String classNames) ;
+
+    List<Student> findExistStudent(List<Student> studentList) ;
+
+    int classCountByName(String className) ;
 }

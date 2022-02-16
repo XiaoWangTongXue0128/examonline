@@ -76,6 +76,7 @@
             <tx:method name="get*" read-only="true" />
             <tx:method name="load*" read-only="true" />
             <tx:method name="select*" read-only="true" />
+            <tx:method name="is*" read-only="true" />
             <tx:method name="*" isolation="READ_COMMITTED" propagation="REQUIRED" rollback-for="java.lang.Throwable" />
         </tx:attributes>
     </tx:advice>

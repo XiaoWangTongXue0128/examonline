@@ -430,3 +430,45 @@ exam.toCreateClass = function(){
         })
     });
 }
+
+exam.toImpotClasses = function(){
+    var uploading = false ;
+    $.post('student/importsTemplate.html',{},function(view){
+        main.showDefaultDialog({
+            title:'导入班级学生',
+            content:view,
+            submit:function(){
+                var fileInfo = $('#import-excel').val();
+                if(!fileInfo){
+                    alert('请选择要上传的excel文件');
+                    return ;
+                }
+                if(uploading){
+                    alert("文件正在上传中，请稍候");
+                    return false;
+                }
+                var formData = new FormData($('#student-import-form')[0]) ;
+                formData.append('id',$('#fill-form-id').val() );
+                $.ajax({
+                    url: 'exam/importClasses',
+                    type: 'POST',
+                    cache: false,
+                    data: formData ,
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function () {
+                        uploading = true;
+                    },
+                    success: function (msg) {
+                        uploading = false;
+                        msg = msg.replace(/\|/g,"\r\n");
+                        alert(msg) ;
+                        main.closeDialog()
+                        exam.flushRefClassGrid();
+                    }
+                });
+
+            }
+        });
+    });
+}

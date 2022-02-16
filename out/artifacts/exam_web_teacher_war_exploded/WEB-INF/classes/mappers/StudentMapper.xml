@@ -302,4 +302,26 @@
     group by className
   </select>
 
+
+  <select id="findExistStudent" resultMap="studentMap">
+    select
+      id,code,sname
+    from
+      t_student
+    where
+      concat(code,'-',sname) in
+      <foreach collection="list" item="stu" open="(" close=")" separator=",">
+        concat(#{stu.code},'-',#{stu.sname})
+      </foreach>
+  </select>
+
+  <select id="classCountByName" resultType="int">
+    select
+      count(*)
+    from
+      t_student
+    where
+      concat(grade,'-',major,'-',class_no) = #{className}
+  </select>
+
 </mapper>

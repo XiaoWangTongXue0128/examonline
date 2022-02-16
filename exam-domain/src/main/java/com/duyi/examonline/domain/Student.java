@@ -142,4 +142,19 @@ public class Student {
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == this){
+            return true ;
+        }
+        if(obj instanceof  Student){
+            Student stu = (Student) obj;
+
+            return stu.code.equals(this.code) && stu.sname.equals(this.sname) ;
+
+        }
+
+        return false ;
+    }
 }
