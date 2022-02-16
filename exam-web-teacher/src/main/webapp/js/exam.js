@@ -405,3 +405,28 @@ exam.flushRefClassGrid = function(){
         $('#refClassGrid').replaceWith(view);
     });
 }
+
+exam.toCreateClass = function(){
+    $.post('exam/createClass.html',{},function(view){
+        main.showDefaultDialog({
+            title:'自定义班级',
+            content:view,
+            submit:function(){
+                //将自定义班级存入缓存。
+                var param = {
+                    className:$('#exam-form-className').val(),
+                    id:$('#fill-form-id').val()
+                }
+                $.post('exam/createClass',param,function(f){
+                    if(f == true){
+                        alert('班级创建成功');
+                        main.closeDialog();
+                        exam.flushRefClassGrid();
+                    }else{
+                        alert('班级名称重复，请重新填写') ;
+                    }
+                });
+            }
+        })
+    });
+}

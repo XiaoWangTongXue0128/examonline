@@ -24,6 +24,8 @@ import java.util.*;
 @RequestMapping("/exam")
 public class ExamController extends BaseController {
 
+    private static final String cacheKey_prefix = "classesCache" ;
+
     @Autowired
     private ExamService examService ;
     @Autowired
@@ -90,15 +92,24 @@ public class ExamController extends BaseController {
     public String toFill(Long id , Model model,HttpSession session){
         String cacheKey = "classesCache"+id ;
 
+        Exam exam = examService.findById(id);
+        model.addAttribute("exam",exam);
+
+
         Map<String,String> classesCache = (Map<String, String>) session.getAttribute(cacheKey);
         if(classesCache == null){
             classesCache = new HashMap<>();
             session.setAttribute(cacheKey,classesCache);
+
+            //同时需要将持久化的关联信息取出，并装入缓存。
+
         }
 
+        if(classesCache.size() > 0) {
+            List<Map> refClasses = loadRefClasses(classesCache);
+            model.addAttribute("refClasses", refClasses);
+        }
 
-        Exam exam = examService.findById(id);
-        model.addAttribute("exam",exam);
         return "exam/fill" ;
     }
 
@@ -295,6 +306,15 @@ public class ExamController extends BaseController {
         String cacheKey = "classesCache"+id ;
         Map<String,String> classesCache = (Map<String, String>) session.getAttribute(cacheKey);
 
+        List<Map> refClasses = loadRefClasses(classesCache);
+
+        model.addAttribute("refClasses",refClasses);
+
+        return "exam/fill::#refClassGrid" ;
+    }
+
+    //班级信息展示处理，将缓存的班级信息转换成可以展示的班级信息（名称，总人数，关联人数）
+    private List<Map> loadRefClasses(Map<String,String> classesCache){
         //先将所有缓存的班级变成一个字符串，利用逗号分隔
         //cs = "xxx-1班,xxx-2班,...."
         //sql = "select * from table where #{cs} like "xxx-1班"
@@ -322,12 +342,44 @@ public class ExamController extends BaseController {
             }
         }
 
-        model.addAttribute("refClasses",refClasses);
+        //上述处理的都是在数据库中存在的班级
+        //考试信息关联的班级中，还包括自定义的班级（数据库-student中不存在）
+        //这一部分班级也需要处理，并且班级的总人数和关联人数相同
+        for(String className : classNameSet){
+            String info = classesCache.get(className);
+            if(info.startsWith("x")){
+                //这是一个自定义班级，需要手动处理。
+                //经过上诉操作，这个班级并没有被存入refClasses
+                Map map = new HashMap();
+                map.put("className",className);
 
-        return "exam/fill::#refClassGrid" ;
+                String[] array = info.split(",");
+                map.put("total",array.length-1);
+                map.put("refTotal",array.length-1);
+                refClasses.add(map);
+            }
+        }
+
+        return refClasses;
     }
 
 
+    @RequestMapping("/createClass.html")
+    public String toCreateClass(){
+        return "exam/createClass";
+    }
 
+    @RequestMapping("/createClass")
+    @ResponseBody
+    public boolean createClass(Long id , String className , HttpSession session){
+        String cacheKey = cacheKey_prefix + id ;
+        Map<String,String> classesCache = (Map<String, String>) session.getAttribute(cacheKey);
+        if(classesCache.get(className) != null){
+            return false ;
+        }
 
+        //x,1,2,3,4,5
+        classesCache.put(className,"x") ;
+        return true ;
+    }
 }
