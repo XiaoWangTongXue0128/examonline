@@ -273,18 +273,22 @@ exam.classesBindingHandle = function(){
     });
 
 }
+
 exam.classesBinding = function(param){
 
     $.post('exam/bindClasses',param,function(){
         alert('班级绑定成功') ;
         //刷新外部的班级表格
+        exam.flushRefClassGrid();
     });
 }
+
 exam.classesUnbinding = function(param){
 
     $.post('exam/unbindClasses',param,function(){
         alert('班级解绑成功') ;
         //刷新外部的班级表格
+        exam.flushRefClassGrid();
     });
 }
 
@@ -385,11 +389,19 @@ exam.studentsBindingHandle = function(){
 exam.studentBinding = function(param){
     $.post('exam/bindStudent',param,function(){
         alert('学生绑定成功');
+        exam.flushRefClassGrid();
     });
 }
 
 exam.studentUnbinding = function(param){
     $.post('exam/unbindStudent',param,function(){
         alert('学生解绑成功');
+        exam.flushRefClassGrid();
+    });
+}
+
+exam.flushRefClassGrid = function(){
+    $.post('exam/refClassGrid.html',{id:$('#fill-form-id').val()},function(view){
+        $('#refClassGrid').replaceWith(view);
     });
 }

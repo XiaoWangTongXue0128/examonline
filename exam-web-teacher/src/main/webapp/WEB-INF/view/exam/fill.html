@@ -95,7 +95,7 @@
                     </div>
                 </div>
 
-                <table class="table">
+                <table id="refClassGrid" class="table">
                     <thead>
                         <tr>
                             <th width="6%"><input type="checkbox" /></th>
@@ -107,7 +107,23 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td colspan="6" align="center">没有绑定任何班级信息</td></tr>
+                        <th:block th:if="${refClasses == null or refClasses.size() == 0}">
+                            <tr><td colspan="6" align="center">没有绑定任何班级信息</td></tr>
+                        </th:block>
+                        <th:block th:unless="${refClasses == null or refClasses.size() == 0}">
+                            <tr th:each="refClass:${refClasses}">
+                                <td><input type="checkbox" th:value="${refClass.className}" /></td>
+                                <td th:text="${refClassStat.index + 1}"></td>
+                                <td th:text="${refClass.className}"></td>
+                                <td th:text="${refClass.total}"></td>
+                                <td th:text="${refClass.refTotal}"></td>
+                                <td>
+                                    <button class="btn">
+                                        <span></span> 移除
+                                    </button>
+                                </td>
+                            </tr>
+                        </th:block>
                     </tbody>
                 </table>
             </div>

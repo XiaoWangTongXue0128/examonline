@@ -37,4 +37,6 @@ public interface StudentMapper {
 
     String findStudentIdsExcludeId(@Param("className")String className, @Param("id")Long id);
 
+
+    List<Map> findClassesByNames(String classNames) ;
 }

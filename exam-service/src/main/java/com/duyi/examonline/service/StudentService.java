@@ -64,4 +64,12 @@ public interface StudentService {
      * 考试信息模块使用的功能
      */
     String findStudentIdsExcludeId(String className , Long studentId);
+
+
+    /**
+     * 根据一组班级名称的字符串，获得其中所有班级的信息（班级名-className + 总人数-total）
+     * @param classNames
+     * @return
+     */
+    List<Map> findClassesByNames(String classNames) ;
 }

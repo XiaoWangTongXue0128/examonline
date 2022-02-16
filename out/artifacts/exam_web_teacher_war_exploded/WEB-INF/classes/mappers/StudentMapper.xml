@@ -289,4 +289,17 @@
       concat(grade,'-',major,'-',class_no) = #{className}
       and id != #{id}
   </select>
+
+
+  <select id="findClassesByNames" resultType="map">
+    select
+      concat(grade,'-',major,'-',class_no) className,
+      count(*) total
+    from
+      t_student
+    where
+      #{classNames} like concat('%',grade,'-',major,'-',class_no,'%')
+    group by className
+  </select>
+
 </mapper>

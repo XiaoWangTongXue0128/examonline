@@ -290,5 +290,44 @@ public class ExamController extends BaseController {
     }
 
 
+    @RequestMapping("/refClassGrid.html")
+    public String toRefClassGrid(Long id,HttpSession session,Model model){
+        String cacheKey = "classesCache"+id ;
+        Map<String,String> classesCache = (Map<String, String>) session.getAttribute(cacheKey);
+
+        //先将所有缓存的班级变成一个字符串，利用逗号分隔
+        //cs = "xxx-1班,xxx-2班,...."
+        //sql = "select * from table where #{cs} like "xxx-1班"
+
+        String classNames = "" ;
+        Set<String> classNameSet = classesCache.keySet();
+        for(String className : classNameSet){
+            classNames += className + ",";
+        }
+        classNames = classNames.substring(0,classNames.length()-1);
+        List<Map> refClasses = studentService.findClassesByNames(classNames);
+
+        //此时refClasses中只有2个字段 className，total。
+        //但在前端展示时，还需要选择人数，这个信息就在缓存中。
+        //还需要从缓存中获取这个选择人数的信息，并将其加入refClasses中
+        for(Map refClass : refClasses){
+            String className = (String) refClass.get("className");
+            String info = classesCache.get(className);
+            if(info.equals("ALL")){
+                //全选， 选择人数=总人数
+                refClass.put("refTotal", refClass.get("total") ) ;
+            }else{
+                //只选了部分学生，这些学号用逗号连接
+                refClass.put("refTotal",info.split(",").length ) ;
+            }
+        }
+
+        model.addAttribute("refClasses",refClasses);
+
+        return "exam/fill::#refClassGrid" ;
+    }
+
+
+
 
 }
