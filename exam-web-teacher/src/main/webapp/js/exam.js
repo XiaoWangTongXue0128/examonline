@@ -224,9 +224,16 @@ exam.classesBindingHandle = function(){
         if(f){
             //绑定当前表格中所有班级
             exam.classesBinding(param);
+
+            //需要处理一下学生复选框的关联
+            $('#studentGrid input:checkbox').prop('checked',true);
+
         }else{
             //解绑当前表格中的所有班级
             exam.classesUnbinding(param);
+
+            //需要处理一下学生复选框的关联
+            $('#studentGrid input:checkbox').prop('checked',false);
         }
     });
 
@@ -241,8 +248,19 @@ exam.classesBindingHandle = function(){
         var f = $(this).prop('checked') ;
         if(f){
             exam.classesBinding(param);
+
+            //需要处理一下学生复选框的关联，需要判断下面显示的班级是否是当前绑定班级
+            if(className == $('#search-className').val()){
+                $('#studentGrid input:checkbox').prop('checked',true);
+            }
+
         }else{
             exam.classesUnbinding(param);
+
+            //需要处理一下学生复选框的关联，需要判断下面显示的班级是否是当前解绑班级
+            if(className == $('#search-className').val()){
+                $('#studentGrid input:checkbox').prop('checked',false);
+            }
         }
 
     });
@@ -283,8 +301,16 @@ exam.studentsBindingHandle = function(){
         var f = studentAllBtn.prop('checked');
         if(f){
             exam.classesBinding(param);
+
+            //只要绑定了学生，对应的班级就一定需要绑定
+            $('#classGrid tbody input:checkbox[value="'+param.classNames+'"]').prop('checked',true);
+
         }else{
             exam.classesUnbinding(param);
+
+            //只要绑定了学生，对应的班级就一定需要绑定
+            $('#classGrid tbody input:checkbox[value="'+param.classNames+'"]').prop('checked',false);
+
         }
     });
 
@@ -293,15 +319,36 @@ exam.studentsBindingHandle = function(){
         var param = {
             id:$('#fill-form-id').val(),
             className:$('#search-className').val(),
-            studentId:$(this).val()
+            studentId:$(this).val(),
+            classNames:$('#search-className').val(),
         }
 
         var f = $(this).prop('checked');
         if(f){
-            //选中了这个学生
+            //选中了这个学生，有可能是全选中，也可能就是又增加了一个（不全）
+            if($('#studentGrid tbody input:not(:checked)').length == 0){
+                //没有没被选中的学生，也就是都被选中了。就变成了绑定班级
+                //此时学生默认全选
+                $('#studentGrid thead tr th:eq(0) input:checkbox').prop('checked',true);
+                exam.classesBinding(param);
+                return ;
+            }
             exam.studentBinding(param);
+
+            //只要绑定了学生，对应的班级就一定需要绑定
+            $('#classGrid tbody input:checkbox[value="'+param.classNames+'"]').prop('checked',true);
+
+
         }else{
             //解绑了这个学生
+            if($('#studentGrid tbody input:checked').length == 0){
+                exam.classesUnbinding(param);
+
+                //只要绑定了学生，对应的班级就一定需要绑定
+                $('#classGrid tbody input:checkbox[value="'+param.classNames+'"]').prop('checked',false);
+
+                return ;
+            }
             exam.studentUnbinding(param);
         }
     });
