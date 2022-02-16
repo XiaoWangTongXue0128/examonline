@@ -203,6 +203,13 @@ exam.classesHandleForSelectClasses = function(){
 
    exam.classesBindingHandle();
 
+   //需要根据缓存默认选中已绑定的班级
+   $.post('exam/loadCacheClasses',{id:$('#fill-form-id').val()},function(cache){
+       for(className in cache){
+           $('#classGrid tbody tr td:nth-child(1) input:checkbox[value="'+className+'"]').prop("checked",true);
+       }
+   },'json');
+
 }
 
 //班级的绑定与解绑
@@ -286,6 +293,27 @@ exam.studentsHandleForSelectClasses = function(){
     $('#studentGrid tr th:nth-last-child(1)').remove();
 
     exam.studentsBindingHandle();
+
+    //需要根据缓存，默认勾选学生信息
+    var param = {
+        id:$('#fill-form-id').val(),
+        className : $('#search-className').val()
+    }
+    $.post('exam/loadCacheStudents',param,function(cache){
+        //cache就是string "ALL", "1,2,3,4,5"
+        if(!cache)return ;
+
+        if(cache == 'ALL'){
+            $('#studentGrid input:checkbox').prop('checked',true);
+        }else{
+            var sids = cache.split(",");
+            for(var i=0;i<sids.length;i++){
+                var sid = sids[i];
+                $('#studentGrid :checkbox[value="'+sid+'"]').prop('checked',true);
+            }
+        }
+
+    });
 }
 
 exam.studentsBindingHandle = function(){

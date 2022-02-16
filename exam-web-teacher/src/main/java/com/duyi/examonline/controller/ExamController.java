@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpSession;
 import java.util.*;
 
@@ -86,7 +87,16 @@ public class ExamController extends BaseController {
     }
 
     @RequestMapping("/fill.html")
-    public String toFill(Long id , Model model){
+    public String toFill(Long id , Model model,HttpSession session){
+        String cacheKey = "classesCache"+id ;
+
+        Map<String,String> classesCache = (Map<String, String>) session.getAttribute(cacheKey);
+        if(classesCache == null){
+            classesCache = new HashMap<>();
+            session.setAttribute(cacheKey,classesCache);
+        }
+
+
         Exam exam = examService.findById(id);
         model.addAttribute("exam",exam);
         return "exam/fill" ;
@@ -261,5 +271,24 @@ public class ExamController extends BaseController {
         log.debug("unbinding end:" + cacheKey + " " + classesCache);
 
     }
+
+
+    @RequestMapping("/loadCacheClasses")
+    @ResponseBody
+    public Map<String,String> loadCacheClasses(Long id , HttpSession session){
+        String cacheKey = "classesCache"+id ;
+        Map<String,String> classesCache = (Map<String, String>) session.getAttribute(cacheKey);
+        return classesCache;
+    }
+
+    @RequestMapping("/loadCacheStudents")
+    @ResponseBody
+    public String loadCacheStudents(Long id ,String className, HttpSession session){
+        String cacheKey = "classesCache"+id ;
+        Map<String,String> classesCache = (Map<String, String>) session.getAttribute(cacheKey);
+        return classesCache == null?"":classesCache.get(className);
+    }
+
+
 
 }
