@@ -123,12 +123,12 @@
                                     </button>
 
 
-                                    <button class="btn">
+                                    <button class="btn" th:onclick="exam.toAdjustStudents([[${refClass.className}]])">
                                         <span></span> 调整学生
                                     </button>
 
 
-                                    <button th:if="${refClass.custom == 'Y'}" class="btn" th:onclick="exam.importStudents([[${refClass.className}]])">
+                                    <button th:if="${refClass.custom == 'Y'}" class="btn" th:onclick="exam.toImportStudents([[${refClass.className}]])">
                                         <span></span> 导入学生
                                     </button>
                                 </td>

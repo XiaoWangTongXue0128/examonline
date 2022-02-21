@@ -547,4 +547,12 @@ public class ExamController extends BaseController {
 
         return msg ;
     }
+
+
+    @RequestMapping("/adjustStudents.html")
+    public String toAdjustStudents(Long id , String className , HttpSession session){
+
+
+        return "exam/adjustStudents" ;
+    }
 }

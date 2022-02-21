@@ -490,7 +490,7 @@ exam.removeRefClass = function(className){
     });
 }
 
-exam.importStudents = function(className){
+exam.toImportStudents = function(className){
     $.post('student/importsTemplate.html',{},function(view){
         var uploading= false ;
         main.showDefaultDialog({
@@ -531,5 +531,21 @@ exam.importStudents = function(className){
         });
 
         $('#student-import-form div:eq(1) a').attr('href','exam/downStudentTemplate');
+    });
+}
+
+exam.toAdjustStudents = function(className){
+    var param = {
+        id : $('#fill-form-id').val(),
+        className:className
+    }
+    $.post('exam/adjustStudents.html',param,function(view){
+        main.showLgDialog({
+            title:'调整关联学生',
+            content:view,
+            submit:function(){
+
+            }
+        });
     });
 }
