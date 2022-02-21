@@ -329,6 +329,10 @@ public class ExamController extends BaseController {
         for(String className : classNameSet){
             classNames += className + ",";
         }
+        if(classNames.length() == 0){
+            //没有任何缓存数据
+            return null ;
+        }
         classNames = classNames.substring(0,classNames.length()-1);
         List<Map> refClasses = studentService.findClassesByNames(classNames);
 
@@ -338,6 +342,7 @@ public class ExamController extends BaseController {
         for(Map refClass : refClasses){
             String className = (String) refClass.get("className");
             String info = classesCache.get(className);
+            refClass.put("custom","N") ;
             if(info.equals("ALL")){
                 //全选， 选择人数=总人数
                 refClass.put("refTotal", refClass.get("total") ) ;
@@ -357,7 +362,7 @@ public class ExamController extends BaseController {
                 //经过上诉操作，这个班级并没有被存入refClasses
                 Map map = new HashMap();
                 map.put("className",className);
-
+                map.put("custom","Y") ;
                 String[] array = info.split(",");
                 map.put("total",array.length-1);
                 map.put("refTotal",array.length-1);
@@ -450,5 +455,15 @@ public class ExamController extends BaseController {
 
         return msg ;
     }
+
+    @RequestMapping("/removeRefClass")
+    @ResponseBody
+    public void removeRefClass(Long id , String className,HttpSession session){
+        String cacheKey = cacheKey_prefix + id ;
+        Map<String,String> classesCache = (Map<String, String>) session.getAttribute(cacheKey);
+        classesCache.remove(className);
+    }
+
+
 
 }

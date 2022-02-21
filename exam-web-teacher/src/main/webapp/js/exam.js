@@ -472,3 +472,20 @@ exam.toImpotClasses = function(){
         });
     });
 }
+
+exam.removeRefClass = function(className){
+    if(!confirm('是否确认移除指定班级')){
+        return ;
+    }
+
+    var param = {
+        className : className ,
+        id:$('#fill-form-id').val()
+    }
+
+    $.post('exam/removeRefClass',param,function(){
+
+        alert('移除成功') ;
+        exam.flushRefClassGrid();
+    });
+}
