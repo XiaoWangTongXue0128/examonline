@@ -43,4 +43,8 @@ public interface StudentMapper {
     List<Student> findExistStudent(List<Student> studentList) ;
 
     int classCountByName(String className) ;
+
+    List<Map<String,String>> findBindStudents(@Param("className")String className,@Param("array")String[] sidArray) ;
+
+    List<Map<String,String>> findUnbindStudents(@Param("className")String className,@Param("array")String[] sidBindArray) ;
 }

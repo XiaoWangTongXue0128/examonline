@@ -2,6 +2,7 @@ package com.duyi.examonline.service.impl;
 
 import com.duyi.examonline.common.CommonUtil;
 import com.duyi.examonline.dao.ExamMapper;
+import com.duyi.examonline.dao.StudentMapper;
 import com.duyi.examonline.domain.Exam;
 import com.duyi.examonline.domain.Student;
 import com.duyi.examonline.domain.vo.PageVO;
@@ -19,6 +20,9 @@ public class ExamServiceImpl implements ExamService {
 
     @Autowired
     private ExamMapper examMapper ;
+
+    @Autowired
+    private StudentMapper studentMapper ;
 
     @Override
     public PageVO findByPage(int page, int rows, Map condition) {
@@ -47,4 +51,13 @@ public class ExamServiceImpl implements ExamService {
         examMapper.updateByPrimaryKeySelective(exam);
     }
 
+    @Override
+    public List<Map<String, String>> findBindStudents(String className,String[] sidArray) {
+        return studentMapper.findBindStudents(className,sidArray);
+    }
+
+    @Override
+    public List<Map<String, String>> findUnbindStudents(String className, String[] sidBindArray) {
+        return studentMapper.findUnbindStudents(className,sidBindArray);
+    }
 }

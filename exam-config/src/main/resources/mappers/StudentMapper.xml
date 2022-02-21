@@ -324,4 +324,41 @@
       concat(grade,'-',major,'-',class_no) = #{className}
   </select>
 
+
+  <select id="findBindStudents" resultType="map">
+    select
+      sname ,
+      concat(grade,'-',major,'-',class_no) className
+    from
+      t_student
+    where
+      <choose>
+        <when test="array[0] == 'ALL'">
+          concat(grade,'-',major,'-',class_no) = #{className}
+        </when>
+        <otherwise>
+          id in
+          <foreach collection="array" item="sid" open="(" close=")" separator=",">
+            #{sid}
+          </foreach>
+        </otherwise>
+      </choose>
+
+  </select>
+
+
+  <select id="findUnbindStudents" resultType="map">
+    select
+      sname,
+      #{className} className
+    from
+      t_student
+    where
+      concat(grade,'-',major,'-',class_no) = #{className}
+      and id not in
+      <foreach collection="array" item="sid" open="(" close=")" separator=",">
+        #{sid}
+      </foreach>
+  </select>
+
 </mapper>

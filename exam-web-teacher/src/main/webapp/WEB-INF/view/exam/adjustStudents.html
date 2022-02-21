@@ -4,12 +4,23 @@
         <div class="col-md-4">
             <div class="form-inline">
 
-                <input class="form-control" id="adjust-search-className" />
+                <input th:if="${custom=='N'}" class="form-control" id="adjust-search-className" th:value="${className}" readonly />
 
-                <button class="btn">
+                <input th:unless="${custom=='N'}" class="form-control" id="adjust-search-className" />
+
+                <button class="btn" th:disabled="${custom=='N'}" onclick="alert(11);">
                     <span></span> 查询
                 </button>
             </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h4 align="center">未关联学生</h4>
+        </div>
+        <div class="col-md-6">
+            <h4 align="center">已关联学生</h4>
         </div>
     </div>
 
@@ -24,7 +35,16 @@
                     </tr>
                 </thead>
                 <tbody>
-
+                    <th:block th:if="${unbindStudents == null or unbindStudents.size() == 0}">
+                        <tr><td colspan="3" align="center">没有找到未绑定的学生</td></tr>
+                    </th:block>
+                    <th:block th:unless="${unbindStudents == null or unbindStudents.size() == 0}">
+                        <tr th:each="student:${unbindStudents}">
+                            <td th:text="${studentStat.index+1}"></td>
+                            <td th:text="${student.className}"></td>
+                            <td th:text="${student.sname}"></td>
+                        </tr>
+                    </th:block>
                 </tbody>
             </table>
         </div>
@@ -38,7 +58,16 @@
                 </tr>
                 </thead>
                 <tbody>
-
+                    <th:block th:if="${bindStudents == null or bindStudents.size() == 0}">
+                        <tr><td colspan="3" align="center">没有找到绑定的学生</td></tr>
+                    </th:block>
+                    <th:block th:unless="${bindStudents == null or bindStudents.size() == 0}">
+                        <tr th:each="student:${bindStudents}">
+                            <td th:text="${studentStat.index+1}"></td>
+                            <td th:text="${student.className}"></td>
+                            <td th:text="${student.sname}"></td>
+                        </tr>
+                    </th:block>
                 </tbody>
             </table>
         </div>

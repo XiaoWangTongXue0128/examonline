@@ -26,4 +26,8 @@ public interface ExamService {
      */
     void update(Exam exam);
 
+    List<Map<String,String>> findBindStudents(String className,String[] sidArray) ;
+
+    List<Map<String,String>> findUnbindStudents(String className,String[] sidBindArray) ;
+
 }

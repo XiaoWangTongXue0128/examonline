@@ -150,4 +150,6 @@ public class StudentServiceImpl implements StudentService {
     public boolean isExistClass(String className) {
         return studentMapper.classCountByName(className) > 0;
     }
+
+
 }

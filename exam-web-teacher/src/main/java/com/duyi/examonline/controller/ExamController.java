@@ -550,8 +550,50 @@ public class ExamController extends BaseController {
 
 
     @RequestMapping("/adjustStudents.html")
-    public String toAdjustStudents(Long id , String className , HttpSession session){
+    public String toAdjustStudents(Long id , String className , HttpSession session,Model model){
+        //查出选中的学生信息
+        //如果是存在的班级，还需要查出未选中的学生信息
+        //如果是自定义班级，初次不查询。未来会通过查询按钮来查询 （service操作相同）
 
+        List<Map<String,String>> bindStudents ;
+        List<Map<String,String>> unbindStudents ;
+        String custom = "";
+
+        String cacheKey = cacheKey_prefix+id ;
+        Map<String,String> classesCache = (Map<String, String>) session.getAttribute(cacheKey);
+        String info = classesCache.get(className) ;
+
+        String[] sidArray ;
+        if(info.startsWith("x,")){
+            //"x,"-->""
+            //"x,1,2,3"-->"1,2,3"
+            sidArray = info.replace("x,","").split(",");
+        }else{
+            //已存在的班级，有2种学生存储情况 id串 和 ALL
+            if(info.equals("ALL")){
+                sidArray = new String[]{"ALL"} ;
+            }else{
+                sidArray = info.split(",");
+            }
+        }
+        //此时sidArray中存储的就是选中的学生id
+        bindStudents = examService.findBindStudents(className,sidArray);
+
+        //处理未关联的学生 （自定义班级不需要默认处理）
+        if(info.startsWith("x,")){
+            //自定义班级，不做未关联处理
+            unbindStudents = new ArrayList<>();
+            custom="Y" ;
+        }else{
+            //已选班级，需要将这个班级未选中的学生获取
+            unbindStudents = examService.findUnbindStudents(className,sidArray);
+            custom="N" ;
+        }
+
+        model.addAttribute("bindStudents",bindStudents);
+        model.addAttribute("unbindStudents",unbindStudents) ;
+        model.addAttribute("className",className) ;
+        model.addAttribute("custom",custom);
 
         return "exam/adjustStudents" ;
     }
