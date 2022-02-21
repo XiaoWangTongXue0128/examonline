@@ -327,6 +327,7 @@
 
   <select id="findBindStudents" resultType="map">
     select
+      id sid,
       sname ,
       concat(grade,'-',major,'-',class_no) className
     from
@@ -349,6 +350,7 @@
 
   <select id="findUnbindStudents" resultType="map">
     select
+      id sid,
       sname,
       #{className} className
     from

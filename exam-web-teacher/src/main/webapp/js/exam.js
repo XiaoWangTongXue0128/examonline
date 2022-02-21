@@ -541,11 +541,63 @@ exam.toAdjustStudents = function(className){
     }
     $.post('exam/adjustStudents.html',param,function(view){
         main.showLgDialog({
-            title:'调整关联学生',
+            title:'调整【'+className+'】关联学生',
             content:view,
             submit:function(){
 
             }
         });
+    });
+}
+
+/**
+ * 查询指定班级中未绑定的学生信息 （需要参考当前这个班级已绑定的学生）
+ * 当前这个班级绑定的学生在缓存中，只需要传递当前班级的名字即可。
+ */
+exam.toQueryUnbindStudents = function(){
+    var param = {
+        id:$('#fill-form-id').val(),
+        className:$('#adjust-old-className').val(),
+        searchName:$('#adjust-search-className').val()
+    }
+
+    $.post('exam/flushUnbindStudents.html',param,function(view){
+        $('#unbindGrid').replaceWith(view) ;
+    });
+}
+
+exam.bindStudent = function(tr,sid){
+    var param = {
+        id:$('#fill-form-id').val(),
+        className:$('#adjust-old-className').val(),
+        studentId:sid
+    };
+
+    $.post('exam/bindStudent',param,function(){
+        alert('学生绑定成功');
+        $(tr).appendTo($('#bindGrid tbody'));
+        //移动后，tr的双击事件需要改变，由原来的绑定，改为解绑
+        $(tr).attr('ondblclick',null).off('dblclick').dblclick(function(){
+            exam.unbindStudent(tr,sid);
+        });
+
+        exam.flushRefClassGrid();
+    });
+}
+
+exam.unbindStudent = function(tr,sid){
+    var param = {
+        id:$('#fill-form-id').val(),
+        className:$('#adjust-old-className').val(),
+        studentId:sid
+    };
+
+    $.post('exam/unbindStudent',param,function(){
+        alert('学生解绑成功');
+        $(tr).appendTo($('#unbindGrid tbody'));
+        $(tr).attr('ondblclick',null).off('dblclick').dblclick(function(){
+            exam.bindStudent(tr,sid);
+        });
+        exam.flushRefClassGrid();
     });
 }

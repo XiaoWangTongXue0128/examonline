@@ -393,7 +393,7 @@ public class ExamController extends BaseController {
         }
 
         //x,1,2,3,4,5
-        classesCache.put(className,"x,") ;
+        classesCache.put(className,"x") ;
         return true ;
     }
 
@@ -564,10 +564,17 @@ public class ExamController extends BaseController {
         String info = classesCache.get(className) ;
 
         String[] sidArray ;
-        if(info.startsWith("x,")){
-            //"x,"-->""
-            //"x,1,2,3"-->"1,2,3"
-            sidArray = info.replace("x,","").split(",");
+        if(info.startsWith("x")){
+            //"x"-->""
+            //"x,1,2,3"-->",1,2,3"
+            if(info.length() == 1){
+                //"x"
+                sidArray = info.replace("x","").split(",");
+            }else{
+                //x,1,2,3,4
+                sidArray = info.replace("x,","").split(",");
+            }
+
         }else{
             //已存在的班级，有2种学生存储情况 id串 和 ALL
             if(info.equals("ALL")){
@@ -580,13 +587,17 @@ public class ExamController extends BaseController {
         bindStudents = examService.findBindStudents(className,sidArray);
 
         //处理未关联的学生 （自定义班级不需要默认处理）
-        if(info.startsWith("x,")){
+        if(info.startsWith("x")){
             //自定义班级，不做未关联处理
             unbindStudents = new ArrayList<>();
             custom="Y" ;
         }else{
             //已选班级，需要将这个班级未选中的学生获取
-            unbindStudents = examService.findUnbindStudents(className,sidArray);
+            if(info.equals("ALL")){
+                unbindStudents = new ArrayList<>();
+            }else{
+                unbindStudents = examService.findUnbindStudents(className,sidArray);
+            }
             custom="N" ;
         }
 
@@ -596,5 +607,22 @@ public class ExamController extends BaseController {
         model.addAttribute("custom",custom);
 
         return "exam/adjustStudents" ;
+    }
+
+
+    @RequestMapping("/flushUnbindStudents.html")
+    public String toFlushUnbindStudents(Long id , String className , String searchName , HttpSession session,Model model){
+        String cacheKey = cacheKey_prefix + id ;
+        Map<String,String> classesCache = (Map<String, String>) session.getAttribute(cacheKey);
+        String info = classesCache.get(className);
+
+        String[] sidArray ;
+        //目前的逻辑，只有自定义班级才需要额外查询其他班级未绑定的学生信息
+        sidArray = info.replace("x,","").split(",");
+
+        List<Map<String, String>> unbindStudents = examService.findUnbindStudents(searchName, sidArray);
+        model.addAttribute("unbindStudents",unbindStudents);
+
+        return "exam/adjustStudents::#unbindGrid" ;
     }
 }

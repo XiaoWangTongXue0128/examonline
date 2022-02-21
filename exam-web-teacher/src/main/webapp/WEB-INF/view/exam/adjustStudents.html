@@ -1,5 +1,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
+    <input type="hidden" id="adjust-old-className" th:value="${className}"/>
     <div class="row">
         <div class="col-md-4">
             <div class="form-inline">
@@ -8,7 +9,7 @@
 
                 <input th:unless="${custom=='N'}" class="form-control" id="adjust-search-className" />
 
-                <button class="btn" th:disabled="${custom=='N'}" onclick="alert(11);">
+                <button class="btn" th:disabled="${custom=='N'}" onclick="exam.toQueryUnbindStudents()">
                     <span></span> 查询
                 </button>
             </div>
@@ -35,11 +36,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <th:block th:if="${unbindStudents == null or unbindStudents.size() == 0}">
-                        <tr><td colspan="3" align="center">没有找到未绑定的学生</td></tr>
-                    </th:block>
                     <th:block th:unless="${unbindStudents == null or unbindStudents.size() == 0}">
-                        <tr th:each="student:${unbindStudents}">
+                        <tr th:each="student:${unbindStudents}" th:ondblclick="exam.bindStudent(this,[[${student.sid}]])">
                             <td th:text="${studentStat.index+1}"></td>
                             <td th:text="${student.className}"></td>
                             <td th:text="${student.sname}"></td>
@@ -58,11 +56,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                    <th:block th:if="${bindStudents == null or bindStudents.size() == 0}">
-                        <tr><td colspan="3" align="center">没有找到绑定的学生</td></tr>
-                    </th:block>
                     <th:block th:unless="${bindStudents == null or bindStudents.size() == 0}">
-                        <tr th:each="student:${bindStudents}">
+                        <tr th:each="student:${bindStudents}" th:ondblclick="exam.unbindStudent(this,[[${student.sid}]])">
                             <td th:text="${studentStat.index+1}"></td>
                             <td th:text="${student.className}"></td>
                             <td th:text="${student.sname}"></td>
