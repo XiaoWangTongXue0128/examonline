@@ -128,7 +128,7 @@
                                     </button>
 
 
-                                    <button th:if="${refClass.custom == 'Y'}" class="btn">
+                                    <button th:if="${refClass.custom == 'Y'}" class="btn" th:onclick="exam.importStudents([[${refClass.className}]])">
                                         <span></span> 导入学生
                                     </button>
                                 </td>

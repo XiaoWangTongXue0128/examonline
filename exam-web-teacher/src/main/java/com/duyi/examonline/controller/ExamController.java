@@ -10,8 +10,12 @@ import com.duyi.examonline.domain.vo.PageVO;
 import com.duyi.examonline.domain.vo.QuestionVO;
 import com.duyi.examonline.domain.vo.TemplateFormVO;
 import com.duyi.examonline.service.*;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -389,7 +393,7 @@ public class ExamController extends BaseController {
         }
 
         //x,1,2,3,4,5
-        classesCache.put(className,"x") ;
+        classesCache.put(className,"x,") ;
         return true ;
     }
 
@@ -466,4 +470,81 @@ public class ExamController extends BaseController {
 
 
 
+    @RequestMapping("/downStudentTemplate")
+    public ResponseEntity<byte[]> downStudentTemplate() throws IOException {
+        InputStream is = Thread.currentThread().getContextClassLoader()
+                .getResourceAsStream("files/students2.xlsx") ;
+        byte[] bs = new byte[is.available()];
+        IOUtils.read(is,bs);
+
+        HttpHeaders headers = new HttpHeaders() ;
+        headers.add("content-disposition","attachment;filename=students2.xlsx");
+        headers.add("content-type","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        return new ResponseEntity<byte[]>(bs,headers, HttpStatus.OK) ;
+    }
+
+
+
+    @RequestMapping(value="/importStudents",produces = "text/html;charset=utf-8")
+    @ResponseBody
+    public String importStudents(Long id,String className , MultipartFile excel,HttpSession session) throws IOException {
+        String cacheKey = cacheKey_prefix + id ;
+        Map<String,String> classesCache = (Map<String, String>) session.getAttribute(cacheKey);
+
+        String msg = "" ;
+        int count1 = 0 ;
+        int count2 = 0 ;
+
+        InputStream is = excel.getInputStream();
+        ExcelReader reader = ExcelUtil.getReader(is);
+
+        reader.addHeaderAlias("学号","code") ;
+        reader.addHeaderAlias("姓名","sname") ;
+
+        List<String> sheetNames = reader.getSheetNames();
+
+        String sheetName = sheetNames.get(1) ;
+        //默认读取第一个sheet表。
+        reader.setSheet(sheetName) ;
+
+        List<Student> studentList = reader.readAll(Student.class);
+        //此时读取了一个班级的学生信息
+        //info存储班级学生的编号字符串
+        String info = classesCache.get(className);
+        //此时追加后，info中可能会有重复的数据 info="1,2,4,5,1"
+        //set可以自动去重。  info中的一堆id 装入set（自动去重），再重新组成info
+        Set<String> idSet = new HashSet( Arrays.asList( info.split(",") ) );
+        List<Student> existStudent = studentService.findExistStudent(studentList);
+        for(Student student :existStudent){
+            String sid = student.getId() + "";
+            if(idSet.contains(sid)){
+                continue ;
+            }
+            info += sid + "," ;
+            idSet.add(sid); //防止后面的数据与当前这个新数据重复。
+        }
+        info = info.substring(0,info.length()-1);
+
+        //不考虑缓存中已有该班级情况，如果存在，直接覆盖，以导入为主。
+        classesCache.put(className,info);
+
+        //处理反馈问题。 处理存在和不存在学生
+        for(Student student : studentList){
+            //循环的是导入的学生（存在，保存在）
+            if(existStudent.contains(student)){
+                //list集合的contains方法底层用equals比较是否相等。
+                //student默认equals比较地址。
+                //我们认为code和sname相等的就是相等。需要重写equals方法
+                count1++ ;
+            }else{
+                msg += "【"+student.getCode()+"-"+student.getSname()+"】存储失败"+"|" ;
+                count2++ ;
+            }
+        }
+
+
+        msg = "共导入【"+(count1+count2)+"】学生|成功导入【"+count1+"】学生|失败导入【"+count2+"】学生|" + msg ;
+
+        return msg ;
+    }
 }

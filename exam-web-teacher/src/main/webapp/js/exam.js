@@ -489,3 +489,47 @@ exam.removeRefClass = function(className){
         exam.flushRefClassGrid();
     });
 }
+
+exam.importStudents = function(className){
+    $.post('student/importsTemplate.html',{},function(view){
+        var uploading= false ;
+        main.showDefaultDialog({
+            title:'导入学生',
+            content:view,
+            submit:function(){
+                var fileInfo = $('#import-excel').val();
+                if(!fileInfo){
+                    alert('请选择要上传的excel文件');
+                    return ;
+                }
+                if(uploading){
+                    alert("文件正在上传中，请稍候");
+                    return false;
+                }
+                var formData = new FormData($('#student-import-form')[0]) ;
+                formData.append('id',$('#fill-form-id').val() );
+                formData.append('className',className)
+                $.ajax({
+                    url: 'exam/importStudents',
+                    type: 'POST',
+                    cache: false,
+                    data: formData ,
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function () {
+                        uploading = true;
+                    },
+                    success: function (msg) {
+                        uploading = false;
+                        msg = msg.replace(/\|/g,"\r\n");
+                        alert(msg) ;
+                        main.closeDialog()
+                        exam.flushRefClassGrid();
+                    }
+                });
+            }
+        });
+
+        $('#student-import-form div:eq(1) a').attr('href','exam/downStudentTemplate');
+    });
+}
