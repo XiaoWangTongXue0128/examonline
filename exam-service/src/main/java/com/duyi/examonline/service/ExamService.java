@@ -26,8 +26,14 @@ public interface ExamService {
      */
     void update(Exam exam);
 
-    List<Map<String,String>> findBindStudents(String className,String[] sidArray) ;
+    List<Map<String,Object>> findBindStudents(String className,String[] sidArray) ;
 
-    List<Map<String,String>> findUnbindStudents(String className,String[] sidBindArray) ;
+    List<Map<String,Object>> findUnbindStudents(String className,String[] sidBindArray) ;
 
+    /**
+     * 获取指定班级中所有学生id组成的字符串
+     * @param className
+     * @return
+     */
+    String findClassAllStudentIds(String className) ;
 }

@@ -52,12 +52,17 @@ public class ExamServiceImpl implements ExamService {
     }
 
     @Override
-    public List<Map<String, String>> findBindStudents(String className,String[] sidArray) {
+    public List<Map<String, Object>> findBindStudents(String className,String[] sidArray) {
         return studentMapper.findBindStudents(className,sidArray);
     }
 
     @Override
-    public List<Map<String, String>> findUnbindStudents(String className, String[] sidBindArray) {
+    public List<Map<String, Object>> findUnbindStudents(String className, String[] sidBindArray) {
         return studentMapper.findUnbindStudents(className,sidBindArray);
+    }
+
+    @Override
+    public String findClassAllStudentIds(String className) {
+        return studentMapper.findClassAllStudentIds(className);
     }
 }

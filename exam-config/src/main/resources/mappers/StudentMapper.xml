@@ -363,4 +363,13 @@
       </foreach>
   </select>
 
+
+  <select id="findClassAllStudentIds" resultType="string">
+    select
+      group_concat(id)
+    from
+      t_student
+    where
+      concat(grade,'-',major,'-',class_no) = #{className}
+  </select>
 </mapper>

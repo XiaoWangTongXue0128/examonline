@@ -31,7 +31,7 @@
         </div>
 
         <div id="fill-part-2" class="fill-part-2">
-            <button class="btn btn-primary right">
+            <button class="btn btn-primary right" onclick="exam.toFillSave()">
                 <span></span> 保存
             </button>
         </div>
@@ -49,7 +49,7 @@
             </div>
 
             <div class="form-inline">
-                <label>填写考试区间：<input type="radio" name="fill-form-time" checked onclick="exam.selectTime(1)" /></label>
+                <label>填写考试区间：<input type="radio" name="fill-form-time" value="1" checked onclick="exam.selectTime(1)" /></label>
                 <div>
                     <label for="fill-form-start-time">开始时间：</label>
                     <input type="datetime-local" class="form-control" id="fill-form-start-time" />
@@ -61,7 +61,7 @@
             </div>
 
             <div class="form-inline">
-                <label>填写考试时长：<input type="radio" name="fill-form-time" onclick="exam.selectTime(2)" /></label>
+                <label>填写考试时长：<input type="radio" name="fill-form-time" value="2" onclick="exam.selectTime(2)" /></label>
                 <div>
                     <label for="fill-form-duration">考试时长：</label>
                     <select id="fill-form-duration" class="form-control" disabled >

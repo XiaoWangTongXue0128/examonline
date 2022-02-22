@@ -555,8 +555,8 @@ public class ExamController extends BaseController {
         //如果是存在的班级，还需要查出未选中的学生信息
         //如果是自定义班级，初次不查询。未来会通过查询按钮来查询 （service操作相同）
 
-        List<Map<String,String>> bindStudents ;
-        List<Map<String,String>> unbindStudents ;
+        List<Map<String,Object>> bindStudents ;
+        List<Map<String,Object>> unbindStudents ;
         String custom = "";
 
         String cacheKey = cacheKey_prefix+id ;
@@ -620,9 +620,133 @@ public class ExamController extends BaseController {
         //目前的逻辑，只有自定义班级才需要额外查询其他班级未绑定的学生信息
         sidArray = info.replace("x,","").split(",");
 
-        List<Map<String, String>> unbindStudents = examService.findUnbindStudents(searchName, sidArray);
+        List<Map<String, Object>> unbindStudents = examService.findUnbindStudents(searchName, sidArray);
         model.addAttribute("unbindStudents",unbindStudents);
 
         return "exam/adjustStudents::#unbindGrid" ;
     }
+
+
+    @RequestMapping("/fillSave")
+    @ResponseBody
+    public Map<String,Object> fillSave(Exam exam,HttpSession session){
+        Map<String,Object> result = null ;
+
+        String cacheKey = cacheKey_prefix + exam.getId() ;
+        Map<String,String> classesCache = (Map<String, String>) session.getAttribute(cacheKey);
+
+        //检查缓存中的新数据是否存在重复，并且要给出提示
+        result = checkRepeat(classesCache);
+
+        return result ;
+    }
+
+    /**
+     * 检查缓存中是否有重复的学生
+     *  如果没有重复的学生，直接给出提示反馈
+     *      {code:0,msg:'xxxx'}
+     *  如果有重复的学生，要知道重复的学生姓名以及在哪个班级中发生了重复，并给出提示反馈
+     *      {code:1,msg:'【xxx】重复关联，【x班】【y班】'}
+     * @param classesCache
+     * @return
+     */
+    private Map<String,Object> checkRepeat(Map<String,String> classesCache){
+        Map<String,Object> result = new HashMap<>();
+        //先检查是否有重复
+        //再处理那些重复的数据
+        List<Set<String>> classList = new ArrayList<Set<String>>();
+        Set<String> checkBox = new HashSet<String>();
+        int checkCount = 0 ;
+
+        //装载的就是所有的班级
+        String[] classNameArray = new String[classesCache.size()] ;
+        classesCache.keySet().toArray(classNameArray);
+
+        //逐个的将班级中的人员信息取出
+        for(String className : classNameArray){
+            // 3种 "ALL","1,2,3,4,5","x,1,2,3,4,5"
+            String info = classesCache.get(className);
+            if("ALL".equals(info)){
+                //获取这个班级所有的学生id组成的字符串 ALL->"1,2,3,4,5,6"
+                info = examService.findClassAllStudentIds(className);
+            }else if(info.startsWith("x")){
+                //"x,1,2,3" --> "1,2,3"
+                info = info.replace("x,","");
+            }
+
+            Set<String> idSet = new HashSet<>( Arrays.asList( info.split(",") ) );
+            classList.add(idSet);
+
+            checkBox.addAll(idSet);
+            checkCount += idSet.size();
+        }
+        //至此循环结束，就将所有的缓存的学生信息获取
+        //既装入了classList中，方便后面从中寻找重复的数据
+        //又将其装入了checkbox，以便检测是否存在重复
+        if(checkBox.size() == checkCount){
+            //不存在重复
+            result.put("code",0);
+            result.put("msg","保存成功") ;
+            return result ;
+        }
+
+        //代码至此，证明存在重复，需要处理获得哪些重复的学生以及所在的班级
+        Map<String,String> repeatInfo = new HashMap<>();
+
+        //从头到尾，循环每一个班级
+        //最后一个班级不需要处理
+        for(int i=0;i<classList.size()-1;i++){
+            Set<String> currSidSet = classList.get(i);
+
+            for(int j=i+1;j<classList.size();j++){
+                Set<String> targetSidSet = classList.get(j);
+                checkBox.clear();
+                checkBox.addAll(currSidSet) ;
+                checkBox.addAll(targetSidSet);
+                if(checkBox.size() == currSidSet.size() + targetSidSet.size()){
+                    //i班和j班没有重复，i班再和j+1班比较
+                    continue ; //j++
+                }
+                //代码至此证明i班和j班有重复的数据
+                for(String currSid : currSidSet){
+                    if(targetSidSet.contains(currSid)){
+                        //i班和j班都存在currSid
+                        //info="【2020-软件-1班】【2020-软件-2班】"
+                        String info = repeatInfo.get(currSid);
+                        info = info==null?"":info ;
+                        String iClassName = classNameArray[i] ;
+                        String jClassName = classNameArray[j] ;
+                        if(!info.contains(iClassName)){
+                            info+="【"+iClassName+"】";
+                        }
+                        if(!info.contains(jClassName)){
+                            info+="【"+jClassName+"】";
+                        }
+                        repeatInfo.put(currSid,info);
+                    }
+                }
+            }
+        }
+
+        //至此重复数据装载完毕
+        log.info("repeatInfo : {}",repeatInfo);
+        //接下来就是需要将学生id 变成对应的学生姓名，并拼成前端所需要的结果
+        String[] repeatSidArray = repeatInfo.keySet().toArray(new String[]{});
+        List<Map<String, Object>> repeatStudents = examService.findBindStudents(null, repeatSidArray);
+
+        String msg = "" ;
+        for(Map<String,Object> student : repeatStudents){
+            String sid = student.get("sid").toString();
+            String sname = student.get("sname").toString() ;
+            String info = repeatInfo.get(sid);
+            info = "【"+sname+"】重复关联"+info;
+            msg+=info+"|";
+        }
+
+        result.put("code",1);
+        result.put("msg",msg);
+
+        return result ;
+    }
+
 }

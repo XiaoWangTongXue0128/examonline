@@ -601,3 +601,34 @@ exam.unbindStudent = function(tr,sid){
         exam.flushRefClassGrid();
     });
 }
+
+exam.toFillSave = function(){
+    var param = {
+        id:$('#fill-form-id').val(),
+        templateId:$('#fill-form-template-id').val()
+    }
+    var v = $('input[name="fill-form-time"]:checked').val();
+    if(v == 1){
+        //区间
+        param.startTime = $('#fill-form-start-time').val();
+        param.endTime = $('#fill-form-end-time').val()
+    }else{
+        //时长
+        param.duration = $('#fill-form-duration').val();
+    }
+
+    $.post('exam/fillSave',param,function(result){
+        //分析反馈信息。
+        // 没有任何问题，就是保存成功提示
+        // 但有问题的情况， 如出现了重复的学生。此时需要给出提示
+        // 要求返回json格式  {code:0,msg:'保存成功'} , {code:1,msg:'【张三】重复关联【1班】【2班】|【李四】重复关联【1班】【2班】'}
+        if(result.code == 0){
+            alert(result.msg) ;
+            location.href='exam/exam.html' ;
+        }else if(result.code == 1){
+            var msg = result.msg.replace(/\|/g,"\r\n") ;
+            alert(msg) ;
+        }
+    },'json');
+
+}
