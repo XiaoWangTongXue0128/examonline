@@ -36,4 +36,6 @@ public interface ExamService {
      * @return
      */
     String findClassAllStudentIds(String className) ;
+
+    void fill(Exam exam , Map<String,String> classesCache) ;
 }

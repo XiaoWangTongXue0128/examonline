@@ -28,4 +28,6 @@ public interface CommonData {
 
     String DEFAULT_EXAM_STATUS = "未发布" ;
 
+    String DEFAULT_STUDENT_EXAM_STATUS = "未考试" ;
+
 }

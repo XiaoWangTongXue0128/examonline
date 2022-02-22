@@ -278,4 +278,33 @@
     where exam_id = #{examId,jdbcType=BIGINT}
       and student_id = #{studentId,jdbcType=BIGINT}
   </update>
+
+
+  <select id="findStudentIdByExam" resultType="long">
+    select
+      student_id
+    from
+      t_student_exam
+    where
+      exam_id = #{examId}
+  </select>
+  
+  
+  <delete id="removeReference">
+    delete from t_student_exam
+    where
+      concat(exam_id,'-',student_id) in
+      <foreach collection="list" item="se" open="(" close=")" separator=",">
+        concat(#{se.examId},'-',#{se.studentId})
+      </foreach>
+  </delete>
+
+  <insert id="addReference">
+      insert into t_student_exam(exam_id,student_id,exam_group , status , create_time)
+      values
+      <foreach collection="list" item="se" open="" close=";" separator=",">
+          (#{se.examId},#{se.studentId},#{se.examGroup},#{se.status},now())
+      </foreach>
+  </insert>
+
 </mapper>

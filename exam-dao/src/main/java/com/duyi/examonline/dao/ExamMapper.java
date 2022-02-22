@@ -20,7 +20,7 @@ public interface ExamMapper {
     int updateByPrimaryKey(Exam record);
 
 
-
     List<Exam> find(Map condition) ;
+
 
 }

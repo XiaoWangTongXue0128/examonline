@@ -3,6 +3,8 @@ package com.duyi.examonline.dao;
 import com.duyi.examonline.domain.StudentExam;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 public interface StudentExamMapper {
     int deleteByPrimaryKey(@Param("examId") Long examId, @Param("studentId") Long studentId);
 
@@ -16,4 +18,10 @@ public interface StudentExamMapper {
 
     int updateByPrimaryKey(StudentExam record);
 
+
+    List<Long> findStudentIdByExam(Long examId) ;
+
+    void removeReference(List<StudentExam> removeStudents) ;
+
+    void addReference(List<StudentExam> addStudents) ;
 }

@@ -638,6 +638,13 @@ public class ExamController extends BaseController {
         //检查缓存中的新数据是否存在重复，并且要给出提示
         result = checkRepeat(classesCache);
 
+        if(result.get("code").equals(1)){
+            //有重复，错误情况，不能保存，直接反馈
+            return result ;
+        }
+
+        examService.fill(exam,classesCache);
+
         return result ;
     }
 
