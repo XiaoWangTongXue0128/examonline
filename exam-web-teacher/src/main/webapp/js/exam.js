@@ -165,16 +165,16 @@ exam.defaultTemplateDetail = function(){
 exam.selectTime = function(no){
     if(no == 1){
         //选择区间方式
-        $('#fill-form-duration').val('30').prop('disabled',true);
+        $('#fill-form-duration').prop('disabled',true);
 
-        $('#fill-form-start-time').val('').prop('disabled',false);
-        $('#fill-form-end-time').val('').prop('disabled',false);
+        $('#fill-form-start-time').prop('disabled',false);
+        $('#fill-form-end-time').prop('disabled',false);
     }else{
         //选择了时长方式
-        $('#fill-form-start-time').val('').prop('disabled',true);
-        $('#fill-form-end-time').val('').prop('disabled',true);
+        $('#fill-form-start-time').prop('disabled',true);
+        $('#fill-form-end-time').prop('disabled',true);
 
-        $('#fill-form-duration').val('30').prop('disabled',false);
+        $('#fill-form-duration').prop('disabled',false);
     }
 }
 
@@ -631,4 +631,58 @@ exam.toFillSave = function(){
         }
     },'json');
 
+}
+
+//设置未发布状态下的 右键处理操作
+exam.toSetStatus1 = function(id,ev){
+    var e = ev || event ;
+    var x = e.clientX ;
+    var y = e.clientY ;
+    var div = $('<div></div>') ;
+    div.css({
+        position:'absolute',
+        width:130,
+        height:140,
+        left:x-5,
+        top:y-5,
+        background:'#fff',
+        border:'1px solid #ccc',
+        borderRadius:5,
+        boxShadow:'2px 2px 2px #ccc'
+    });
+    $('body').append(div);
+
+    div.html(`
+        <a class="btn btn-link" onclick="exam.toGeneratePage(${id})"><span class="glyphicon glyphicon-duplicate"></span> 生成考卷</a>
+        <a class="btn btn-link" onclick="exam.toGeneratePage(${id})"><span class="glyphicon glyphicon-trash"></span> 删除考卷</a>
+        <a class="btn btn-link" onclick="template.toSetShare(${id})"><span class="glyphicon glyphicon-level-up"></span> 发布考试</a>
+        <a class="btn btn-link" onclick="template.toSetLeave(${id})"><span class="glyphicon glyphicon-ban-circle"></span> 删除考试</a>
+    `);
+
+    var timer ;
+    div.mouseleave(function(){
+        timer = window.setTimeout(function(){
+            div.remove();
+        },200);
+    });
+    div.mouseover(function(){
+        if(timer){
+            window.clearTimeout(timer) ;
+        }
+    });
+
+    return false ;
+}
+
+exam.toGeneratePage = function(id){
+    if(!confirm('是否确认生成考卷')){
+        return ;
+    }
+    $.post('exam/generatePage',{id:id},function(f){
+        if(f == true){
+            alert('考卷生成完毕') ;
+        }else{
+            alert('考卷生成失败，考卷已存在') ;
+        }
+    });
 }

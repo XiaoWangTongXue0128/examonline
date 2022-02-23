@@ -106,7 +106,7 @@
                                 <span th:if="${exam.startTime==null and exam.duration==null}">尚未填写</span>
                             </td>
                             <td>
-                                <span th:if="${exam.status=='未发布'}" class="label label-warning">未发布</span>
+                                <span th:if="${exam.status=='未发布'}" class="label label-warning" th:oncontextmenu="return exam.toSetStatus1([[${exam.id}]])">未发布</span>
                                 <span th:if="${exam.status=='未考试'}" class="label label-success">未考试</span>
                                 <span th:if="${exam.status=='考试中'}" class="label label-info">考试中</span>
                                 <span th:if="${exam.status=='已完成'}" class="label label-danger">已完成</span>
@@ -116,9 +116,6 @@
                             <td>
                                 <a th:href="@{/exam/fill.html(id=${exam.id})}" class="btn btn-sm btn-primary">
                                     <span class="glyphicon glyphicon-pencil"></span> 设置
-                                </a>
-                                <a class="btn btn-sm btn-danger">
-                                    <span class="glyphicon glyphicon-trash"></span> 删除
                                 </a>
                             </td>
                         </tr>

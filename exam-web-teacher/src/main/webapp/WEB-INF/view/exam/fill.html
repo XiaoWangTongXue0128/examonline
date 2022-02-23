@@ -52,11 +52,11 @@
                 <label>填写考试区间：<input type="radio" name="fill-form-time" value="1" checked onclick="exam.selectTime(1)" /></label>
                 <div>
                     <label for="fill-form-start-time">开始时间：</label>
-                    <input type="datetime-local" class="form-control" id="fill-form-start-time" th:value="${#dates.format(exam.startTime,'yyyy-MM-dd')+'T'+#dates.format(exam.startTime,'HH:mm')}" />
+                    <input type="datetime-local" class="form-control" id="fill-form-start-time" th:value="${exam.startTime==null?'':#dates.format(exam.startTime,'yyyy-MM-dd')+'T'+#dates.format(exam.startTime,'HH:mm')}" />
                 </div>
                 <div>
                     <label for="fill-form-end-time">结束时间：</label>
-                    <input type="datetime-local" class="form-control" id="fill-form-end-time" th:value="${#dates.format(exam.endTime,'yyyy-MM-dd')+'T'+#dates.format(exam.endTime,'HH:mm')}" />
+                    <input type="datetime-local" class="form-control" id="fill-form-end-time" th:value="${exam.endTime==null?'':#dates.format(exam.endTime,'yyyy-MM-dd')+'T'+#dates.format(exam.endTime,'HH:mm')}" />
                 </div>
             </div>
 

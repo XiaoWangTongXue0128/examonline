@@ -133,7 +133,6 @@ public class ExamController extends BaseController {
         return "exam/fill" ;
     }
 
-
     @RequestMapping("/update")
     @ResponseBody
     public boolean update(Exam exam){
@@ -765,6 +764,14 @@ public class ExamController extends BaseController {
         result.put("msg",msg);
 
         return result ;
+    }
+
+    @RequestMapping("/generatePage")
+    @ResponseBody
+    public boolean generatePage(Long id){
+
+
+        return false ;
     }
 
 }

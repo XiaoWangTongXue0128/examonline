@@ -3,6 +3,8 @@ package com.duyi.examonline.test;
 import com.duyi.examonline.common.CommonData;
 import org.junit.Test;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.util.Arrays;
 
@@ -32,6 +34,19 @@ public class Test3 {
         System.out.println(Arrays.toString(indexArray));
         Arrays.sort(indexArray);
         System.out.println(Arrays.toString(indexArray));
+    }
+
+    /**
+     * 字符串分隔符测试
+     */
+    @Test
+    public void t3() throws IOException {
+        String str = "abc--\r\nabc--\r\nabc--\r\n" ;
+        FileWriter w = new FileWriter("f:/z/2.txt");
+        w.write(str);
+        w.close();
+        String[] array = str.split("--\r\n");
+        System.out.println(Arrays.toString(array));
     }
 
 }
