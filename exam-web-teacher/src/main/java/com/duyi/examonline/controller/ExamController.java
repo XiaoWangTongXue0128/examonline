@@ -104,14 +104,25 @@ public class ExamController extends BaseController {
         Exam exam = examService.findById(id);
         model.addAttribute("exam",exam);
 
+        //缺模板名称
+        if(exam.getTemplateId() != null) {
+            Template template = templateService.findById(exam.getTemplateId());
+            model.addAttribute("template", template);
+        }
 
         Map<String,String> classesCache = (Map<String, String>) session.getAttribute(cacheKey);
         if(classesCache == null){
             classesCache = new HashMap<>();
             session.setAttribute(cacheKey,classesCache);
 
-            //同时需要将持久化的关联信息取出，并装入缓存。
-
+            //此时缓存中没有数据，应该是首次进入当前页面
+            //需要将持久化的关联信息取出，并装入缓存。{"班级名","1,2,3,4,5"}
+            List<Map> refClasses = examService.findRefClasses(exam.getId());
+            for(Map map : refClasses){
+                Object key = map.get("exam_group");
+                Object value = map.get("sids");
+                classesCache.put(key.toString(),value.toString());
+            }
         }
 
         if(classesCache.size() > 0) {

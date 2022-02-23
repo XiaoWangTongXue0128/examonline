@@ -158,12 +158,13 @@
       </if>
       <if test="startTime != null">
         start_time = #{startTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="endTime != null">
         end_time = #{endTime,jdbcType=TIMESTAMP},
+        duration = null,
       </if>
       <if test="duration != null">
         duration = #{duration,jdbcType=INTEGER},
+        start_time = null,
+        end_time = null,
       </if>
       <if test="status != null">
         status = #{status,jdbcType=VARCHAR},

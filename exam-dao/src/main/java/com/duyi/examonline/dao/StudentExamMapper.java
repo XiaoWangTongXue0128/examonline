@@ -4,6 +4,7 @@ import com.duyi.examonline.domain.StudentExam;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface StudentExamMapper {
     int deleteByPrimaryKey(@Param("examId") Long examId, @Param("studentId") Long studentId);
@@ -24,4 +25,6 @@ public interface StudentExamMapper {
     void removeReference(List<StudentExam> removeStudents) ;
 
     void addReference(List<StudentExam> addStudents) ;
+
+    List<Map> findRefClasses(Long examId) ;
 }

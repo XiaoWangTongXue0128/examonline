@@ -41,8 +41,8 @@
             <div class="form-inline">
 
                 <label>关联模板：</label>
-                <input type="hidden" id="fill-form-template-id" />
-                <input class="form-control" readonly="readonly" id="fill-form-template-name" />
+                <input type="hidden" id="fill-form-template-id" th:value="${template!=null?template.id:''}" />
+                <input class="form-control" readonly="readonly" id="fill-form-template-name" th:value="${template!=null?template.name:''}" />
                 <a href="javascript:exam.toSelectTemplate()" class="btn btn-link">关联模板</a>
                 <a href="javascript:exam.toShowTemplateDetail()" class="btn btn-link">模板详情</a>
 
@@ -52,11 +52,11 @@
                 <label>填写考试区间：<input type="radio" name="fill-form-time" value="1" checked onclick="exam.selectTime(1)" /></label>
                 <div>
                     <label for="fill-form-start-time">开始时间：</label>
-                    <input type="datetime-local" class="form-control" id="fill-form-start-time" />
+                    <input type="datetime-local" class="form-control" id="fill-form-start-time" th:value="${#dates.format(exam.startTime,'yyyy-MM-dd')+'T'+#dates.format(exam.startTime,'HH:mm')}" />
                 </div>
                 <div>
                     <label for="fill-form-end-time">结束时间：</label>
-                    <input type="datetime-local" class="form-control" id="fill-form-end-time" />
+                    <input type="datetime-local" class="form-control" id="fill-form-end-time" th:value="${#dates.format(exam.endTime,'yyyy-MM-dd')+'T'+#dates.format(exam.endTime,'HH:mm')}" />
                 </div>
             </div>
 
@@ -138,8 +138,13 @@
                 </table>
             </div>
 
-
-
+            <script>
+                var init_duration = '[[${exam.duration}]]';
+                if(init_duration && init_duration!=''){
+                    $('input[name="fill-form-time"]:eq(1)').click();
+                    $('#fill-form-duration').val(init_duration);
+                }
+            </script>
         </div>
 
 

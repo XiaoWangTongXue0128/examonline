@@ -165,4 +165,9 @@ public class ExamServiceImpl implements ExamService {
             studentExamMapper.addReference(addList);
         }
     }
+
+    @Override
+    public List<Map> findRefClasses(Long examId) {
+        return studentExamMapper.findRefClasses(examId);
+    }
 }

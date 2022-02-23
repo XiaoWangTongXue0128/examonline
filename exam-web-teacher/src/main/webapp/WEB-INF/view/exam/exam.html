@@ -101,8 +101,8 @@
                             <td th:text="${examStat.index+1}"></td>
                             <td th:text="${exam.name}"></td>
                             <td>
-                                <span th:if="${exam.startTime != null }">[[${#dates.format(exam.startTime},'yyyy-MM-dd HH:mm')]]-[[${#dates.format(exam.endTime,'yyyy-MM-dd HH:mm')}]]</span>
-                                <span th:if="${exam.duration != null}">[[${exam.duration}]]分钟</span>
+                                <span th:if="${exam.startTime != null and exam.duration==null }">[[${#dates.format(exam.startTime,'yyyy-MM-dd HH:mm')}]] - [[${#dates.format(exam.endTime,'yyyy-MM-dd HH:mm')}]]</span>
+                                <span th:if="${exam.duration != null and exam.startTime==null}">[[${exam.duration}]]分钟</span>
                                 <span th:if="${exam.startTime==null and exam.duration==null}">尚未填写</span>
                             </td>
                             <td>

@@ -307,4 +307,32 @@
       </foreach>
   </insert>
 
+
+  <select id="findRefClasses" resultType="map">
+    select
+      exam_group ,
+      class_name,
+      if(class_name is null , concat('x,',sids),sids) sids
+    from
+      (
+        select
+          exam_group ,
+          group_concat(student_id) sids
+        from
+          t_student_exam
+        where
+          exam_id = #{examId}
+        group by exam_group
+      ) t1
+      left join
+      (
+        select
+          concat(grade,'-',major,'-',class_no) class_name
+        from
+          t_student
+        group by grade,major,class_no
+      ) t2
+    on t1.exam_group = t2.class_name
+  </select>
+
 </mapper>

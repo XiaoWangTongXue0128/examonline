@@ -27,7 +27,6 @@ import java.util.*;
 public class CommonController {
 
     Logger log = LoggerFactory.getLogger(CommonController.class) ;
-
     @Autowired
     private TeacherService teacherService;
 

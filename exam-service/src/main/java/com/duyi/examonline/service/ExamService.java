@@ -38,4 +38,6 @@ public interface ExamService {
     String findClassAllStudentIds(String className) ;
 
     void fill(Exam exam , Map<String,String> classesCache) ;
+
+    List<Map> findRefClasses(Long examId) ;
 }
