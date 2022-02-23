@@ -29,4 +29,6 @@ public interface StudentExamMapper {
     List<Map> findRefClasses(Long examId) ;
 
     int findPagePathCount(Long examId);
+
+    void updatePagePath(@Param("examId") Long examId,@Param("studentId") Long studentId,@Param("pagePath") String pagePath);
 }

@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -222,6 +224,14 @@ public class ExamServiceImpl implements ExamService {
             //代码至此，静态试卷信息就准备就绪，可以生成了
             writePage(pageFile,questionList);
 
+            //需要将考卷的路径更新至考生的page_path字段中
+            //静态考卷是全部
+            //f:/z/xxxxx/page.txt
+            String path = pageFile.getAbsolutePath() ;
+            // /xxxx/page.txt
+            path = path.replace(CommonData.PAGE_ROOT_PATH,"") ;
+            studentExamMapper.updatePagePath(exam.getId(),null,path);
+
         }else{
             //动态模板考试题处理
         }
@@ -240,6 +250,32 @@ public class ExamServiceImpl implements ExamService {
     }
 
     private void writePage(File pageFile,List<Question> questionList){
+        try {
+            //创建试卷文件
+            pageFile.createNewFile() ;
 
+            FileWriter w = new FileWriter(pageFile) ;
+
+            for(Question question : questionList){
+                w.write(question.getType());
+                w.write(CommonData.QUESTION_OPTION_SEPARATOR);
+                w.write(question.getYl4());
+                w.write(CommonData.QUESTION_OPTION_SEPARATOR);
+                w.write(question.getSubject());
+                w.write(CommonData.QUESTION_OPTION_SEPARATOR);
+                w.write(question.getOptions());
+                w.write(CommonData.QUESTION_OPTION_SEPARATOR);
+                w.write(question.getAnswer());
+                w.write(CommonData.QUESTION_OPTION_SEPARATOR);
+
+                w.write(CommonData.QUESTION_SEPARATOR);
+                w.write(CommonData.QUESTION_OPTION_SEPARATOR);
+            }
+
+            w.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

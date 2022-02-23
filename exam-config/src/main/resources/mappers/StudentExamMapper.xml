@@ -345,4 +345,12 @@
       and page_path is not null
   </select>
 
+  <update id="updatePagePath">
+    update t_student_exam set page_path=#{pagePath}
+    where
+      exam_id = #{examId}
+      <if test="studentId != null and studentId != ''">
+        and student_id = #{studentId}
+      </if>
+  </update>
 </mapper>

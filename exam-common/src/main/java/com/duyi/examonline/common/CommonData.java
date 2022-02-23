@@ -1,5 +1,6 @@
 package com.duyi.examonline.common;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +31,11 @@ public interface CommonData {
 
     String DEFAULT_STUDENT_EXAM_STATUS = "未考试" ;
 
-    String PAGE_ROOT_PATH = "f:/z" ;
+    String PAGE_ROOT_PATH = "f"+ File.separator+"z" ;
 
     String STATIC_PAGE_NAME = "page.txt" ;
+
+    String QUESTION_OPTION_SEPARATOR = "--\r\n" ;
+
+    String QUESTION_SEPARATOR = "====" ;
 }
