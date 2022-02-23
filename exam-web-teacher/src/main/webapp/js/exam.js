@@ -655,8 +655,8 @@ exam.toSetStatus1 = function(id,ev){
     div.html(`
         <a class="btn btn-link" onclick="exam.toGeneratePage(${id})"><span class="glyphicon glyphicon-duplicate"></span> 生成考卷</a>
         <a class="btn btn-link" onclick="exam.toGeneratePage(${id})"><span class="glyphicon glyphicon-trash"></span> 删除考卷</a>
-        <a class="btn btn-link" onclick="template.toSetShare(${id})"><span class="glyphicon glyphicon-level-up"></span> 发布考试</a>
-        <a class="btn btn-link" onclick="template.toSetLeave(${id})"><span class="glyphicon glyphicon-ban-circle"></span> 删除考试</a>
+        <a class="btn btn-link" onclick="template.toSetShare(${id})"><span class="glyphicon glyphicon-share"></span> 发布考试</a>
+        <a class="btn btn-link" onclick="template.toSetLeave(${id})"><span class="glyphicon glyphicon-remove-circle"></span> 删除考试</a>
     `);
 
     var timer ;

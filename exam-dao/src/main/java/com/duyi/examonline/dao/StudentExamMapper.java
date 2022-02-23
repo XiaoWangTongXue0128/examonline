@@ -27,4 +27,6 @@ public interface StudentExamMapper {
     void addReference(List<StudentExam> addStudents) ;
 
     List<Map> findRefClasses(Long examId) ;
+
+    int findPagePathCount(Long examId);
 }

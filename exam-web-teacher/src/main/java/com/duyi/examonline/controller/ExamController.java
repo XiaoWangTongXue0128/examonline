@@ -769,9 +769,14 @@ public class ExamController extends BaseController {
     @RequestMapping("/generatePage")
     @ResponseBody
     public boolean generatePage(Long id){
+        if(examService.isPageExist(id)){
+            //存在试卷，此次生成试卷失败。
+            return false ;
+        }
 
+        examService.generatePage(id);
 
-        return false ;
+        return true ;
     }
 
 }

@@ -39,5 +39,9 @@ public interface ExamService {
 
     void fill(Exam exam , Map<String,String> classesCache) ;
 
-    List<Map> findRefClasses(Long examId) ;
+    List<Map> findRefClasses(Long id) ;
+
+    boolean isPageExist(Long id);
+
+    void generatePage(Long id) ;
 }

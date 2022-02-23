@@ -335,4 +335,14 @@
     on t1.exam_group = t2.class_name
   </select>
 
+  <select id="findPagePathCount" resultType="int">
+    select
+      count(page_path)
+    from
+      t_student_exam
+    where
+      exam_id=#{examId}
+      and page_path is not null
+  </select>
+
 </mapper>

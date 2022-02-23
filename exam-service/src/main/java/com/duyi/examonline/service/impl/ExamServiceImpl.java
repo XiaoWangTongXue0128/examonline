@@ -2,12 +2,8 @@ package com.duyi.examonline.service.impl;
 
 import com.duyi.examonline.common.CommonData;
 import com.duyi.examonline.common.CommonUtil;
-import com.duyi.examonline.dao.ExamMapper;
-import com.duyi.examonline.dao.StudentExamMapper;
-import com.duyi.examonline.dao.StudentMapper;
-import com.duyi.examonline.domain.Exam;
-import com.duyi.examonline.domain.Student;
-import com.duyi.examonline.domain.StudentExam;
+import com.duyi.examonline.dao.*;
+import com.duyi.examonline.domain.*;
 import com.duyi.examonline.domain.vo.PageVO;
 import com.duyi.examonline.service.ExamService;
 import com.github.pagehelper.PageHelper;
@@ -15,6 +11,7 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.*;
 
 @Service
@@ -28,6 +25,12 @@ public class ExamServiceImpl implements ExamService {
 
     @Autowired
     private StudentExamMapper studentExamMapper ;
+
+    @Autowired
+    private TemplateMapper templateMapper ;
+
+    @Autowired
+    private QuestionMapper questionMapper ;
 
     @Override
     public PageVO findByPage(int page, int rows, Map condition) {
@@ -169,5 +172,74 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public List<Map> findRefClasses(Long examId) {
         return studentExamMapper.findRefClasses(examId);
+    }
+
+    @Override
+    public boolean isPageExist(Long id) {
+        return studentExamMapper.findPagePathCount(id) > 0;
+    }
+
+    @Override
+    public void generatePage(Long id) {
+        Exam exam = examMapper.selectByPrimaryKey(id);
+
+        String dirName = exam.getName();
+        String dirPath = CommonData.PAGE_ROOT_PATH + File.separator + dirName ;
+
+        File dir = new File(dirPath);
+        if(!dir.exists()){
+            dir.mkdir();
+        }
+        //至此，存放考卷的目录已存在
+
+        //先获得模板，根据考试模板找到考题，将考题写入考卷文件
+        Template template = templateMapper.selectByPrimaryKey(exam.getTemplateId());
+        if("静态模板".equals(template.getType())){
+            //静态模板考题处理
+            List<Question> questionList = new ArrayList<>();
+            File pageFile = new File(dir,CommonData.STATIC_PAGE_NAME);
+
+            //单选题 2}-|-{1}-|-{2}-|-{3}-|-{4
+            String questionStr = template.getQuestion1();
+            loadStaticQuestion(questionList,questionStr);
+
+            //多选题 2}-|-{1}-|-{2}-|-{3}-|-{4
+            questionStr = template.getQuestion2();
+            loadStaticQuestion(questionList,questionStr);
+
+            //判断题 2}-|-{1}-|-{2}-|-{3}-|-{4
+            questionStr = template.getQuestion3();
+            loadStaticQuestion(questionList,questionStr);
+
+            //填空题 2}-|-{1}-|-{2}-|-{3}-|-{4
+            questionStr = template.getQuestion4();
+            loadStaticQuestion(questionList,questionStr);
+
+            //综合题 2}-|-{1}-|-{2}-|-{3}-|-{4
+            questionStr = template.getQuestion5();
+            loadStaticQuestion(questionList,questionStr);
+
+            //代码至此，静态试卷信息就准备就绪，可以生成了
+            writePage(pageFile,questionList);
+
+        }else{
+            //动态模板考试题处理
+        }
+
+    }
+
+    private void loadStaticQuestion(List<Question> questionList,String questionStr){
+        String[] array = questionStr.split(CommonData.SPLIT_SEPARATOR);
+        for(int i=1;i<array.length;i++){
+            String qid = array[i] ;
+            Question question = questionMapper.selectByPrimaryKey(Long.valueOf(qid));
+            //使用预留4存储考题分数
+            question.setYl4(array[0]);
+            questionList.add(question);
+        }
+    }
+
+    private void writePage(File pageFile,List<Question> questionList){
+
     }
 }

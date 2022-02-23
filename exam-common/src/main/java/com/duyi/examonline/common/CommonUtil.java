@@ -5,7 +5,9 @@ import com.duyi.examonline.domain.vo.PageVO;
 import com.duyi.examonline.domain.vo.QuestionVO;
 import com.github.pagehelper.PageInfo;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 
 public final class CommonUtil {
@@ -43,6 +45,12 @@ public final class CommonUtil {
         questionVO.setAnswerList( Arrays.asList(answerArray) );
 
         return questionVO ;
+    }
+
+
+    public static String getSystemDateString(String pattern){
+        SimpleDateFormat df = new SimpleDateFormat(pattern);
+        return df.format(new Date());
     }
 
 }
