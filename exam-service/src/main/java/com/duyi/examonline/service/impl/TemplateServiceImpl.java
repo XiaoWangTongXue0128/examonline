@@ -1,8 +1,11 @@
 package com.duyi.examonline.service.impl;
 
+import com.duyi.examonline.common.CommonData;
 import com.duyi.examonline.common.CommonUtil;
+import com.duyi.examonline.dao.QuestionMapper;
 import com.duyi.examonline.dao.TeacherMapper;
 import com.duyi.examonline.dao.TemplateMapper;
+import com.duyi.examonline.domain.Question;
 import com.duyi.examonline.domain.Teacher;
 import com.duyi.examonline.domain.Template;
 import com.duyi.examonline.domain.vo.PageVO;
@@ -28,6 +31,9 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Autowired
     private TeacherMapper teacherMapper ;
+
+    @Autowired
+    private QuestionMapper questionMapper ;
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -106,6 +112,29 @@ public class TemplateServiceImpl implements TemplateService {
         template.setId(id);
         template.setStatus(status);
         templateMapper.updateByPrimaryKeySelective(template);
+
+        //增加针对于静态模板公有和丢弃状态设置时，关联考题的设置
+        template = templateMapper.selectByPrimaryKey(id);
+        if(template.getType().equals("静态模板") && ("公有".equals(status) || "丢弃".equals(status))){
+            //都需要将模板关联的考题设置为公有
+            changeQuestionPublicStatus(template.getQuestion1());
+            changeQuestionPublicStatus(template.getQuestion2());
+            changeQuestionPublicStatus(template.getQuestion3());
+            changeQuestionPublicStatus(template.getQuestion4());
+            changeQuestionPublicStatus(template.getQuestion5());
+        }
+
+    }
+
+    private void changeQuestionPublicStatus(String questionStr){
+        String[] array = questionStr.split(CommonData.SPLIT_SEPARATOR);
+        for(int i=1;i<array.length;i++){
+            String qid = array[i];
+            Question question = new Question();
+            question.setId(Long.valueOf(qid));
+            question.setStatus("公有");
+            questionMapper.updateByPrimaryKeySelective(question);
+        }
     }
 
     @Override
