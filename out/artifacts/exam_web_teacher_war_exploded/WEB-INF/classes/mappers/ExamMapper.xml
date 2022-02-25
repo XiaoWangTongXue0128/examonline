@@ -206,7 +206,6 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
 
-
   <select id="find" resultMap="examMap">
     select
       <include refid="Base_Column_List"></include>

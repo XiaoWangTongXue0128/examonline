@@ -655,7 +655,7 @@ exam.toSetStatus1 = function(id,ev){
     div.html(`
         <a class="btn btn-link" onclick="exam.toGeneratePage(${id})"><span class="glyphicon glyphicon-duplicate"></span> 生成考卷</a>
         <a class="btn btn-link" onclick="exam.toRemovePage(${id})"><span class="glyphicon glyphicon-trash"></span> 删除考卷</a>
-        <a class="btn btn-link" onclick="exam.toSetShare(${id})"><span class="glyphicon glyphicon-share"></span> 发布考试</a>
+        <a class="btn btn-link" onclick="exam.toReleaseExam(${id})"><span class="glyphicon glyphicon-share"></span> 发布考试</a>
         <a class="btn btn-link" onclick="exam.toRemoveExam(${id})"><span class="glyphicon glyphicon-remove-circle"></span> 删除考试</a>
     `);
 
@@ -739,8 +739,30 @@ exam.toRemoveExam = function(id){
     $.post('exam/removeExam',{id:id},function(f){
         if(f == true){
             alert('考试信息删除成功') ;
+            //刷新表格
+            exam.flushExamGrid();
         }else{
             alert('当前状态，考试信息无法删除') ;
+        }
+    });
+}
+
+exam.flushExamGrid = function(){
+    var pageNo = $('.pagination .active').text().trim();
+    exam.toQuery(pageNo);
+}
+
+exam.toReleaseExam = function(id){
+    if(!confirm('考试信息发布后不能再修改，是否确认发布?')){
+        return ;
+    }
+    $.post('exam/releaseExam',{id:id},function(f){
+        if(f == true){
+            alert('考试信息发布成功') ;
+            //刷新表格
+            exam.flushExamGrid();
+        }else{
+            alert('还未生成考卷，考试信息发布失败') ;
         }
     });
 }

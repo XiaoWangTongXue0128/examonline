@@ -42,7 +42,7 @@
 
                 <label>关联模板：</label>
                 <input type="hidden" id="fill-form-template-id" th:value="${template!=null?template.id:''}" />
-                <input class="form-control" readonly="readonly" id="fill-form-template-name" th:value="${template!=null?template.name:''}" />
+                <input class="form-control" readonly="readonly" id="fill-form-template-name" th:value="${template!=null?template.name:''}" style="width:250px;"/>
                 <a href="javascript:exam.toSelectTemplate()" class="btn btn-link">关联模板</a>
                 <a href="javascript:exam.toShowTemplateDetail()" class="btn btn-link">模板详情</a>
 
@@ -52,11 +52,11 @@
                 <label>填写考试区间：<input type="radio" name="fill-form-time" value="1" checked onclick="exam.selectTime(1)" /></label>
                 <div>
                     <label for="fill-form-start-time">开始时间：</label>
-                    <input type="datetime-local" class="form-control" id="fill-form-start-time" th:value="${exam.startTime==null?'':#dates.format(exam.startTime,'yyyy-MM-dd')+'T'+#dates.format(exam.startTime,'HH:mm')}" />
+                    <input type="datetime-local" class="form-control" id="fill-form-start-time" th:value="${exam.startTime==null?'':#dates.format(exam.startTime,'yyyy-MM-dd')+'T'+#dates.format(exam.startTime,'HH:mm')}"  style="width:250px;"/>
                 </div>
                 <div>
                     <label for="fill-form-end-time">结束时间：</label>
-                    <input type="datetime-local" class="form-control" id="fill-form-end-time" th:value="${exam.endTime==null?'':#dates.format(exam.endTime,'yyyy-MM-dd')+'T'+#dates.format(exam.endTime,'HH:mm')}" />
+                    <input type="datetime-local" class="form-control" id="fill-form-end-time" th:value="${exam.endTime==null?'':#dates.format(exam.endTime,'yyyy-MM-dd')+'T'+#dates.format(exam.endTime,'HH:mm')}"  style="width:250px;"/>
                 </div>
             </div>
 
@@ -64,7 +64,7 @@
                 <label>填写考试时长：<input type="radio" name="fill-form-time" value="2" onclick="exam.selectTime(2)" /></label>
                 <div>
                     <label for="fill-form-duration">考试时长：</label>
-                    <select id="fill-form-duration" class="form-control" disabled >
+                    <select id="fill-form-duration" class="form-control" disabled  style="width:250px;">
                         <option value="30">30分钟</option>
                         <option value="45">45分钟</option>
                         <option value="60">60分钟</option>

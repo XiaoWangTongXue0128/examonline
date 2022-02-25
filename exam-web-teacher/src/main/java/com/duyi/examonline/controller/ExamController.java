@@ -790,4 +790,19 @@ public class ExamController extends BaseController {
     public boolean removeExam(Long id){
         return examService.removeExam(id);
     }
+
+
+    @RequestMapping("/releaseExam")
+    @ResponseBody
+    public boolean releaseExam(Long id){
+        if(!examService.isPageExist(id)){
+            //不存在试卷，不能发布考试
+            return false ;
+        }
+
+        examService.releaseExam(id);
+
+        return true ;
+    }
+
 }

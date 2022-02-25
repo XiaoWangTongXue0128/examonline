@@ -48,4 +48,6 @@ public interface ExamService {
     boolean removePage(Long id) ;
 
     boolean removeExam(Long id) ;
+
+    void releaseExam(Long id) ;
 }

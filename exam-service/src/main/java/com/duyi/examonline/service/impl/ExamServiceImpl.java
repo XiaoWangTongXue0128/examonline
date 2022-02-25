@@ -913,4 +913,13 @@ public class ExamServiceImpl implements ExamService {
             file.delete();
         }
     }
+
+
+    @Override
+    public void releaseExam(Long id) {
+        Exam exam = new Exam();
+        exam.setId(id);
+        exam.setStatus("未考试");
+        examMapper.updateByPrimaryKeySelective(exam);
+    }
 }
