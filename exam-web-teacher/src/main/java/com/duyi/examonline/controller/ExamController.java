@@ -779,4 +779,15 @@ public class ExamController extends BaseController {
         return true ;
     }
 
+    @RequestMapping("/removePage")
+    @ResponseBody
+    public boolean removePage(Long id){
+      return examService.removePage(id);
+    }
+
+    @RequestMapping("/removeExam")
+    @ResponseBody
+    public boolean removeExam(Long id){
+        return examService.removeExam(id);
+    }
 }

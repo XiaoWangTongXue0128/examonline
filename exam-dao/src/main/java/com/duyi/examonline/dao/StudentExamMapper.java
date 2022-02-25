@@ -31,4 +31,8 @@ public interface StudentExamMapper {
     int findPagePathCount(Long examId);
 
     void updatePagePath(@Param("examId") Long examId,@Param("studentId") Long studentId,@Param("pagePath") String pagePath);
+
+    void removePagePath(Long examId) ;
+
+    void removeRefStudentsByExam(Long examId);
 }

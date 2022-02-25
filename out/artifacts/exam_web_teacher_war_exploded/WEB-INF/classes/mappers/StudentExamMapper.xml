@@ -353,4 +353,12 @@
         and student_id = #{studentId}
       </if>
   </update>
+
+  <update id="removePagePath">
+    update t_student_exam set page_path = null where exam_id = #{examId}
+  </update>
+
+  <delete id="removeRefStudentsByExam">
+    delete from t_student_exam where exam_id = #{examId}
+  </delete>
 </mapper>

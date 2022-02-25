@@ -44,4 +44,8 @@ public interface ExamService {
     boolean isPageExist(Long id);
 
     void generatePage(Long id) ;
+
+    boolean removePage(Long id) ;
+
+    boolean removeExam(Long id) ;
 }

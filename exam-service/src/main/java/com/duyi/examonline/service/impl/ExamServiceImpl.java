@@ -293,7 +293,6 @@ public class ExamServiceImpl implements ExamService {
 
     }
 
-
     private static List<Question> questions11 ;
     private static List<Question> questions12 ;
     private static List<Question> questions13 ;
@@ -867,6 +866,51 @@ public class ExamServiceImpl implements ExamService {
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+
+    @Override
+    public boolean removePage(Long id) {
+        Exam exam = examMapper.selectByPrimaryKey(id);
+        if(!"未发布".equals(exam.getStatus())){
+            return false ;
+        }
+        //删除试卷路径
+        studentExamMapper.removePagePath(id);
+        //删除试卷
+        String dirName = CommonData.PAGE_ROOT_PATH + File.separator + exam.getName() ;
+        File dir = new File(dirName) ;
+        removePage(dir);
+        return true ;
+    }
+
+    @Override
+    public boolean removeExam(Long id) {
+        Exam exam = examMapper.selectByPrimaryKey(id);
+        if(!"未发布".equals(exam.getStatus())){
+            return false ;
+        }
+        //删除考试信息
+        examMapper.deleteByPrimaryKey(id);
+        //删除考试关联的学生信息
+        studentExamMapper.removeRefStudentsByExam(id);
+        //删除考试试卷
+        String dirName = CommonData.PAGE_ROOT_PATH + File.separator + exam.getName() ;
+        File dir = new File(dirName) ;
+        removePage(dir);
+        dir.delete();
+
+        return true ;
+    }
+
+    private void removePage(File dir){
+        if(!dir.exists()){
+            return ;
+        }
+        File[] files = dir.listFiles();
+        for(File file : files){
+            file.delete();
         }
     }
 }

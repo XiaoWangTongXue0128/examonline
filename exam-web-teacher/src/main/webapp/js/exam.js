@@ -654,9 +654,9 @@ exam.toSetStatus1 = function(id,ev){
 
     div.html(`
         <a class="btn btn-link" onclick="exam.toGeneratePage(${id})"><span class="glyphicon glyphicon-duplicate"></span> 生成考卷</a>
-        <a class="btn btn-link" onclick="exam.toGeneratePage(${id})"><span class="glyphicon glyphicon-trash"></span> 删除考卷</a>
-        <a class="btn btn-link" onclick="template.toSetShare(${id})"><span class="glyphicon glyphicon-share"></span> 发布考试</a>
-        <a class="btn btn-link" onclick="template.toSetLeave(${id})"><span class="glyphicon glyphicon-remove-circle"></span> 删除考试</a>
+        <a class="btn btn-link" onclick="exam.toRemovePage(${id})"><span class="glyphicon glyphicon-trash"></span> 删除考卷</a>
+        <a class="btn btn-link" onclick="exam.toSetShare(${id})"><span class="glyphicon glyphicon-share"></span> 发布考试</a>
+        <a class="btn btn-link" onclick="exam.toRemoveExam(${id})"><span class="glyphicon glyphicon-remove-circle"></span> 删除考试</a>
     `);
 
     var timer ;
@@ -687,7 +687,7 @@ exam.toGeneratePage = function(id){
         position:'absolute',
         left:0,
         top:0,
-        background:'#ccc',
+        background:'#000',
         zIndex:999999,
         opacity:0.5
     });
@@ -703,9 +703,8 @@ exam.toGeneratePage = function(id){
     var width = 0;
     var timer = setInterval(function(){
         $('#exam-progress div').css('width',width+'%');
-        width = width>=100?0:width+=10 ;
-    },100);
-
+        width = width>=100?0:width+=5 ;
+    },50);
     $.post('exam/generatePage',{id:id},function(f){
         if(f == true){
             alert('考卷生成完毕') ;
@@ -716,6 +715,32 @@ exam.toGeneratePage = function(id){
         clearInterval(timer);
         bg.remove();
         $('#exam-progress div').css('width','0');
-        ('#exam-progress').css({display:'none'});
+        $('#exam-progress').css({display:'none'});
+    });
+}
+
+exam.toRemovePage = function(id){
+    if(!confirm('是否确认删除考卷?')){
+        return ;
+    }
+    $.post('exam/removePage',{id:id},function(f){
+        if(f == true){
+            alert('考卷删除成功') ;
+        }else{
+            alert('当前状态，考卷无法删除') ;
+        }
+    });
+}
+
+exam.toRemoveExam = function(id){
+    if(!confirm('是否确认删除此次考试信息?')){
+        return ;
+    }
+    $.post('exam/removeExam',{id:id},function(f){
+        if(f == true){
+            alert('考试信息删除成功') ;
+        }else{
+            alert('当前状态，考试信息无法删除') ;
+        }
     });
 }
