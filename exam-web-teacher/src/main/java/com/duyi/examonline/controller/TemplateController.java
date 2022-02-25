@@ -625,41 +625,41 @@ public class TemplateController extends BaseController {
         List<String> courses = dictionaryService.findCourses();
         model.addAttribute("courses",courses) ;
 
+        if(template.getType().equals("静态模板")) {
+            //如果是静态模板，模板中存储着关联的考题信息
+            //只需要将这些考题信息存入session缓存，以后就都可以展示了
+            //要将vo中存储的题号，变成考题
+            List<QuestionVO> questions = new ArrayList<QuestionVO>();
+            List<Question> questionCache = (List<Question>) session.getAttribute(cacheKey);
+            if (questionCache != null && questionCache.size() > 0) {
+                //之前已经有缓存了
+                int index = 1;
+                for (Question question : questionCache) {
+                    QuestionVO questionVO = questionCast(question, index++);
+                    questions.add(questionVO);
+                }
+            } else {
+                //之前没有缓存，这是第一次
+                questionCache = new ArrayList<>();
+                session.setAttribute(cacheKey, questionCache);
+                List<Integer> qids = new ArrayList<>();
+                qids.addAll(vo.getQuestion1());
+                qids.addAll(vo.getQuestion2());
+                qids.addAll(vo.getQuestion3());
+                qids.addAll(vo.getQuestion4());
+                qids.addAll(vo.getQuestion5());
+                for (Integer qid : qids) {
+                    Question question = questionService.findById(qid.longValue());
+                    questionCache.add(question);
 
-        //如果是静态模板，模板中存储着关联的考题信息
-        //只需要将这些考题信息存入session缓存，以后就都可以展示了
-        //要将vo中存储的题号，变成考题
-        List<QuestionVO> questions = new ArrayList<QuestionVO>();
-        List<Question> questionCache = (List<Question>) session.getAttribute(cacheKey);
-        if(questionCache != null && questionCache.size() > 0){
-            //之前已经有缓存了
-            int index = 1 ;
-            for(Question question : questionCache){
-                QuestionVO questionVO = questionCast(question, index++);
-                questions.add(questionVO);
+                    //将question->questionVO 在面展示
+                    QuestionVO questionVO = questionCast(question, questionCache.size());
+                    questions.add(questionVO);
+                }
             }
-        }else{
-            //之前没有缓存，这是第一次
-            questionCache = new ArrayList<>();
-            session.setAttribute(cacheKey,questionCache);
-            List<Integer> qids = new ArrayList<>();
-            qids.addAll(vo.getQuestion1());
-            qids.addAll(vo.getQuestion2());
-            qids.addAll(vo.getQuestion3());
-            qids.addAll(vo.getQuestion4());
-            qids.addAll(vo.getQuestion5());
-            for(Integer qid : qids){
-                Question question = questionService.findById(qid.longValue());
-                questionCache.add(question);
 
-                //将question->questionVO 在面展示
-                QuestionVO questionVO = questionCast(question, questionCache.size());
-                questions.add(questionVO);
-            }
+            model.addAttribute("questions", questions);
         }
-
-
-        model.addAttribute("questions",questions);
 
         return "template/edit";
     }

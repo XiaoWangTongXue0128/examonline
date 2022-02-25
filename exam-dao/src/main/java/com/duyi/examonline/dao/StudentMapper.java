@@ -49,4 +49,6 @@ public interface StudentMapper {
     List<Map<String,Object>> findUnbindStudents(@Param("className")String className,@Param("array")String[] sidBindArray) ;
 
     String findClassAllStudentIds(String className) ;
+
+    List<Student> findByExam(Long examId) ;
 }

@@ -11,10 +11,10 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 public class ExamServiceImpl implements ExamService {
@@ -234,6 +234,557 @@ public class ExamServiceImpl implements ExamService {
 
         }else{
             //动态模板考试题处理
+            List<Student> students = studentMapper.findByExam(exam.getId());
+            int threadCount = 5 ;
+            if(students.size() >= threadCount){
+                //利用10个线程
+                //先分组
+                List<List<Student>> studentsAll = new ArrayList<>();
+                for(int i=0;i<threadCount;i++){
+                    studentsAll.add(new ArrayList<Student>());
+                }
+                int index = 0 ;
+                for(Student student : students){
+                    studentsAll.get(index).add(student);
+                    index = index==threadCount-1?0:++index;
+                }
+                for(int i=0;i<threadCount;i++){
+                    new Thread(new DynamicPageGenerator(dir,studentsAll.get(i),template,exam)).start();
+                }
+            }else{
+                //利用1个线程
+                new Thread(new DynamicPageGenerator(dir,students,template,exam)).start();
+            }
+        }
+
+    }
+
+
+    private static List<Question> questions11 ;
+    private static List<Question> questions12 ;
+    private static List<Question> questions13 ;
+    private static List<Question> questions21 ;
+    private static List<Question> questions22 ;
+    private static List<Question> questions23 ;
+    private static List<Question> questions31 ;
+    private static List<Question> questions32 ;
+    private static List<Question> questions33 ;
+    private static List<Question> questions41 ;
+    private static List<Question> questions42 ;
+    private static List<Question> questions43 ;
+    private static List<Question> questions51 ;
+    private static List<Question> questions52 ;
+    private static List<Question> questions53 ;
+    /**
+     * 内部类，线程类
+     * 利用多线程完成动态试卷的生成
+     */
+    private class DynamicPageGenerator implements Runnable{
+        File dir ;
+        List<Student> students  ;
+        Template template ;
+        Exam exam ;
+
+        public DynamicPageGenerator(File dir,List<Student> students, Template template,Exam exam) {
+            this.dir = dir ;
+            this.students = students;
+            this.template = template;
+            this.exam = exam ;
+        }
+
+        private Random random = new Random();
+        Set<Integer> checkbox = new HashSet<>();
+        @Override
+        public void run() {
+            for(Student student : students){
+                //装载当前学生的考题
+                List<Question> questionList = new ArrayList<>();
+
+                //单选题 2}-|-{2}-|-{2}-|-{3
+                {
+                    String questionStr = template.getQuestion1();
+                    String[] array = questionStr.split(CommonData.SPLIT_SEPARATOR);
+                    String score = array[0];
+                    int count1 = Integer.valueOf(array[1]);
+                    int count2 = Integer.valueOf(array[2]);
+                    int count3 = Integer.valueOf(array[3]);
+                    if (count1 > 0) {
+                        //先获得所有的指定课程的简单单选题
+                        //此时确保10个线程只会获取一次缓存信息
+                        if (questions11 == null) {
+                            synchronized ("dmc11") {
+                                if (questions11 == null) {
+                                    questions11 = questionMapper.findByTypeAndStatusAndCourse("单选题", "简单", template.getYl1());
+                                }
+                            }
+                        }
+                        int count = questions11.size();
+                        int _count = 0; //抽取考题的数量
+                        while (_count < count1) {
+                            int i;
+                            do {
+                                i = random.nextInt(count);// [0,count)
+                            } while (checkbox.contains(i));
+
+                            Question question = questions11.get(i);
+                            question.setYl4(score);
+                            questionList.add(question);
+                            checkbox.add(i);
+                            _count++;
+                        }
+                        checkbox.clear();
+                    }
+                    if (count2 > 0) {
+                        //先获得所有的指定课程的中等单选题
+                        //此时确保10个线程只会获取一次缓存信息
+                        if (questions12 == null) {
+                            synchronized ("dmc12") {
+                                if (questions12 == null) {
+                                    questions12 = questionMapper.findByTypeAndStatusAndCourse("单选题", "中等", template.getYl1());
+                                }
+                            }
+                        }
+                        int count = questions12.size();
+                        int _count = 0; //抽取考题的数量
+
+                        while (_count < count2) {
+                            int i;
+                            do {
+                                i = random.nextInt(count);// [0,count)
+                            } while (checkbox.contains(i));
+
+                            Question question = questions12.get(i);
+                            questionList.add(question);
+                            question.setYl4(score);
+                            checkbox.add(i);
+                            _count++;
+                        }
+                        checkbox.clear();
+                    }
+                    if (count3 > 0) {
+                        //先获得所有的指定课程的困难单选题
+                        //此时确保10个线程只会获取一次缓存信息
+                        if (questions13 == null) {
+                            synchronized ("dmc13") {
+                                if (questions13 == null) {
+                                    questions13 = questionMapper.findByTypeAndStatusAndCourse("单选题", "困难", template.getYl1());
+                                }
+                            }
+                        }
+                        int count = questions13.size();
+                        int _count = 0; //抽取考题的数量
+
+                        while (_count < count3) {
+                            int i;
+                            do {
+                                i = random.nextInt(count);// [0,count)
+                            } while (checkbox.contains(i));
+
+                            Question question = questions13.get(i);
+                            questionList.add(question);
+                            question.setYl4(score);
+                            checkbox.add(i);
+                            _count++;
+                        }
+                        checkbox.clear();
+                    }
+                }
+                //==================================================
+                //多选题 2}-|-{2}-|-{2}-|-{3
+                {
+                    String questionStr = template.getQuestion2();
+                    String[] array = questionStr.split(CommonData.SPLIT_SEPARATOR);
+                    String score = array[0];
+                    int count1 = Integer.valueOf(array[1]);
+                    int count2 = Integer.valueOf(array[2]);
+                    int count3 = Integer.valueOf(array[3]);
+                    if (count1 > 0) {
+                        //先获得所有的指定课程的简单单选题
+                        //此时确保10个线程只会获取一次缓存信息
+                        if (questions21 == null) {
+                            synchronized ("dmc21") {
+                                if (questions21 == null) {
+                                    questions21 = questionMapper.findByTypeAndStatusAndCourse("多选题", "简单", template.getYl1());
+                                }
+                            }
+                        }
+                        int count = questions21.size();
+                        int _count = 0; //抽取考题的数量
+                        while (_count < count1) {
+                            int i;
+                            do {
+                                i = random.nextInt(count);// [0,count)
+                            } while (checkbox.contains(i));
+
+                            Question question = questions21.get(i);
+                            question.setYl4(score);
+                            questionList.add(question);
+                            checkbox.add(i);
+                            _count++;
+                        }
+                        checkbox.clear();
+                    }
+                    if (count2 > 0) {
+                        //先获得所有的指定课程的中等单选题
+                        //此时确保10个线程只会获取一次缓存信息
+                        if (questions22 == null) {
+                            synchronized ("dmc22") {
+                                if (questions22 == null) {
+                                    questions22 = questionMapper.findByTypeAndStatusAndCourse("多选题", "中等", template.getYl1());
+                                }
+                            }
+                        }
+                        int count = questions22.size();
+                        int _count = 0; //抽取考题的数量
+
+                        while (_count < count2) {
+                            int i;
+                            do {
+                                i = random.nextInt(count);// [0,count)
+                            } while (checkbox.contains(i));
+
+                            Question question = questions22.get(i);
+                            questionList.add(question);
+                            question.setYl4(score);
+                            checkbox.add(i);
+                            _count++;
+                        }
+                        checkbox.clear();
+                    }
+                    if (count3 > 0) {
+                        //先获得所有的指定课程的困难单选题
+                        //此时确保10个线程只会获取一次缓存信息
+                        if (questions23 == null) {
+                            synchronized ("dmc23") {
+                                if (questions23 == null) {
+                                    questions23 = questionMapper.findByTypeAndStatusAndCourse("多选题", "困难", template.getYl1());
+                                }
+                            }
+                        }
+                        int count = questions23.size();
+                        int _count = 0; //抽取考题的数量
+
+                        while (_count < count3) {
+                            int i;
+                            do {
+                                i = random.nextInt(count);// [0,count)
+                            } while (checkbox.contains(i));
+
+                            Question question = questions23.get(i);
+                            questionList.add(question);
+                            question.setYl4(score);
+                            checkbox.add(i);
+                            _count++;
+                        }
+                        checkbox.clear();
+                    }
+                }
+                //==================================================
+                //判断题 2}-|-{2}-|-{2}-|-{3
+                {
+                    String questionStr = template.getQuestion3();
+                    String[] array = questionStr.split(CommonData.SPLIT_SEPARATOR);
+                    String score = array[0];
+                    int count1 = Integer.valueOf(array[1]);
+                    int count2 = Integer.valueOf(array[2]);
+                    int count3 = Integer.valueOf(array[3]);
+                    if (count1 > 0) {
+                        //先获得所有的指定课程的简单单选题
+                        //此时确保10个线程只会获取一次缓存信息
+                        if (questions31 == null) {
+                            synchronized ("dmc31") {
+                                if (questions31 == null) {
+                                    questions31 = questionMapper.findByTypeAndStatusAndCourse("判断题", "简单", template.getYl1());
+                                }
+                            }
+                        }
+                        int count = questions31.size();
+                        int _count = 0; //抽取考题的数量
+                        while (_count < count1) {
+                            int i;
+                            do {
+                                i = random.nextInt(count);// [0,count)
+                            } while (checkbox.contains(i));
+
+                            Question question = questions31.get(i);
+                            question.setYl4(score);
+                            questionList.add(question);
+                            checkbox.add(i);
+                            _count++;
+                        }
+                        checkbox.clear();
+                    }
+                    if (count2 > 0) {
+                        //先获得所有的指定课程的中等单选题
+                        //此时确保10个线程只会获取一次缓存信息
+                        if (questions32 == null) {
+                            synchronized ("dmc32") {
+                                if (questions32 == null) {
+                                    questions32 = questionMapper.findByTypeAndStatusAndCourse("判断题", "中等", template.getYl1());
+                                }
+                            }
+                        }
+                        int count = questions32.size();
+                        int _count = 0; //抽取考题的数量
+
+                        while (_count < count2) {
+                            int i;
+                            do {
+                                i = random.nextInt(count);// [0,count)
+                            } while (checkbox.contains(i));
+
+                            Question question = questions32.get(i);
+                            questionList.add(question);
+                            question.setYl4(score);
+                            checkbox.add(i);
+                            _count++;
+                        }
+                        checkbox.clear();
+                    }
+                    if (count3 > 0) {
+                        //先获得所有的指定课程的困难单选题
+                        //此时确保10个线程只会获取一次缓存信息
+                        if (questions33 == null) {
+                            synchronized ("dmc33") {
+                                if (questions33 == null) {
+                                    questions33 = questionMapper.findByTypeAndStatusAndCourse("判断题", "困难", template.getYl1());
+                                }
+                            }
+                        }
+                        int count = questions33.size();
+                        int _count = 0; //抽取考题的数量
+
+                        while (_count < count3) {
+                            int i;
+                            do {
+                                i = random.nextInt(count);// [0,count)
+                            } while (checkbox.contains(i));
+
+                            Question question = questions33.get(i);
+                            questionList.add(question);
+                            question.setYl4(score);
+                            checkbox.add(i);
+                            _count++;
+                        }
+                        checkbox.clear();
+                    }
+                }
+                //==================================================
+                //填空题 2}-|-{2}-|-{2}-|-{3
+                {
+                    String questionStr = template.getQuestion4();
+                    String[] array = questionStr.split(CommonData.SPLIT_SEPARATOR);
+                    String score = array[0];
+                    int count1 = Integer.valueOf(array[1]);
+                    int count2 = Integer.valueOf(array[2]);
+                    int count3 = Integer.valueOf(array[3]);
+                    if (count1 > 0) {
+                        //先获得所有的指定课程的简单单选题
+                        //此时确保10个线程只会获取一次缓存信息
+                        if (questions41 == null) {
+                            synchronized ("dmc41") {
+                                if (questions41 == null) {
+                                    questions41 = questionMapper.findByTypeAndStatusAndCourse("填空题", "简单", template.getYl1());
+                                }
+                            }
+                        }
+                        int count = questions41.size();
+                        int _count = 0; //抽取考题的数量
+                        while (_count < count1) {
+                            int i;
+                            do {
+                                i = random.nextInt(count);// [0,count)
+                            } while (checkbox.contains(i));
+
+                            Question question = questions41.get(i);
+                            //检测当前这道题空的数量
+                            String answerStr = question.getAnswer();
+                            String[] answerArray = answerStr.split(CommonData.SPLIT_SEPARATOR);
+                            if(answerArray.length <= (count1 - _count)){
+                                //此时这道题是可用的
+                                question.setYl4(score);
+                                questionList.add(question);
+                                _count+=answerArray.length;
+                            }
+
+                            checkbox.add(i);
+
+
+                        }
+                        checkbox.clear();
+                    }
+                    if (count2 > 0) {
+                        //先获得所有的指定课程的中等单选题
+                        //此时确保10个线程只会获取一次缓存信息
+                        if (questions42 == null) {
+                            synchronized ("dmc42") {
+                                if (questions42 == null) {
+                                    questions42 = questionMapper.findByTypeAndStatusAndCourse("填空题", "中等", template.getYl1());
+                                }
+                            }
+                        }
+                        int count = questions42.size();
+                        int _count = 0; //抽取考题的数量
+
+                        while (_count < count2) {
+                            int i;
+                            do {
+                                i = random.nextInt(count);// [0,count)
+                            } while (checkbox.contains(i));
+
+                            Question question = questions42.get(i);
+                            //检测当前这道题空的数量
+                            String answerStr = question.getAnswer();
+                            String[] answerArray = answerStr.split(CommonData.SPLIT_SEPARATOR);
+                            if(answerArray.length <= (count2 - _count)){
+                                //此时这道题是可用的
+                                question.setYl4(score);
+                                questionList.add(question);
+                                _count+=answerArray.length;
+                            }
+
+                            checkbox.add(i);
+                        }
+                        checkbox.clear();
+                    }
+                    if (count3 > 0) {
+                        //先获得所有的指定课程的困难单选题
+                        //此时确保10个线程只会获取一次缓存信息
+                        if (questions43 == null) {
+                            synchronized ("dmc43") {
+                                if (questions43 == null) {
+                                    questions43 = questionMapper.findByTypeAndStatusAndCourse("填空题", "困难", template.getYl1());
+                                }
+                            }
+                        }
+                        int count = questions43.size();
+                        int _count = 0; //抽取考题的数量
+
+                        while (_count < count3) {
+                            int i;
+                            do {
+                                i = random.nextInt(count);// [0,count)
+                            } while (checkbox.contains(i));
+
+                            Question question = questions43.get(i);
+                            //检测当前这道题空的数量
+                            String answerStr = question.getAnswer();
+                            String[] answerArray = answerStr.split(CommonData.SPLIT_SEPARATOR);
+                            if(answerArray.length <= (count3 - _count)){
+                                //此时这道题是可用的
+                                question.setYl4(score);
+                                questionList.add(question);
+                                _count+=answerArray.length;
+                            }
+
+                            checkbox.add(i);
+                        }
+                        checkbox.clear();
+                    }
+                }
+                //==================================================
+                //综合题 2}-|-{2}-|-{2}-|-{3
+                {
+                    String questionStr = template.getQuestion5();
+                    String[] array = questionStr.split(CommonData.SPLIT_SEPARATOR);
+                    String score = array[0];
+                    int count1 = Integer.valueOf(array[1]);
+                    int count2 = Integer.valueOf(array[2]);
+                    int count3 = Integer.valueOf(array[3]);
+                    if (count1 > 0) {
+                        //先获得所有的指定课程的简单单选题
+                        //此时确保10个线程只会获取一次缓存信息
+                        if (questions51 == null) {
+                            synchronized ("dmc51") {
+                                if (questions51 == null) {
+                                    questions51 = questionMapper.findByTypeAndStatusAndCourse("综合题", "简单", template.getYl1());
+                                }
+                            }
+                        }
+                        int count = questions51.size();
+                        int _count = 0; //抽取考题的数量
+                        while (_count < count1) {
+                            int i;
+                            do {
+                                i = random.nextInt(count);// [0,count)
+                            } while (checkbox.contains(i));
+
+                            Question question = questions51.get(i);
+                            question.setYl4(score);
+                            questionList.add(question);
+                            checkbox.add(i);
+                            _count++;
+                        }
+                        checkbox.clear();
+                    }
+                    if (count2 > 0) {
+                        //先获得所有的指定课程的中等单选题
+                        //此时确保10个线程只会获取一次缓存信息
+                        if (questions52 == null) {
+                            synchronized ("dmc52") {
+                                if (questions52 == null) {
+                                    questions52 = questionMapper.findByTypeAndStatusAndCourse("综合题", "中等", template.getYl1());
+                                }
+                            }
+                        }
+                        int count = questions52.size();
+                        int _count = 0; //抽取考题的数量
+
+                        while (_count < count2) {
+                            int i;
+                            do {
+                                i = random.nextInt(count);// [0,count)
+                            } while (checkbox.contains(i));
+
+                            Question question = questions52.get(i);
+                            questionList.add(question);
+                            question.setYl4(score);
+                            checkbox.add(i);
+                            _count++;
+                        }
+                        checkbox.clear();
+                    }
+                    if (count3 > 0) {
+                        //先获得所有的指定课程的困难单选题
+                        //此时确保10个线程只会获取一次缓存信息
+                        if (questions53 == null) {
+                            synchronized ("dmc53") {
+                                if (questions53 == null) {
+                                    questions53 = questionMapper.findByTypeAndStatusAndCourse("综合题", "困难", template.getYl1());
+                                }
+                            }
+                        }
+                        int count = questions53.size();
+                        int _count = 0; //抽取考题的数量
+
+                        while (_count < count3) {
+                            int i;
+                            do {
+                                i = random.nextInt(count);// [0,count)
+                            } while (checkbox.contains(i));
+
+                            Question question = questions53.get(i);
+                            questionList.add(question);
+                            question.setYl4(score);
+                            checkbox.add(i);
+                            _count++;
+                        }
+                        checkbox.clear();
+                    }
+                }
+
+                //代码至此，一个学生的考题就抽取完毕了
+                String fileName = student.getCode()+"_"+student.getSname()+".txt";
+                File pageFile = new File(dir,fileName);
+                ExamServiceImpl.this.writePage(pageFile,questionList);
+
+                //同时需要将路径更新至数据库
+                //f:/z/xxxxx/page.txt
+                String path = pageFile.getAbsolutePath() ;
+                // /xxxx/page.txt
+                path = path.replace(CommonData.PAGE_ROOT_PATH,"") ;
+                studentExamMapper.updatePagePath(exam.getId(),student.getId(),path);
+            }
         }
 
     }

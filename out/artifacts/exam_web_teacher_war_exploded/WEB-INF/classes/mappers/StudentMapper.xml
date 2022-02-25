@@ -372,4 +372,14 @@
     where
       concat(grade,'-',major,'-',class_no) = #{className}
   </select>
+
+  <select id="findByExam" resultMap="studentMap">
+    select
+      id,
+      code ,
+      sname
+    from
+      t_student s
+      inner join t_student_exam se on s.id = se.student_id and exam_id=#{examId}
+  </select>
 </mapper>

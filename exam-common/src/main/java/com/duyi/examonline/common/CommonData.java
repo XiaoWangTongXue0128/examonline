@@ -31,7 +31,7 @@ public interface CommonData {
 
     String DEFAULT_STUDENT_EXAM_STATUS = "未考试" ;
 
-    String PAGE_ROOT_PATH = "f"+ File.separator+"z" ;
+    String PAGE_ROOT_PATH = "f:"+ File.separator+"z" ;
 
     String STATIC_PAGE_NAME = "page.txt" ;
 

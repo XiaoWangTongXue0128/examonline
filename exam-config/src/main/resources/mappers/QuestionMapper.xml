@@ -213,5 +213,15 @@
   </update>
 
 
-
+  <select id="findByTypeAndStatusAndCourse" resultMap="questionMap">
+    select
+      <include refid="Base_Column_List"></include>
+    from
+      t_question
+    where
+      type = #{type}
+      and course = #{course}
+      and level = #{level}
+      and status = '公有'
+  </select>
 </mapper>

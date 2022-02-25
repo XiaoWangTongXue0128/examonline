@@ -1,6 +1,9 @@
 package com.duyi.examonline.dao;
 
 import com.duyi.examonline.domain.Question;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface QuestionMapper {
     int deleteByPrimaryKey(Long id);
@@ -16,4 +19,5 @@ public interface QuestionMapper {
     int updateByPrimaryKey(Question record);
 
 
+    List<Question> findByTypeAndStatusAndCourse(@Param("type")String type , @Param("level")String level,@Param("course")String course);
 }
