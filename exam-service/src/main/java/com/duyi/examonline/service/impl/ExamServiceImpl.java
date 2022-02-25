@@ -8,6 +8,8 @@ import com.duyi.examonline.domain.vo.PageVO;
 import com.duyi.examonline.service.ExamService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +17,12 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Service
 public class ExamServiceImpl implements ExamService {
+
+    Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private ExamMapper examMapper ;
@@ -234,6 +239,9 @@ public class ExamServiceImpl implements ExamService {
 
         }else{
             //动态模板考试题处理
+            log.info("============开始生成动态考卷=============");
+            ExecutorService executorService = Executors.newCachedThreadPool();
+            List<Future> submits = new ArrayList<>();
             List<Student> students = studentMapper.findByExam(exam.getId());
             int threadCount = 5 ;
             if(students.size() >= threadCount){
@@ -249,12 +257,38 @@ public class ExamServiceImpl implements ExamService {
                     index = index==threadCount-1?0:++index;
                 }
                 for(int i=0;i<threadCount;i++){
-                    new Thread(new DynamicPageGenerator(dir,studentsAll.get(i),template,exam)).start();
+                    //new Thread(new DynamicPageGenerator(dir,studentsAll.get(i),template,exam)).start();
+                    Future<?> submit = executorService.submit(new DynamicPageGenerator(dir, studentsAll.get(i), template, exam));
+                    submits.add(submit);
                 }
+
             }else{
                 //利用1个线程
-                new Thread(new DynamicPageGenerator(dir,students,template,exam)).start();
+                //new Thread(new DynamicPageGenerator(dir,students,template,exam)).start();
+                Future<?> submit = executorService.submit(new DynamicPageGenerator(dir, students, template, exam));
+                submits.add(submit);
             }
+
+            //业务线程实时监控子线程是否执行完毕。当都执行完毕时，再给与反馈
+            out:while(true){
+                for(Future submit : submits){
+                    if(submit.isDone()){
+                        continue ;
+                    }
+                    //发现有一个线程还没有执行完毕，其他线程是否执行完毕就无所谓了。
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    //等一小下，重新检查
+                    continue out ;
+                }
+                //完成了一次submit循环验证，证明所有的submit都执行完毕了
+                break ;
+            }
+            log.info("============动态考卷生成完毕=============");
+
         }
 
     }
@@ -784,6 +818,12 @@ public class ExamServiceImpl implements ExamService {
                 // /xxxx/page.txt
                 path = path.replace(CommonData.PAGE_ROOT_PATH,"") ;
                 studentExamMapper.updatePagePath(exam.getId(),student.getId(),path);
+
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
 

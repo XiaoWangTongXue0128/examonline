@@ -678,11 +678,44 @@ exam.toGeneratePage = function(id){
     if(!confirm('是否确认生成考卷')){
         return ;
     }
+    //开启进度条
+    var bg = $('<div>') ;
+    $('body').append(bg);
+    bg.css({
+        width:'100%',
+        height:'100%',
+        position:'absolute',
+        left:0,
+        top:0,
+        background:'#ccc',
+        zIndex:999999,
+        opacity:0.5
+    });
+    $('#exam-progress').css({
+        display:'block',
+        width:'60%',
+        position:'absolute',
+        zIndex:1000000,
+        left:'20%',
+        top:300
+    });
+
+    var width = 0;
+    var timer = setInterval(function(){
+        $('#exam-progress div').css('width',width+'%');
+        width = width>=100?0:width+=10 ;
+    },100);
+
     $.post('exam/generatePage',{id:id},function(f){
         if(f == true){
             alert('考卷生成完毕') ;
         }else{
             alert('考卷生成失败，考卷已存在') ;
         }
+        //结束进度条
+        clearInterval(timer);
+        bg.remove();
+        $('#exam-progress div').css('width','0');
+        ('#exam-progress').css({display:'none'});
     });
 }
