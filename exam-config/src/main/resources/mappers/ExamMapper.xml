@@ -238,6 +238,7 @@
 
   <select id="findByStudent" resultType="map">
     select
+      e.id examId,
       e.name,
       e.start_time startTime ,
       e.end_time endTime,
@@ -275,6 +276,13 @@
     </where>
 
   </select>
+
+
+  <update id="changeStatus">
+    update t_exam set status = #{status}
+    where
+      id = #{id}
+  </update>
 
 
 </mapper>

@@ -35,4 +35,8 @@ public interface StudentExamMapper {
     void removePagePath(Long examId) ;
 
     void removeRefStudentsByExam(Long examId);
+
+    StudentExam findStudentExamById(@Param("examId") Long examId , @Param("studentId") Long studentId) ;
+
+    void changeStatus(@Param("examId") Long examId , @Param("studentId") Long studentId,@Param("status") String status);
 }

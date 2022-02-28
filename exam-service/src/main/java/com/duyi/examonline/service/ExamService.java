@@ -2,6 +2,7 @@ package com.duyi.examonline.service;
 
 import com.duyi.examonline.domain.Exam;
 import com.duyi.examonline.domain.Student;
+import com.duyi.examonline.domain.StudentExam;
 import com.duyi.examonline.domain.vo.PageVO;
 
 import java.util.List;
@@ -54,8 +55,12 @@ public interface ExamService {
 
     /**
      * @param timeFlag 1 当天， 2 本周， 3 本月
-     * @return  List.Map{name , startTime,endTime,duration , state , status}
+     * @return  List.Map{examId , name , startTime,endTime,duration , state , status}
      */
     List<Map> findByStudent(Long sid , Integer timeFlag);
+
+    StudentExam findStudentExamById(Long studentId , Long examId) ;
+
+    void startExam(Long studentId , Long examId) ;
 
 }

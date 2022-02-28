@@ -24,4 +24,6 @@ public interface ExamMapper {
     List<Exam> find(Map condition) ;
 
     List<Map> findByStudent(@Param("sid")Long sid , @Param("timeFlag")Integer timeFlag);
+
+    void changeStatus(@Param("id")Long id , @Param("status")String status) ;
 }

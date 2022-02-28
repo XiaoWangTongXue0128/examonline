@@ -361,4 +361,20 @@
   <delete id="removeRefStudentsByExam">
     delete from t_student_exam where exam_id = #{examId}
   </delete>
+
+  <select id="findStudentExamById" resultMap="studentExamMap">
+    select
+      <include refid="Base_Column_List"></include>
+    from
+      t_student_exam
+    where
+      exam_id = #{examId} and student_id = #{studentId}
+  </select>
+
+  <update id="changeStatus">
+    update t_student_exam set status = #{status}
+    where
+      exam_id = #{examId} and student_id = #{studentId}
+  </update>
+
 </mapper>

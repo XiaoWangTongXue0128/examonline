@@ -927,4 +927,32 @@ public class ExamServiceImpl implements ExamService {
     public List<Map> findByStudent(Long sid , Integer timeFlag) {
         return examMapper.findByStudent(sid,timeFlag);
     }
+
+    @Override
+    public StudentExam findStudentExamById(Long studentId, Long examId) {
+        return studentExamMapper.findStudentExamById(examId,studentId);
+    }
+
+
+    //缓存考试的开始状态的变化
+    //key = flag + examId
+    private static Map<String,Integer> flagMap = new HashMap<>() ;
+    @Override
+    public void startExam(Long studentId, Long examId) {
+
+        studentExamMapper.changeStatus(examId,studentId,"考试中");
+
+        //还需要检测当前考试状态是否需要改变。
+        String key = "flag" + examId ;
+        Integer flag = flagMap.get(key);
+        if(flag == null || flag == 0){
+            //考试状态还没有改变
+            synchronized ("startExam") {
+                if(flag == null || flag == 0){
+                    examMapper.changeStatus(examId, "考试中");
+                    flagMap.put(key, 1);
+                }
+            }
+        }
+    }
 }

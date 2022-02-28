@@ -55,7 +55,7 @@
                             <td th:text="${exam.state}"></td>
                             <td th:text="${exam.status}"></td>
                             <td>
-                                <a href="">进入考试</a>
+                                <a th:href="|javascript:exam.enterExam(${exam.examId})|">进入考试</a>
                             </td>
                         </tr>
                     </th:block>
