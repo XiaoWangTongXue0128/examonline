@@ -151,5 +151,13 @@ public class StudentServiceImpl implements StudentService {
         return studentMapper.classCountByName(className) > 0;
     }
 
+    @Override
+    public Student findByName(String sname) {
+        return studentMapper.findByName(sname);
+    }
 
+    @Override
+    public void updatePwd(Long id, String pass) {
+        studentMapper.updatePwd(id,pass);
+    }
 }

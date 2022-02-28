@@ -107,7 +107,7 @@
                             </td>
                             <td>
                                 <span th:if="${exam.status=='未发布'}" class="label label-warning" th:oncontextmenu="return exam.toSetStatus1([[${exam.id}]])">未发布</span>
-                                <span th:if="${exam.status=='未考试'}" class="label label-success">未考试</span>
+                                <span th:if="${exam.status=='未考试'}" class="label label-success" th:oncontextmenu="return exam.toSetStatus2([[${exam.id}]])">未考试</span>
                                 <span th:if="${exam.status=='考试中'}" class="label label-info">考试中</span>
                                 <span th:if="${exam.status=='已完成'}" class="label label-danger">已完成</span>
                                 <span th:if="${exam.status=='丢弃'}" class="label label-default">丢弃</span>

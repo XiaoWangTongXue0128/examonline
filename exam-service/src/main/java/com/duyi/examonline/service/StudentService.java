@@ -77,4 +77,8 @@ public interface StudentService {
 
     boolean isExistClass(String className) ;
 
+
+    Student findByName(String sname) ;
+
+    void updatePwd(Long id , String pass) ;
 }

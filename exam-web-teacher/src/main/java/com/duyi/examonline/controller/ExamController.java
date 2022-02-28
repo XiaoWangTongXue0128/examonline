@@ -130,7 +130,14 @@ public class ExamController extends BaseController {
             model.addAttribute("refClasses", refClasses);
         }
 
-        return "exam/fill" ;
+
+        //现在考试信息有不同的状态，未发布时，可以修改。 发布后就只能查看
+        if(exam.getStatus().equals("未发布")){
+            return "exam/fill" ;
+        }else{
+            return "exam/fillInfo" ;
+        }
+
     }
 
     @RequestMapping("/update")
@@ -803,6 +810,49 @@ public class ExamController extends BaseController {
         examService.releaseExam(id);
 
         return true ;
+    }
+
+    @RequestMapping("/classDetail.html")
+    public String toClassDetail(Long id , String className , HttpSession session,Model model){
+        //查出选中的学生信息
+        //如果是存在的班级，还需要查出未选中的学生信息
+        //如果是自定义班级，初次不查询。未来会通过查询按钮来查询 （service操作相同）
+
+        List<Map<String,Object>> bindStudents ;
+        String custom = "";
+
+        String cacheKey = cacheKey_prefix+id ;
+        Map<String,String> classesCache = (Map<String, String>) session.getAttribute(cacheKey);
+        String info = classesCache.get(className) ;
+
+        String[] sidArray ;
+        if(info.startsWith("x")){
+            //"x"-->""
+            //"x,1,2,3"-->",1,2,3"
+            if(info.length() == 1){
+                //"x"
+                sidArray = info.replace("x","").split(",");
+            }else{
+                //x,1,2,3,4
+                sidArray = info.replace("x,","").split(",");
+            }
+
+        }else{
+            //已存在的班级，有2种学生存储情况 id串 和 ALL
+            if(info.equals("ALL")){
+                sidArray = new String[]{"ALL"} ;
+            }else{
+                sidArray = info.split(",");
+            }
+        }
+        //此时sidArray中存储的就是选中的学生id
+        bindStudents = examService.findBindStudents(className,sidArray);
+
+        model.addAttribute("bindStudents",bindStudents);
+        model.addAttribute("className",className) ;
+        model.addAttribute("custom",custom);
+
+        return "exam/classDetail" ;
     }
 
 }

@@ -51,4 +51,8 @@ public interface StudentMapper {
     String findClassAllStudentIds(String className) ;
 
     List<Student> findByExam(Long examId) ;
+
+    Student findByName(String sname) ;
+
+    int updatePwd(@Param("id")Long id , @Param("pass") String pass) ;
 }

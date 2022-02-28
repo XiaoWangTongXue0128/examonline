@@ -382,4 +382,18 @@
       t_student s
       inner join t_student_exam se on s.id = se.student_id and exam_id=#{examId}
   </select>
+
+
+  <select id="findByName" resultMap="studentMap">
+    select
+      <include refid="Base_Column_List"></include>
+    from
+      t_student
+    where
+      sname = #{sname} or  mnemonic_code = #{sname} or code = #{sname}
+  </select>
+
+  <update id="updatePwd">
+    update t_student set pass=#{pass} , update_time=now() where id = #{id}
+  </update>
 </mapper>

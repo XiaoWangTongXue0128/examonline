@@ -766,3 +766,58 @@ exam.toReleaseExam = function(id){
         }
     });
 }
+
+exam.toShowClassDetail = function(className){
+    var param = {
+        id : $('#fill-form-id').val(),
+        className:className
+    }
+    $.post('exam/classDetail.html',param,function(view){
+        main.showLgDialog({
+            title:'【'+className+'】学生关联信息',
+            content:view,
+            submit:function(){
+
+            }
+        });
+    });
+}
+
+//设置未发布状态下的 右键处理操作
+exam.toSetStatus2 = function(id,ev){
+    var e = ev || event ;
+    var x = e.clientX ;
+    var y = e.clientY ;
+    var div = $('<div></div>') ;
+    div.css({
+        position:'absolute',
+        width:130,
+        height:70,
+        left:x-5,
+        top:y-5,
+        background:'#fff',
+        border:'1px solid #ccc',
+        borderRadius:5,
+        boxShadow:'2px 2px 2px #ccc'
+    });
+    $('body').append(div);
+
+    div.html(`
+        <a class="btn btn-link" onclick="exam.toGeneratePage(${id})"><span class="glyphicon glyphicon-ban-circle"></span> 结束考试</a>
+        <a class="btn btn-link" onclick="exam.toRemovePage(${id})"><span class="glyphicon glyphicon-trash"></span> 丢弃考试</a>
+    `);
+
+    var timer ;
+    div.mouseleave(function(){
+        timer = window.setTimeout(function(){
+            div.remove();
+        },200);
+    });
+    div.mouseover(function(){
+        if(timer){
+            window.clearTimeout(timer) ;
+        }
+    });
+
+    return false ;
+}
