@@ -238,9 +238,9 @@
 
   <select id="findByStudent" resultType="map">
     select
-      e.ename,
-      e.startTime ,
-      e.endTime,
+      e.name,
+      e.start_time startTime ,
+      e.end_time endTime,
       e.duration,
       (case e.status when '未考试' then '未开始'
                     when '考试中' then '正在进行'

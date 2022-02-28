@@ -5,6 +5,7 @@
 <configuration>
     <settings>
         <setting name="logImpl" value="LOG4J2"/>
+        <setting name="callSettersOnNulls" value="true" />
     </settings>
 
 </configuration>
