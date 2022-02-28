@@ -236,4 +236,45 @@
     </where>
   </select>
 
+  <select id="findByStudent" resultType="map">
+    select
+      e.ename,
+      e.startTime ,
+      e.endTime,
+      e.duration,
+      (case e.status when '未考试' then '未开始'
+                    when '考试中' then '正在进行'
+                    else '已结束' end ) as state,
+      se.status
+    from
+      t_exam e
+      inner join
+        t_student_exam se on
+          e.id = se.exam_id
+          and se.student_id = #{sid}
+          and e.status != '未发布'
+          and e.status != '丢弃'
+    <where>
+        <choose>
+            <when test="timeFlag == 1">
+                and (duration is not null and se.status != '已完成' and e.status != '已完成')
+                or (duration is not null and se.status = '已完成' and se.end_time between concat(date_format(now(),'%Y-%m-%d'),' 00:00:00') and concat(date_format(now(),'%Y-%m-%d'),' 23:59:59') )
+                or (duration is null and e.start_time between concat(date_format(now(),'%Y-%m-%d'),' 00:00:00') and concat(date_format(now(),'%Y-%m-%d'),' 23:59:59') )
+            </when>
+            <when test="timeFlag == 2">
+                and (duration is not null and se.status != '已完成' and e.status != '已完成')
+                or (duration is not null and se.status = '已完成' and se.end_time between now() - interval weekday(now()) day and now() + interval 6-weekday(now()) day  )
+                or (duration is null and e.start_time between now() - interval weekday(now()) day and now() + interval 6-weekday(now()) day)
+            </when>
+            <when test="timeFlag == 3">
+                and (duration is not null and se.status != '已完成' and e.status != '已完成')
+                or (duration is not null and se.status = '已完成' and se.end_time between concat(date_format(now(),'%Y-%m'),'-01 00:00:00') and concat(date_format(now(),'%Y-%m'),'-31 23:59:59'))
+                or (duration is null and e.start_time between concat(date_format(now(),'%Y-%m'),'-01 00:00:00') and concat(date_format(now(),'%Y-%m'),'-31 23:59:59'))
+            </when>
+        </choose>
+    </where>
+
+  </select>
+
+
 </mapper>

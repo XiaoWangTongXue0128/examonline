@@ -922,4 +922,9 @@ public class ExamServiceImpl implements ExamService {
         exam.setStatus("未考试");
         examMapper.updateByPrimaryKeySelective(exam);
     }
+
+    @Override
+    public List<Map> findByStudent(Long sid , Integer timeFlag) {
+        return examMapper.findByStudent(sid,timeFlag);
+    }
 }

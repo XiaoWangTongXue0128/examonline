@@ -50,4 +50,12 @@ public interface ExamService {
     boolean removeExam(Long id) ;
 
     void releaseExam(Long id) ;
+
+
+    /**
+     * @param timeFlag 1 当天， 2 本周， 3 本月
+     * @return  List.Map{name , startTime,endTime,duration , state , status}
+     */
+    List<Map> findByStudent(Long sid , Integer timeFlag);
+
 }
