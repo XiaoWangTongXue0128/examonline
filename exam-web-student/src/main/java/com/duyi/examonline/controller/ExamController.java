@@ -107,6 +107,12 @@ public class ExamController extends BaseController {
         model.addAttribute("questions",questions);
         model.addAttribute("studentExam",studentExam);
 
+        //还需要更新一下学生考试开始时间
+        if(studentExam.getStartTime() == null) {
+            examService.updateStartTime(student.getId(), examId);
+            studentExam.setStartTime(new Date());
+        }
+
         return "exam/page" ;
     }
 

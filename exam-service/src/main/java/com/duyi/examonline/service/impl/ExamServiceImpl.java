@@ -955,4 +955,9 @@ public class ExamServiceImpl implements ExamService {
             }
         }
     }
+
+    @Override
+    public void updateStartTime(Long studentId, Long examId) {
+        studentExamMapper.updateStartTime(examId,studentId);
+    }
 }

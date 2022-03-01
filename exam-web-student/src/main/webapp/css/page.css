@@ -85,22 +85,33 @@
 }
 
 .page-question .page-option{
-    width:40px;
-    height:40px;
-    text-align:center;
-    line-height: 30px;
+    padding:5px 10px;
     border:1px solid #06f ;
     border-radius: 6px;
     cursor: default;
 }
 
 .page-question ul{
-    display:none;
+    --display:none;
 }
 
 .page-part-2 dd.active{
-    background:#ccc;
+    background:#5bc0de;
 }
+
+.page-part-2 dd.mark{
+    background: #f0ad4e;
+}
+
+.page-part-2 dd.complete{
+    background: #5cb85c;
+}
+
 .page-question ul.active{
     display:block;
+}
+
+.page-question .form-control{
+    width:150px;
+    margin-top:-8px;
 }

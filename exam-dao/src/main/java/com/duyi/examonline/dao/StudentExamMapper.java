@@ -39,4 +39,6 @@ public interface StudentExamMapper {
     StudentExam findStudentExamById(@Param("examId") Long examId , @Param("studentId") Long studentId) ;
 
     void changeStatus(@Param("examId") Long examId , @Param("studentId") Long studentId,@Param("status") String status);
+
+    void updateStartTime(@Param("examId") Long examId , @Param("studentId") Long studentId);
 }

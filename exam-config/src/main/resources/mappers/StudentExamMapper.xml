@@ -377,4 +377,10 @@
       exam_id = #{examId} and student_id = #{studentId}
   </update>
 
+  <update id="updateStartTime">
+    update t_student_exam set start_time = now()
+    where
+      exam_id = #{examId} and student_id = #{studentId}
+  </update>
+
 </mapper>

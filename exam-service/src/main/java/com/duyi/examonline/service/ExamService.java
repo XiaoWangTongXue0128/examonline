@@ -63,4 +63,6 @@ public interface ExamService {
 
     void startExam(Long studentId , Long examId) ;
 
+    void updateStartTime(Long studentId , Long examId) ;
+
 }
