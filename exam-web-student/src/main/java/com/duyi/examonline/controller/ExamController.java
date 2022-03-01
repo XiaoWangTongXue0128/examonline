@@ -129,15 +129,17 @@ public class ExamController extends BaseController {
             log.debug("page array : \r\n {}", Arrays.toString(array));
 
             int index = 0 ;
+            int no = 1 ;//题号
             QuestionVO question = null  ;
             for(String value : array){
                 if(index == 0){
                     //一道新的考题
                     question = new QuestionVO() ;
+                    question.setIndex(no++);
                     questions.add(question) ;
                     question.setType( value ) ;
                 }else if(index == 1){
-                    question.setSocre( Integer.valueOf(value) );
+                    question.setScore( Integer.valueOf(value) );
                 }else if(index == 2){
                     question.setSubject(value);
                 }else if(index == 3){

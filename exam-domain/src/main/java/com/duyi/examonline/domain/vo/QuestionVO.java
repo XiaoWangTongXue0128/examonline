@@ -18,7 +18,7 @@ public class QuestionVO implements Serializable {
 
     private List<String> answerList ;
 
-    private int socre ;
+    private int score ;
 
     public int getIndex() {
         return index;
@@ -60,13 +60,14 @@ public class QuestionVO implements Serializable {
         this.answerList = answerList;
     }
 
-    public int getSocre() {
-        return socre;
+    public int getScore() {
+        return score;
     }
 
-    public void setSocre(int socre) {
-        this.socre = socre;
+    public void setScore(int score) {
+        this.score = score;
     }
+
 
     public QuestionVO(int index, String type, String subject, List<String> optionList, List<String> answerList) {
         this.index = index;
@@ -76,13 +77,13 @@ public class QuestionVO implements Serializable {
         this.answerList = answerList;
     }
 
-    public QuestionVO(int index, String type, String subject, List<String> optionList, List<String> answerList, int socre) {
+    public QuestionVO(int index, String type, String subject, List<String> optionList, List<String> answerList, int score) {
         this.index = index;
         this.type = type;
         this.subject = subject;
         this.optionList = optionList;
         this.answerList = answerList;
-        this.socre = socre;
+        this.score = score;
     }
 
     public QuestionVO() {
