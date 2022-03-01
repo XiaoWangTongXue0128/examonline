@@ -191,3 +191,54 @@ page.question5Handle = function(){
         question5_editors.push(anwser_editor)
     });
 }
+
+page.startAnwserCacheTimer = function(){
+    setInterval(function(){
+        var sp = '}-|-{' ;
+        var answer1 = '' ;
+        var answer2 = '' ;
+        var answer3 = '' ;
+        var answer4 = '' ;
+        var answer5 = '' ;
+
+        var index =0 ;//存储综合题处理下标
+        $('.page-question ul').each(function(i,ul){
+            var ul = $(ul) ;
+            var typeStr = ul.children('li:eq(0)').text().trim();
+            if(typeStr.indexOf('单选题') != -1){
+                var value = $('.page-option.active',ul).attr('value');
+                value = value?value:'';
+                answer1 += value + sp;
+            }else if(typeStr.indexOf('多选题')!= -1){
+                $('.page-option.active',ul).each(function(i,span){
+                    var value = $(span).attr('value');
+                    value = value?value:'';
+                    answer2 += value +',' ;
+                });
+                answer2 += sp ;
+            }else if(typeStr.indexOf('判断题')!= -1){
+                var value = $('.page-option.active',ul).attr('value');
+                value = value?value:'';
+                answer3 += value + sp;
+            }else if(typeStr.indexOf('填空题')!= -1){
+                $('.question4-box',ul).each(function(i,input){
+                    var value = $(input).val();
+                    value = value?value:'';
+                    answer4 += value +',' ;
+                });
+                answer4 += sp ;
+            }else if(typeStr.indexOf('综合题')!= -1){
+                var value = question5_editors[index].txt.html();
+                value = value?value:'';
+                answer5 += value + sp ;
+            }
+        });
+
+        console.log(answer1);
+        console.log(answer2);
+        console.log(answer3);
+        console.log(answer4);
+        console.log(answer5);
+
+    },10000);
+}

@@ -62,7 +62,7 @@
                                 <li><div th:utext="${question.subject}"></div></li>
                                 <th:block th:if="${question.type=='单选题'}">
                                     <li class="row" th:each="option:${question.optionList}">
-                                        <div class="col-md-1"><span class="page-option" th:text="${T(com.duyi.examonline.common.CommonData).OPTION_STR.charAt(optionStat.index)}"></span></div>
+                                        <div class="col-md-1"><span class="page-option" th:value="${optionStat.index}" th:text="${T(com.duyi.examonline.common.CommonData).OPTION_STR.charAt(optionStat.index)}"></span></div>
                                         <div class="col-md-10">
                                             <div th:utext="${option}"></div>
                                         </div>
@@ -71,7 +71,7 @@
 
                                 <th:block th:if="${question.type=='多选题'}">
                                     <li class="row" th:each="option:${question.optionList}">
-                                        <div class="col-md-1"><span class="page-option" th:text="${T(com.duyi.examonline.common.CommonData).OPTION_STR.charAt(optionStat.index)}"></span></div>
+                                        <div class="col-md-1"><span class="page-option" th:value="${optionStat.index}" th:text="${T(com.duyi.examonline.common.CommonData).OPTION_STR.charAt(optionStat.index)}"></span></div>
                                         <div class="col-md-10">
                                             <div th:utext="${option}"></div>
                                         </div>
@@ -80,8 +80,8 @@
 
                                 <th:block th:if="${question.type=='判断题'}">
                                     <li class="row">
-                                        <div class="col-md-2"><span class="page-option">正确</span></div>
-                                        <div class="col-md-2"><span class="page-option">错误</span></div>
+                                        <div class="col-md-2"><span class="page-option" value="0">正确</span></div>
+                                        <div class="col-md-2"><span class="page-option" value="1">错误</span></div>
                                     </li>
                                 </th:block>
 
@@ -89,7 +89,7 @@
                                     <li class="row" th:each="answer:${question.answerList}">
                                         <div class="col-md-2"><span class="page-option" th:text="${'填空'+(answerStat.index+1)}"></span></div>
                                         <div class="col-md-10">
-                                            <input class="form-control"/>
+                                            <input class="form-control question4-box"/>
                                         </div>
                                     </li>
                                 </th:block>
@@ -120,6 +120,9 @@
 
                 //网页加载，初始化综合题文本编辑器
                 page.question5Handle()
+
+                //网页加载，开启一个定时器，轮询更新考试答案
+                page.startAnwserCacheTimer();
 
             </script>
         </div>
