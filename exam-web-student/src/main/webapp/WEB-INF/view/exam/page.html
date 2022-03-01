@@ -39,6 +39,11 @@
                             <dd th:text="${questionStat.index+1}" th:class="${questionStat.index==0?'active':''}" onclick="page.changeIndex(this)"></dd>
                         </th:block>
                     </dl>
+                    <div style="clear:both">
+                        <button class="btn btn-primary">
+                            <span></span> 交卷
+                        </button>
+                    </div>
                 </div>
                 <div class="page-part-3">
 
@@ -107,8 +112,15 @@
             </div>
 
             <script>
-                //页面初始化处理
+                //网页加载，初始化时间
                 page.timeHandle();
+
+                //网页加载，初始化选项点击操作
+                page.optionHandle();
+
+                //网页加载，初始化综合题文本编辑器
+                page.question5Handle()
+
             </script>
         </div>
 

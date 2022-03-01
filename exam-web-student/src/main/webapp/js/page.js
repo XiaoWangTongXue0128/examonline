@@ -161,3 +161,33 @@ page.changeIndex = function(dd){
     $('.page-question ul.active').removeClass('active');
     $('.page-question ul').eq(no).addClass('active');
 }
+
+page.optionHandle = function(){
+    $('.page-option').click(function(){
+        var span = $(this);
+        var ul = span.parent().parent().parent();
+        var typeStr = ul.children('li:eq(0)').text();
+        if(typeStr.indexOf('单选题') != -1 || typeStr.indexOf('判断题') != -1){
+            //点击的是单选题或判断题选项
+            $('.page-option.active',ul).removeClass('active');
+            span.addClass('active');
+
+        }else if(typeStr.indexOf('多选题')!=-1){
+            //点击多选题选项
+            span.toggleClass('active');
+        }else{
+            //点击填空题或综合题，选项误操作
+        }
+    });
+}
+
+//存储所有综合题答案的编辑器对象
+var question5_editors = [] ;
+page.question5Handle = function(){
+    $('.question5-box').each(function(i,div){
+        var anwser_editor = new E(div) ;
+        editorDefaultInit(anwser_editor) ;
+        anwser_editor.create() ;
+        question5_editors.push(anwser_editor)
+    });
+}
