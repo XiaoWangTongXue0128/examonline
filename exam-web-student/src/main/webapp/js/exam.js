@@ -30,6 +30,8 @@ exam.enterExam = function(examId){
         }
 
         alert('准备开始考试....') ;
-        //跳转考试页面了。
+
+        location.href='exam/page.html?examId='+examId ;
+
     });
 }

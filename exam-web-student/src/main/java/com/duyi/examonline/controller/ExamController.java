@@ -1,8 +1,11 @@
 package com.duyi.examonline.controller;
 
+import com.duyi.examonline.common.BaseController;
+import com.duyi.examonline.common.CommonData;
 import com.duyi.examonline.domain.Exam;
 import com.duyi.examonline.domain.Student;
 import com.duyi.examonline.domain.StudentExam;
+import com.duyi.examonline.domain.vo.QuestionVO;
 import com.duyi.examonline.service.ExamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,13 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 
 @Controller
 @RequestMapping("/exam")
-public class ExamController {
+public class ExamController extends BaseController {
 
     @Autowired
     private ExamService examService ;
@@ -82,5 +87,81 @@ public class ExamController {
         }
         return 1;
 
+    }
+
+    @RequestMapping("/page.html")
+    public String toPage(Long examId , HttpSession session,Model model){
+        //需要考试信息
+        Exam exam = examService.findById(examId);
+
+        //需要考生信息
+        Student student = (Student) session.getAttribute("loginStudent");
+
+        //需要试卷信息,读取文件，拆解文件内容，组成试题集合
+        StudentExam studentExam = examService.findStudentExamById(student.getId(), examId);
+        String pagePath = studentExam.getPagePath();
+        pagePath = CommonData.PAGE_ROOT_PATH + pagePath ;
+        List<QuestionVO> questions = readPage(pagePath);
+
+        model.addAttribute("exam",exam);
+        model.addAttribute("questions",questions);
+        model.addAttribute("studentExam",studentExam);
+
+        return "exam/page" ;
+    }
+
+    private List<QuestionVO> readPage(String pagePath){
+        List<QuestionVO> questions = new ArrayList<>();
+        try {
+
+            FileReader r = new FileReader(pagePath);
+            StringBuilder content = new StringBuilder( );
+            char[] cs = new char[0x100] ;
+            int length  ;
+            while( (length = r.read(cs)) != -1){
+                content.append(new String(cs,0,length));
+            }
+
+            log.debug("page info : \r\n {}" , content);
+
+            String[] array = content.toString().split(CommonData.QUESTION_OPTION_SEPARATOR);
+
+            log.debug("page array : \r\n {}", Arrays.toString(array));
+
+            int index = 0 ;
+            QuestionVO question = null  ;
+            for(String value : array){
+                if(index == 0){
+                    //一道新的考题
+                    question = new QuestionVO() ;
+                    questions.add(question) ;
+                    question.setType( value ) ;
+                }else if(index == 1){
+                    question.setSocre( Integer.valueOf(value) );
+                }else if(index == 2){
+                    question.setSubject(value);
+                }else if(index == 3){
+                    question.setOptionList( Arrays.asList( value.split(CommonData.SPLIT_SEPARATOR)) );
+                }else if(index == 4){
+                    //value是答案
+                    question.setAnswerList( Arrays.asList( value.split(CommonData.SPLIT_SEPARATOR) ) );
+                }else if(index == 5){
+                    //分隔符，当前这道题操作完毕
+                    index = 0 ;
+                    continue;
+                }
+
+                index++ ;
+
+            }
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return questions ;
     }
 }
