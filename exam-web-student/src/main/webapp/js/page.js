@@ -61,6 +61,7 @@ page.timer.startDuration = function(){
     s = s<10?'0'+s:s;
     $('#time-show').html(m+'分'+s+'秒');
 
+    //定时改变时间
     setInterval(function(){
         var str = $('#time-show').text().trim();
         var i1 = str.indexOf('分') ;
@@ -83,4 +84,80 @@ page.timer.startDuration = function(){
 
     },1000) ;
 
+}
+
+page.changePrev = function(){
+    //每道题都是一个url
+    var question_ul = $('.page-question ul.active');
+    if(question_ul.prev().length != 0){
+        //切换考题
+        question_ul.removeClass('active');
+        question_ul.prev().addClass('active');
+        //切换题号
+        var question_dd = $('.page-part-2 dd.active');
+        var no = question_dd.text().trim();
+        no = parseInt(no);
+        $('.page-part-2 dd').eq(no-2).addClass('active');
+        question_dd.removeClass('active');
+        question_dd.addClass('complete');
+        //判断上一题是否默认勾选标记
+        if($('.page-part-2 dd').eq(no-2).hasClass('mark')){
+            $('.markBtn').prop('checked',true);
+        }else{
+            $('.markBtn').prop('checked',false);
+        }
+
+
+    }else{
+        alert('已经是第一个题了')
+    }
+}
+
+page.changeNext = function(){
+    var question_ul = $('.page-question ul.active');
+    if(question_ul.next().length != 0){
+        //切换考题
+        question_ul.removeClass('active');
+        question_ul.next().addClass('active');
+        //切换题号
+        var question_dd = $('.page-part-2 dd.active');
+        var no = question_dd.text().trim();
+        no = parseInt(no);
+        $('.page-part-2 dd').eq(no).addClass('active');
+        question_dd.removeClass('active');
+        //同时当前的考题需要标记成已完成
+        question_dd.addClass('complete');
+
+        //判断下一题的标记是否勾选
+        //判断上一题是否默认勾选标记
+        if($('.page-part-2 dd').eq(no).hasClass('mark')){
+            $('.markBtn').prop('checked',true);
+        }else{
+            $('.markBtn').prop('checked',false);
+        }
+    }else{
+        alert('已经是最后一题了')
+    }
+}
+
+page.mark = function(ck){
+    if(ck.checked){
+        $('.page-part-2 dd.active').addClass('mark') ;
+    }else{
+        $('.page-part-2 dd.active').removeClass('mark') ;
+    }
+}
+
+page.changeIndex = function(dd){
+    $('.page-part-2 dd.active').addClass('complete')
+    $('.page-part-2 dd.active').removeClass('active') ;
+
+    $(dd).addClass('active');
+
+    var no = $(dd).text().trim();
+    no = parseInt(no);
+    no = no-1 ;
+
+    $('.page-question ul.active').removeClass('active');
+    $('.page-question ul').eq(no).addClass('active');
 }

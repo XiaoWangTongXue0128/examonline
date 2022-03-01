@@ -36,7 +36,7 @@
                             <th:block th:if="${questionStat.index==0 or question.type != questions.get(questionStat.index-1).type}">
                                 <dt th:text="${question.type}"></dt>
                             </th:block>
-                            <dd th:text="${questionStat.index+1}" th:class="${questionStat.index==0?'active':''}"></dd>
+                            <dd th:text="${questionStat.index+1}" th:class="${questionStat.index==0?'active':''}" onclick="page.changeIndex(this)"></dd>
                         </th:block>
                     </dl>
                 </div>
@@ -44,16 +44,16 @@
 
                     <div class="page-3-top">
                         <ul>
-                            <li><a href="">上一题</a></li>
-                            <li><a href="">标记</a></li>
-                            <li><a href="">下一题</a></li>
+                            <li><a href="javascript:page.changePrev()">上一题</a></li>
+                            <li><label><input class="markBtn" type="checkbox" onclick="page.mark(this)"/> <a>标记</a></label></li>
+                            <li><a href="javascript:page.changeNext()">下一题</a></li>
                         </ul>
                     </div>
                     <div class="page-3-content">
 
                         <div class="page-question">
                             <ul th:each="question:${questions}" th:class="${questionStat.index==0?'active':''}">
-                                <li><b th:text="${question.index+'. '+question.type+'('+question.score+'分)'}"></b></li>
+                                <li><b th:text="${question.index+'. '+question.type+'（'+(question.type=='填空题'?'每空':'每题')+question.score+'分）'}"></b></li>
                                 <li><div th:utext="${question.subject}"></div></li>
                                 <th:block th:if="${question.type=='单选题'}">
                                     <li class="row" th:each="option:${question.optionList}">
@@ -101,13 +101,6 @@
                             </ul>
                         </div>
 
-                    </div>
-                    <div class="page-3-bottom">
-                        <ul>
-                            <li><a href="">上一题</a></li>
-                            <li><a href="">标记</a></li>
-                            <li><a href="">下一题</a></li>
-                        </ul>
                     </div>
 
                 </div>
