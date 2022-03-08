@@ -960,4 +960,9 @@ public class ExamServiceImpl implements ExamService {
     public void updateStartTime(Long studentId, Long examId) {
         studentExamMapper.updateStartTime(examId,studentId);
     }
+
+    @Override
+    public void updateAnswer(Map answerInfo) {
+        studentExamMapper.updateAnswer(answerInfo);
+    }
 }

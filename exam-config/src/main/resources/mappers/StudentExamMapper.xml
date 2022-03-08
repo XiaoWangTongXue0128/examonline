@@ -346,7 +346,7 @@
   </select>
 
   <update id="updatePagePath">
-    update t_student_exam set page_path=#{pagePath}
+    update t_student_exam set page_path=#{pagePath},update_time=now()
     where
       exam_id = #{examId}
       <if test="studentId != null and studentId != ''">
@@ -355,7 +355,7 @@
   </update>
 
   <update id="removePagePath">
-    update t_student_exam set page_path = null where exam_id = #{examId}
+    update t_student_exam set page_path = null , update_time=now() where exam_id = #{examId}
   </update>
 
   <delete id="removeRefStudentsByExam">
@@ -372,15 +372,28 @@
   </select>
 
   <update id="changeStatus">
-    update t_student_exam set status = #{status}
+    update t_student_exam set status = #{status},update_time=now()
     where
       exam_id = #{examId} and student_id = #{studentId}
   </update>
 
   <update id="updateStartTime">
-    update t_student_exam set start_time = now()
+    update t_student_exam set start_time = now(),update_time=now()
     where
       exam_id = #{examId} and student_id = #{studentId}
   </update>
 
+  <update id="updateAnswer">
+    update t_student_exam
+    set
+      answer1=#{answer1},
+      answer2=#{answer2},
+      answer3=#{answer3},
+      answer4=#{answer4},
+      answer5=#{answer5},
+      update_time=now()
+    where
+      exam_id=#{examId}
+      and student_id=#{studentId}
+  </update>
 </mapper>

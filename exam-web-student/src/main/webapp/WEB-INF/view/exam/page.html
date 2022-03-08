@@ -21,6 +21,8 @@
             <input type="hidden" id="exam-endTime" th:value="${exam.endTime==null?'':#dates.format(exam.endTime,'yyyy-MM-dd HH:mm:ss')}" />
             <input type="hidden" id="exam-duration" th:value="${exam.duration==null?'':exam.duration}" />
             <input type="hidden" id="page-startTime" th:value="${studentExam.startTime.getTime()}" />
+            <input type="hidden" id="exam-id" th:value="${studentExam.examId}" />
+            <input type="hidden" id="student-id" th:value="${studentExam.studentId}" />
             <div class="page-container">
                 <div class="page-part-1">
                     <ul>

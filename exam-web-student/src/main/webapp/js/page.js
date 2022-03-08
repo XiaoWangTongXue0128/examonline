@@ -192,6 +192,7 @@ page.question5Handle = function(){
     });
 }
 
+var temp_answers = '' ;
 page.startAnwserCacheTimer = function(){
     setInterval(function(){
         var sp = '}-|-{' ;
@@ -234,11 +235,32 @@ page.startAnwserCacheTimer = function(){
             }
         });
 
-        console.log(answer1);
-        console.log(answer2);
-        console.log(answer3);
-        console.log(answer4);
-        console.log(answer5);
+        // console.log(answer1);
+        // console.log(answer2);
+        // console.log(answer3);
+        // console.log(answer4);
+        // console.log(answer5);
+        var answers = answer1+answer2+answer3+answer4+answer5 ;
+        if(answers == temp_answers){
+            //没有更改过答案
+            console.log('答案没有变化，不需要更新');
+            return ;
+        }
+
+        //将答案信息交给后台存储
+        temp_answers = answers ;
+        var param={
+            answer1:answer1,
+            answer2:answer2,
+            answer3:answer3,
+            answer4:answer4,
+            answer5:answer5,
+            examId:$('#exam-id').val(),
+            studentId:$('#student-id').val()
+        }
+        $.post('exam/updateAnswer',param,function(){
+            console.log('答案信息已存储') ;
+        });
 
     },10000);
 }

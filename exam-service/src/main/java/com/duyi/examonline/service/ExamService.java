@@ -65,4 +65,5 @@ public interface ExamService {
 
     void updateStartTime(Long studentId , Long examId) ;
 
+    void updateAnswer(Map answerInfo);
 }
