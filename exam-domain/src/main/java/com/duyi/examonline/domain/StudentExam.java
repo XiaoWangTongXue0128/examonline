@@ -15,7 +15,7 @@ public class StudentExam {
 
     private Date endTime;
 
-    private String answer1;
+    private String answer1; //1}-|-{2}-|-{3
 
     private String answer2;
 

@@ -185,10 +185,14 @@ page.optionHandle = function(){
 var question5_editors = [] ;
 page.question5Handle = function(){
     $('.question5-box').each(function(i,div){
+        //此时div可能有默认值
+        var content = $(div).html();
+        $(div).html('');
         var anwser_editor = new E(div) ;
         editorDefaultInit(anwser_editor) ;
         anwser_editor.create() ;
         question5_editors.push(anwser_editor)
+        anwser_editor.txt.html(content);
     });
 }
 
@@ -208,29 +212,31 @@ page.startAnwserCacheTimer = function(){
             var typeStr = ul.children('li:eq(0)').text().trim();
             if(typeStr.indexOf('单选题') != -1){
                 var value = $('.page-option.active',ul).attr('value');
-                value = value?value:'';
+                value = value?value:'no';
                 answer1 += value + sp;
             }else if(typeStr.indexOf('多选题')!= -1){
+                var v ='' ;
                 $('.page-option.active',ul).each(function(i,span){
                     var value = $(span).attr('value');
-                    value = value?value:'';
-                    answer2 += value +',' ;
+                    v +=value+',';
                 });
+                v = v==''?'no':v;
+                answer2 += v +',' ;
                 answer2 += sp ;
             }else if(typeStr.indexOf('判断题')!= -1){
                 var value = $('.page-option.active',ul).attr('value');
-                value = value?value:'';
+                value = value?value:'no';
                 answer3 += value + sp;
             }else if(typeStr.indexOf('填空题')!= -1){
                 $('.question4-box',ul).each(function(i,input){
                     var value = $(input).val();
-                    value = value?value:'';
+                    value = value?value:'no';
                     answer4 += value +',' ;
                 });
                 answer4 += sp ;
             }else if(typeStr.indexOf('综合题')!= -1){
                 var value = question5_editors[index].txt.html();
-                value = value?value:'';
+                value = value?value:'no';
                 answer5 += value + sp ;
             }
         });

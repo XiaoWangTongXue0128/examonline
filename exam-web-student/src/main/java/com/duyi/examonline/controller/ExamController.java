@@ -6,6 +6,7 @@ import com.duyi.examonline.domain.Exam;
 import com.duyi.examonline.domain.Student;
 import com.duyi.examonline.domain.StudentExam;
 import com.duyi.examonline.domain.vo.QuestionVO;
+import com.duyi.examonline.domain.vo.StudentExamVO;
 import com.duyi.examonline.service.ExamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -106,7 +107,12 @@ public class ExamController extends BaseController {
 
         model.addAttribute("exam",exam);
         model.addAttribute("questions",questions);
-        model.addAttribute("studentExam",studentExam);
+
+        //studentExam中存有我们需要的答案信息，但需要处理后在thymeleaf中才可以使用
+        //studentExam-->StudentExamVO--> (answer1,2,3,4,5->List)
+
+        StudentExamVO vo = new StudentExamVO(studentExam);
+        model.addAttribute("studentExamVO",vo);
 
         //还需要更新一下学生考试开始时间
         if(studentExam.getStartTime() == null) {
