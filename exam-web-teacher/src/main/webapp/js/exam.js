@@ -805,8 +805,8 @@ exam.toSetStatus2 = function(id,ev){
     $('body').append(div);
 
     div.html(`
-        <a class="btn btn-link" onclick="exam.toGeneratePage(${id})"><span class="glyphicon glyphicon-ban-circle"></span> 结束考试</a>
-        <a class="btn btn-link" onclick="exam.toRemovePage(${id})"><span class="glyphicon glyphicon-trash"></span> 丢弃考试</a>
+        <a class="btn btn-link" onclick="exam.toFinishExam(${id})"><span class="glyphicon glyphicon-ban-circle"></span> 结束考试</a>
+        <a class="btn btn-link" onclick="exam.toLeaveExam(${id})"><span class="glyphicon glyphicon-trash"></span> 丢弃考试</a>
     `);
 
     var timer ;
@@ -899,4 +899,28 @@ exam.toSetStatus4 = function(id,ev){
     });
 
     return false ;
+}
+
+exam.toLeaveExam = function(id){
+    if(!confirm('丢弃后考试失效，是否继续?')){
+        return ;
+    }
+    $.post('exam/leaveExam',{id:id},function(){
+        alert('设置成功');
+        exam.flushExamGrid();
+    });
+}
+
+exam.toFinishExam = function(id){
+    if(!confirm('是否确认结束当前考试?')){
+        return ;
+    }
+    $.post('exam/finishExam',{id:id},function(f){
+        if(f == true){
+            alert('设置成功');
+            exam.flushExamGrid();
+        }else{
+            alert('设置失败，当前考试不能手动设置结束，需要自然结束') ;
+        }
+    });
 }

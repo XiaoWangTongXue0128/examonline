@@ -43,4 +43,16 @@ public interface StudentExamMapper {
     void updateStartTime(@Param("examId") Long examId , @Param("studentId") Long studentId);
 
     void updateAnswer(Map answerInfo) ;
+
+    /**
+     * 考试结束时，设置考试中的学生状态为 已完成
+     * @param examId
+     */
+    void updateFinishByExam(Long examId) ;
+
+    /**
+     * 考试结束时，设置未考试的学生状态为 缺考
+     * @param examId
+     */
+    void updateMissByExam(Long examId) ;
 }

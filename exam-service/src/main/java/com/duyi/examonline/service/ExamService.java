@@ -52,7 +52,6 @@ public interface ExamService {
 
     void releaseExam(Long id) ;
 
-
     /**
      * @param timeFlag 1 当天， 2 本周， 3 本月
      * @return  List.Map{examId , name , startTime,endTime,duration , state , status}
@@ -70,4 +69,16 @@ public interface ExamService {
     void update(StudentExam se);
 
     void submitPage(Map answerInfo) ;
+
+    /**
+     * 丢弃考试
+     * @param id
+     */
+    void leaveExam(Long id) ;
+
+    /**
+     * 手动结束考试（时长）
+     * @param id
+     */
+    void finishExam(Long id) ;
 }

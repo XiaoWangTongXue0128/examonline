@@ -855,4 +855,25 @@ public class ExamController extends BaseController {
         return "exam/classDetail" ;
     }
 
+    @RequestMapping("/leaveExam")
+    @ResponseBody
+    public void leaveExam(Long id){
+        examService.leaveExam(id);
+    }
+
+    @RequestMapping("finishExam")
+    @ResponseBody
+    public boolean finishExam(Long id){
+        Exam exam = examService.findById(id);
+        if(exam.getDuration() == null || "".equals(exam.getDuration())){
+            //是一个区间考试
+            log.debug("这个考试设置了时间区间，不能手动结束");
+            return false ;
+        }
+
+        examService.finishExam(id);
+
+        return true ;
+    }
+
 }

@@ -1011,6 +1011,34 @@ public class ExamServiceImpl implements ExamService {
             //超时了，本轮考试也已经结束了。 同时证明不是提前交卷。
             exam.setStatus("已完成");
             examMapper.updateByPrimaryKeySelective(exam) ;
+            //所有这个考试的学生，如果没有答卷，需要将状态改为缺考。
+            handleStudentStatusForFinish(examId);
         }
+    }
+
+    @Override
+    public void leaveExam(Long id) {
+        Exam exam = new Exam() ;
+        exam.setId(id);
+        exam.setStatus("丢弃");
+        examMapper.updateByPrimaryKeySelective(exam) ;
+    }
+
+    @Override
+    public void finishExam(Long id) {
+        Exam exam = new Exam() ;
+        exam.setId(id);
+        exam.setStatus("已完成");
+        examMapper.updateByPrimaryKeySelective(exam) ;
+        //还需要对学生考试状态做处理。
+        handleStudentStatusForFinish(id);
+    }
+
+
+    private void handleStudentStatusForFinish(Long examId){
+        //处于考试中的学生，就可以设置为已完成
+        studentExamMapper.updateFinishByExam(examId);
+        //处于未考试的学生，就可以设置为缺考
+        studentExamMapper.updateMissByExam(examId);
     }
 }
