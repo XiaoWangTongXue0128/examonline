@@ -20,6 +20,8 @@ exam.toQuery = function(pageNo){
         pageNo:pageNo
     }
 
+    console.log(param);
+
     $.post('exam/examGridTemplate.html',param,function(view){
         $('#part-2').replaceWith(view);
     });

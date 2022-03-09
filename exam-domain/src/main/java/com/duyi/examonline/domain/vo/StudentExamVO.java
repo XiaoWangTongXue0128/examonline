@@ -29,8 +29,19 @@ public class StudentExamVO {
     public StudentExamVO(StudentExam studentExam) {
         this.studentExam = studentExam;
         this.answerList = new ArrayList<>();
+
+        if(
+                studentExam.getAnswer1() == null || "".equals(studentExam.getAnswer1())
+        && studentExam.getAnswer2() == null || "".equals(studentExam.getAnswer2())
+        && studentExam.getAnswer3() == null || "".equals(studentExam.getAnswer3())
+        && studentExam.getAnswer4() == null || "".equals(studentExam.getAnswer4())
+        && studentExam.getAnswer5() == null || "".equals(studentExam.getAnswer5())
+        ){
+            //首次进入考试页面，还没有任何答案记录
+            return ;
+        }
         //单选题处理
-        {
+        if(studentExam.getAnswer1() != null && !"".equals(studentExam.getAnswer1())){
             String answerStr = studentExam.getAnswer1();
             String[] array = answerStr.split(SPLIT_SEPARATOR);
             for(String an:array){
@@ -43,7 +54,7 @@ public class StudentExamVO {
         }
 
         //多选题处理
-        {
+        if(studentExam.getAnswer2() != null && !"".equals(studentExam.getAnswer2())){
             //{"1,2,3","no","1,3"}  3道多选，第一题BCD,第二题没有答案，第三题BD
             String answerStr = studentExam.getAnswer2();
             String[] array = answerStr.split(SPLIT_SEPARATOR);
@@ -63,7 +74,7 @@ public class StudentExamVO {
         }
 
         //判断题题处理
-        {
+        if(studentExam.getAnswer3() != null && !"".equals(studentExam.getAnswer3())){
             //{"1,2,3","no","1,3"}  3道多选，第一题BCD,第二题没有答案，第三题BD
             String answerStr = studentExam.getAnswer3();
             String[] array = answerStr.split(SPLIT_SEPARATOR);
@@ -78,7 +89,7 @@ public class StudentExamVO {
 
 
         //填空题处理
-        {
+        if(studentExam.getAnswer4() != null && !"".equals(studentExam.getAnswer4())){
             //{"1,2,3","no,no","1,3"}  3道多选，第一题BCD,第二题没有答案，第三题BD
             String answerStr = studentExam.getAnswer4();
             String[] array = answerStr.split(SPLIT_SEPARATOR);
@@ -98,7 +109,7 @@ public class StudentExamVO {
             }
 
         //综合题处理
-        {
+        if(studentExam.getAnswer5() != null && !"".equals(studentExam.getAnswer5())){
             String answerStr = studentExam.getAnswer5();
             String[] array = answerStr.split(SPLIT_SEPARATOR);
             for(String an:array){

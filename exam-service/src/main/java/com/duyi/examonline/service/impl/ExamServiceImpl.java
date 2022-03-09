@@ -929,8 +929,9 @@ public class ExamServiceImpl implements ExamService {
     }
 
     @Override
-    public StudentExam findStudentExamById(Long studentId, Long examId) {
-        return studentExamMapper.findStudentExamById(examId,studentId);
+    public StudentExam findStudentExamById(Exam exam,Long studentId, Long examId) {
+        StudentExam se =  studentExamMapper.findStudentExamById(examId,studentId);
+        return se ;
     }
 
 
@@ -964,5 +965,52 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public void updateAnswer(Map answerInfo) {
         studentExamMapper.updateAnswer(answerInfo);
+    }
+
+    @Override
+    public void update(StudentExam se){
+        studentExamMapper.updateByPrimaryKeySelective(se);
+    }
+
+    Map<Long,Exam> examCache = new HashMap<>();
+
+    @Override
+    public void submitPage(Map answerInfo) {
+        //更新答案
+        studentExamMapper.updateAnswer(answerInfo);
+
+        //更新状态
+        StudentExam se = new StudentExam() ;
+        Long examId = Long.valueOf(answerInfo.get("examId").toString()) ;
+        se.setExamId( examId );
+        se.setStudentId( Long.valueOf(answerInfo.get("studentId").toString()) );
+        se.setStatus("已完成");
+        Date curr = new Date() ;
+        se.setEndTime(curr);
+
+        studentExamMapper.updateByPrimaryKeySelective(se);
+
+        //检测更新本轮考试的状态
+        //  时长考试，由管理员手动控制完成状态
+        //  区间考试，可以自动控制完成状态
+        //所以需要知道本轮考试的信息
+        //  如果每个同学交卷时都查询一次数据库，会影响性能。 因为改变本轮考试状态的操作一次就够了
+        //  可以使用缓存
+        Exam exam = examCache.get(examId);
+        if(exam == null){
+            exam = examMapper.selectByPrimaryKey(examId);
+        }
+
+        if(exam.getDuration() != null && !"".equals(exam.getDuration())){
+            //时长考试
+            return ;
+        }
+        //区间考试
+        Date endTime = exam.getEndTime();
+        if(!curr.before(endTime) && !"已完成".equals(exam.getStatus())){
+            //超时了，本轮考试也已经结束了。 同时证明不是提前交卷。
+            exam.setStatus("已完成");
+            examMapper.updateByPrimaryKeySelective(exam) ;
+        }
     }
 }

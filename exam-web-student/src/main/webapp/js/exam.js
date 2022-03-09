@@ -8,7 +8,6 @@ exam.changeTimeFlag = function(){
 }
 
 exam.enterExam = function(examId){
-    alert(examId);
     //先检查是否可以进入考试页面
     $.post('exam/checkEnter',{examId:examId},function(f){
         if(f == 9){

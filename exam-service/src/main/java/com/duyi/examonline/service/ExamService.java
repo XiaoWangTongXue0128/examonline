@@ -59,11 +59,15 @@ public interface ExamService {
      */
     List<Map> findByStudent(Long sid , Integer timeFlag);
 
-    StudentExam findStudentExamById(Long studentId , Long examId) ;
+    StudentExam findStudentExamById(Exam exam,Long studentId , Long examId) ;
 
     void startExam(Long studentId , Long examId) ;
 
     void updateStartTime(Long studentId , Long examId) ;
 
     void updateAnswer(Map answerInfo);
+
+    void update(StudentExam se);
+
+    void submitPage(Map answerInfo) ;
 }

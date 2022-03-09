@@ -54,14 +54,50 @@ public class ExamController extends BaseController {
         Student student = (Student) session.getAttribute("loginStudent");
 
         Exam exam = examService.findById(examId);
-        StudentExam studentExam = examService.findStudentExamById(student.getId(),examId);
+        StudentExam studentExam = examService.findStudentExamById(exam,student.getId(),examId);
+
+        //先判断是否超时
+        //如果没有超时，正常返回
+        //如果已经超时，需要更新时间和状态
+        if(studentExam.getStatus().equals("考试中")){
+            //需要判断时间
+            if(exam.getStartTime() != null){
+                //考试区间，检查当前系统时间 是否超过endTime
+                Date curr = new Date();
+                Date endTime = exam.getEndTime() ;
+                if(curr.after(endTime)){
+                    //当前时间已经超过了考试结束时间
+                    studentExam.setStatus("已完成");
+                    studentExam.setEndTime(endTime);
+                    //更新考试考试状态
+                    examService.update(studentExam);
+                }
+            }else{
+                //设置了时长
+                Integer duration = exam.getDuration();
+                Date startTime = studentExam.getStartTime();
+                Date curr = new Date();
+                long l = curr.getTime() - startTime.getTime() ;
+                if(l/1000/60 > duration){
+                    //超出时长了
+                    studentExam.setStatus("已完成");
+                    l = startTime.getTime() + duration*60*1000 ;
+                    Date endTime = new Date(l) ;
+                    studentExam.setEndTime(endTime);
+                    //更新考试考试状态
+                    examService.update(studentExam);
+                }
+            }
+        }
+
+
         if(exam.getStatus().equals("丢弃")){
             //不常出现，学生在看到考试上瞬间，教师端就丢弃了考试。
             return 9 ;
         }
 
 
-        if(studentExam.equals("已完成")){
+        if(studentExam.getStatus().equals("已完成")){
             //考试可能未结束，考生已经完成考试
             return 8 ;
         }
@@ -100,7 +136,7 @@ public class ExamController extends BaseController {
         Student student = (Student) session.getAttribute("loginStudent");
 
         //需要试卷信息,读取文件，拆解文件内容，组成试题集合
-        StudentExam studentExam = examService.findStudentExamById(student.getId(), examId);
+        StudentExam studentExam = examService.findStudentExamById(exam,student.getId(), examId);
         String pagePath = studentExam.getPagePath();
         pagePath = CommonData.PAGE_ROOT_PATH + pagePath ;
         List<QuestionVO> questions = readPage(pagePath);
@@ -184,5 +220,11 @@ public class ExamController extends BaseController {
     @ResponseBody
     public void updateAnswer(@RequestParam Map answerInfo){
         examService.updateAnswer(answerInfo);
+    }
+
+    @RequestMapping("/submitPage")
+    @ResponseBody
+    public void submitPage(@RequestParam Map answerInfo){
+        examService.submitPage(answerInfo);
     }
 }
