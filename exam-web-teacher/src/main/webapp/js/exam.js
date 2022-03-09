@@ -823,3 +823,80 @@ exam.toSetStatus2 = function(id,ev){
 
     return false ;
 }
+
+//设置考试中状态下的 右键处理操作
+exam.toSetStatus3 = function(id,ev){
+    var e = ev || event ;
+    var x = e.clientX ;
+    var y = e.clientY ;
+    var div = $('<div></div>') ;
+    div.css({
+        position:'absolute',
+        width:130,
+        height:40,
+        left:x-5,
+        top:y-5,
+        background:'#fff',
+        border:'1px solid #ccc',
+        borderRadius:5,
+        boxShadow:'2px 2px 2px #ccc'
+    });
+    $('body').append(div);
+
+    div.html(`
+        <a class="btn btn-link" onclick="exam.toRemovePage(${id})"><span class="glyphicon glyphicon-trash"></span> 丢弃考试</a>
+    `);
+
+    var timer ;
+    div.mouseleave(function(){
+        timer = window.setTimeout(function(){
+            div.remove();
+        },200);
+    });
+    div.mouseover(function(){
+        if(timer){
+            window.clearTimeout(timer) ;
+        }
+    });
+
+    return false ;
+}
+
+//设置已完成状态下的 右键处理操作
+exam.toSetStatus4 = function(id,ev){
+    var e = ev || event ;
+    var x = e.clientX ;
+    var y = e.clientY ;
+    var div = $('<div></div>') ;
+    div.css({
+        position:'absolute',
+        width:130,
+        height:70,
+        left:x-5,
+        top:y-5,
+        background:'#fff',
+        border:'1px solid #ccc',
+        borderRadius:5,
+        boxShadow:'2px 2px 2px #ccc'
+    });
+    $('body').append(div);
+
+    div.html(`
+        <a class="btn btn-link" onclick="exam.toRemovePage(${id})"><span class="glyphicon glyphicon-trash"></span> 查阅考卷</a>
+        <a class="btn btn-link" onclick="exam.toRemovePage(${id})"><span class="glyphicon glyphicon-trash"></span> 丢弃考试</a>
+    `);
+
+    var timer ;
+    div.mouseleave(function(){
+        timer = window.setTimeout(function(){
+            div.remove();
+        },200);
+    });
+    div.mouseover(function(){
+        if(timer){
+            window.clearTimeout(timer) ;
+        }
+    });
+
+    return false ;
+}
