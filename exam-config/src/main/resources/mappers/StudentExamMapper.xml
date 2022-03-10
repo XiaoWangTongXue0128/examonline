@@ -24,6 +24,33 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
+
+    <resultMap id="studentExamDTOMap" type="com.duyi.examonline.domain.dto.StudentExamDTO">
+        <id column="exam_id" jdbcType="BIGINT" property="examId" />
+        <id column="student_id" jdbcType="BIGINT" property="studentId" />
+        <result column="exam_group" jdbcType="VARCHAR" property="examGroup" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+        <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+        <result column="answer1" jdbcType="VARCHAR" property="answer1" />
+        <result column="answer2" jdbcType="VARCHAR" property="answer2" />
+        <result column="answer3" jdbcType="VARCHAR" property="answer3" />
+        <result column="answer4" jdbcType="VARCHAR" property="answer4" />
+        <result column="answer5" jdbcType="VARCHAR" property="answer5" />
+        <result column="review4" jdbcType="VARCHAR" property="review4" />
+        <result column="review5" jdbcType="VARCHAR" property="review5" />
+        <result column="score" jdbcType="INTEGER" property="score" />
+        <result column="page_path" jdbcType="VARCHAR" property="pagePath" />
+        <result column="yl1" jdbcType="VARCHAR" property="yl1" />
+        <result column="yl2" jdbcType="VARCHAR" property="yl2" />
+        <result column="yl3" jdbcType="VARCHAR" property="yl3" />
+        <result column="yl4" jdbcType="VARCHAR" property="yl4" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="code" jdbcType="VARCHAR" property="code" />
+        <result column="sname" jdbcType="VARCHAR" property="sname" />
+    </resultMap>
+
   <sql id="Base_Column_List">
     exam_id, student_id, exam_group, status, start_time, end_time, answer1, answer2, 
     answer3, answer4, answer5, review4, review5, score, page_path, yl1, yl2, yl3, yl4, 
@@ -416,4 +443,29 @@
       exam_id = #{examId}
       and status = '未考试'
   </update>
+
+
+  <select id="findClassesByExam" resultType="map">
+    select
+      exam_id examId,
+      exam_group className,
+      count(*) count
+    from
+      t_student_exam
+    group by exam_id,exam_group
+      having exam_id=#{examId} ;
+  </select>
+
+  <select id="findStudentsByExamAndClass" resultMap="studentExamDTOMap">
+    select
+        se.*,
+        s.sname ,
+        s.code
+    from
+        t_student_exam se
+        inner join t_student s
+            on se.student_id = s.id
+            and exam_id=#{examId}
+            and exam_group = #{className}
+  </select>
 </mapper>

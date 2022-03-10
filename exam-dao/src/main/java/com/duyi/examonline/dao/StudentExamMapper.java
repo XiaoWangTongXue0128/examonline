@@ -1,6 +1,7 @@
 package com.duyi.examonline.dao;
 
 import com.duyi.examonline.domain.StudentExam;
+import com.duyi.examonline.domain.dto.StudentExamDTO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -55,4 +56,9 @@ public interface StudentExamMapper {
      * @param examId
      */
     void updateMissByExam(Long examId) ;
+
+    List<Map> findClassesByExam(Long examId) ;
+
+
+    List<StudentExamDTO> findStudentsByExamAndClass(@Param("examId")Long examId , @Param("className")String className);
 }

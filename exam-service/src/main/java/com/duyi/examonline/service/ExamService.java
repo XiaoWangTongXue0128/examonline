@@ -3,6 +3,7 @@ package com.duyi.examonline.service;
 import com.duyi.examonline.domain.Exam;
 import com.duyi.examonline.domain.Student;
 import com.duyi.examonline.domain.StudentExam;
+import com.duyi.examonline.domain.dto.StudentExamDTO;
 import com.duyi.examonline.domain.vo.PageVO;
 
 import java.util.List;
@@ -81,4 +82,14 @@ public interface ExamService {
      * @param id
      */
     void finishExam(Long id) ;
+
+    /**
+     * 查询获得指定考试的班级信息列表
+     * @param id
+     * @return List.map{className:'',count:0}
+     */
+    List<Map> findClassesByExam(Long id);
+
+
+    List<StudentExamDTO> findStudentsByExamAndClass(Long examId ,String className) ;
 }

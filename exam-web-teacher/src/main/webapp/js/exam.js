@@ -844,7 +844,7 @@ exam.toSetStatus3 = function(id,ev){
     $('body').append(div);
 
     div.html(`
-        <a class="btn btn-link" onclick="exam.toRemovePage(${id})"><span class="glyphicon glyphicon-trash"></span> 丢弃考试</a>
+        <a class="btn btn-link" onclick="exam.toFinishExam(${id})"><span class="glyphicon glyphicon-ban-circle"></span> 结束考试</a>
     `);
 
     var timer ;
@@ -882,8 +882,8 @@ exam.toSetStatus4 = function(id,ev){
     $('body').append(div);
 
     div.html(`
-        <a class="btn btn-link" onclick="exam.toRemovePage(${id})"><span class="glyphicon glyphicon-trash"></span> 查阅考卷</a>
-        <a class="btn btn-link" onclick="exam.toRemovePage(${id})"><span class="glyphicon glyphicon-trash"></span> 丢弃考试</a>
+        <a class="btn btn-link" onclick="exam.toReviewPage(${id})"><span class="glyphicon glyphicon-eye-open"></span> 查阅考卷</a>
+        <a class="btn btn-link" onclick="exam.toLeaveExam(${id})"><span class="glyphicon glyphicon-trash"></span> 丢弃考试</a>
     `);
 
     var timer ;
@@ -923,4 +923,8 @@ exam.toFinishExam = function(id){
             alert('设置失败，当前考试不能手动设置结束，需要自然结束') ;
         }
     });
+}
+
+exam.toReviewPage = function(id){
+    location.href='exam/pageList.html?id='+id;
 }

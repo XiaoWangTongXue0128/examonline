@@ -6,6 +6,7 @@ import com.duyi.examonline.common.BaseController;
 import com.duyi.examonline.common.CommonData;
 import com.duyi.examonline.common.CommonUtil;
 import com.duyi.examonline.domain.*;
+import com.duyi.examonline.domain.dto.StudentExamDTO;
 import com.duyi.examonline.domain.vo.PageVO;
 import com.duyi.examonline.domain.vo.QuestionVO;
 import com.duyi.examonline.domain.vo.TemplateFormVO;
@@ -874,6 +875,22 @@ public class ExamController extends BaseController {
         examService.finishExam(id);
 
         return true ;
+    }
+
+
+    @RequestMapping("/pageList.html")
+    public String toPageList(Long id,Model model){
+        List<Map> classes = examService.findClassesByExam(id);
+        model.addAttribute("classes",classes);
+        model.addAttribute("examId",id);
+        return "exam/pageList" ;
+    }
+
+    @RequestMapping("/studentPageList.html")
+    public String toStudentPageList(Long examId , String className , Model model){
+        List<StudentExamDTO> students = examService.findStudentsByExamAndClass(examId, className);
+        model.addAttribute("students",students);
+        return "exam/pageList::#studentGrid";
     }
 
 }

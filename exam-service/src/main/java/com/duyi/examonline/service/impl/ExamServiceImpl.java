@@ -4,6 +4,7 @@ import com.duyi.examonline.common.CommonData;
 import com.duyi.examonline.common.CommonUtil;
 import com.duyi.examonline.dao.*;
 import com.duyi.examonline.domain.*;
+import com.duyi.examonline.domain.dto.StudentExamDTO;
 import com.duyi.examonline.domain.vo.PageVO;
 import com.duyi.examonline.service.ExamService;
 import com.github.pagehelper.PageHelper;
@@ -1040,5 +1041,16 @@ public class ExamServiceImpl implements ExamService {
         studentExamMapper.updateFinishByExam(examId);
         //处于未考试的学生，就可以设置为缺考
         studentExamMapper.updateMissByExam(examId);
+    }
+
+    @Override
+    public List<Map> findClassesByExam(Long id) {
+        return studentExamMapper.findClassesByExam(id);
+    }
+
+
+    @Override
+    public List<StudentExamDTO> findStudentsByExamAndClass(Long examId, String className) {
+        return studentExamMapper.findStudentsByExamAndClass(examId,className);
     }
 }
