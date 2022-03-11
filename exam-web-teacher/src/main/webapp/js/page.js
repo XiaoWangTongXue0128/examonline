@@ -21,3 +21,10 @@ page.changeStudentStatus = function(select,studentId){
         alert('状态设置成功') ;
     });
 }
+
+page.toReview = function(studentId,sname){
+    //'exam/examId/studentId/page.html'
+    //'exam/8/347/page.html'
+    var url = 'exam/page.html?sname='+sname+'&studentId='+studentId+'&examId='+$('#exam-id').val() ;
+    window.open(url);
+}

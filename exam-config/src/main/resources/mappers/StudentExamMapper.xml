@@ -469,7 +469,7 @@
             and exam_group = #{className}
   </select>
 
-  <select id="findInterruptStudents" resultType="studentExamMap">
+  <select id="findInterruptStudents" resultMap="studentExamMap">
     select
       <include refid="Base_Column_List"></include>
     from

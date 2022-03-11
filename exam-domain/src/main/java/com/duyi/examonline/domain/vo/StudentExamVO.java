@@ -31,11 +31,11 @@ public class StudentExamVO {
         this.answerList = new ArrayList<>();
 
         if(
-                studentExam.getAnswer1() == null || "".equals(studentExam.getAnswer1())
-        && studentExam.getAnswer2() == null || "".equals(studentExam.getAnswer2())
-        && studentExam.getAnswer3() == null || "".equals(studentExam.getAnswer3())
-        && studentExam.getAnswer4() == null || "".equals(studentExam.getAnswer4())
-        && studentExam.getAnswer5() == null || "".equals(studentExam.getAnswer5())
+                ( studentExam.getAnswer1() == null || "".equals(studentExam.getAnswer1()) )
+        && ( studentExam.getAnswer2() == null || "".equals(studentExam.getAnswer2()) )
+        && ( studentExam.getAnswer3() == null || "".equals(studentExam.getAnswer3()) )
+        && ( studentExam.getAnswer4() == null || "".equals(studentExam.getAnswer4()) )
+        && ( studentExam.getAnswer5() == null || "".equals(studentExam.getAnswer5()) )
         ){
             //首次进入考试页面，还没有任何答案记录
             return ;

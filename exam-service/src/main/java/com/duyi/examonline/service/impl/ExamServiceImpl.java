@@ -937,7 +937,7 @@ public class ExamServiceImpl implements ExamService {
     }
 
     @Override
-    public StudentExam findStudentExamById(Exam exam,Long studentId, Long examId) {
+    public StudentExam findStudentExamById(Long studentId, Long examId) {
         StudentExam se =  studentExamMapper.findStudentExamById(examId,studentId);
         return se ;
     }

@@ -54,7 +54,7 @@ public class ExamController extends BaseController {
         Student student = (Student) session.getAttribute("loginStudent");
 
         Exam exam = examService.findById(examId);
-        StudentExam studentExam = examService.findStudentExamById(exam,student.getId(),examId);
+        StudentExam studentExam = examService.findStudentExamById(student.getId(),examId);
 
         //先判断是否超时
         //如果没有超时，正常返回
@@ -136,7 +136,7 @@ public class ExamController extends BaseController {
         Student student = (Student) session.getAttribute("loginStudent");
 
         //需要试卷信息,读取文件，拆解文件内容，组成试题集合
-        StudentExam studentExam = examService.findStudentExamById(exam,student.getId(), examId);
+        StudentExam studentExam = examService.findStudentExamById(student.getId(), examId);
         String pagePath = studentExam.getPagePath();
         pagePath = CommonData.PAGE_ROOT_PATH + pagePath ;
         List<QuestionVO> questions = readPage(pagePath);

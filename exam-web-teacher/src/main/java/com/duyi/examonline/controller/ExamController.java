@@ -9,6 +9,7 @@ import com.duyi.examonline.domain.*;
 import com.duyi.examonline.domain.dto.StudentExamDTO;
 import com.duyi.examonline.domain.vo.PageVO;
 import com.duyi.examonline.domain.vo.QuestionVO;
+import com.duyi.examonline.domain.vo.StudentExamVO;
 import com.duyi.examonline.domain.vo.TemplateFormVO;
 import com.duyi.examonline.service.*;
 import org.apache.commons.io.IOUtils;
@@ -899,6 +900,124 @@ public class ExamController extends BaseController {
     @ResponseBody
     public void changeStudentStatus(Long examId , Long studentId , String status){
         examService.changeStudentStatus(examId,studentId,status);
+    }
+
+    @RequestMapping("/page.html")
+    public String toPage(Long examId , Long studentId,String sname , Model model){
+        Exam exam = examService.findById(examId);
+        //获得考生考试题（题，标准答案）
+        StudentExam studentExam = examService.findStudentExamById( studentId, examId);
+        String pagePath = studentExam.getPagePath();
+        pagePath = CommonData.PAGE_ROOT_PATH + pagePath ;
+        List<QuestionVO> questionVOS = CommonUtil.readPage(pagePath);
+
+        //se中包含了自定义答案
+        //这些答案被存储在5个属性中answer1-answer5
+        //需要将其组成在一个集合中，并且与上面questionVOS对应
+        StudentExamVO studentExamVO = new StudentExamVO(studentExam);
+
+
+        //考题装载前，需要对每一道考题初始化得分
+        handleQuestionScore(questionVOS,studentExamVO);
+
+        model.addAttribute("questionVOS",questionVOS) ;
+        model.addAttribute("studentExamVO",studentExamVO) ;
+        model.addAttribute("exam",exam) ;
+        model.addAttribute("sname",sname);
+
+        return "exam/page" ;
+    }
+
+    private void handleQuestionScore(List<QuestionVO> questionVOS,StudentExamVO studentExamVO){
+        //记录考题的索引
+        int i = 0 ;
+
+        //获得并存储主观题的得分
+        //从2个review中获得，准备装入一个list集合
+        //要明白，这个list集合中存储的分数顺序，和考题中填空题与综合题的顺序一致。
+        //从review中获得主观题得分？？
+        // 存储主观题索引
+        int j = 0 ;
+        List<Integer> score45 = new ArrayList<>();
+        String review4 = studentExamVO.getStudentExam().getReview4();
+        if(review4 != null && !"".equals(review4)){
+            //["5,xxx","6,xxx"]
+            String[] array = review4.split(CommonData.SPLIT_SEPARATOR);
+            for(String s : array){
+                score45.add( Integer.parseInt(s.split(",")[0]) ) ;
+            }
+        }
+        String review5 = studentExamVO.getStudentExam().getReview5();
+        if(review5 != null && !"".equals(review5)){
+            //["5,xxx","6,xxx"]
+            String[] array = review5.split(CommonData.SPLIT_SEPARATOR);
+            for(String s : array){
+                score45.add( Integer.parseInt(s.split(",")[0]) );
+            }
+        }
+
+
+        /**
+         * 装载所有的自定义答案，但我们只需要客观题部分来计算考题的最终得分。还缺主观的得分
+         */
+        List<Object> answerList = studentExamVO.getAnswerList();
+        for(QuestionVO question : questionVOS){
+            String type = question.getType();
+            if("单选题".equals(type) || "判断题".equals(type)){
+                //只有1个答案
+                String a1 = question.getAnswerList().get(0);
+                String a2 = answerList.get(i).toString();
+                if(a1.equals(a2)){
+                    //正确
+                    question.setEndScore(question.getScore());
+                }
+            }
+
+            if("多选题".equals(type)){
+                //只有1个答案
+                List<String> a1 = question.getAnswerList(); //["1","2"]
+                Object ta2 = answerList.get(i);
+                if(ta2.toString().equals("-1")){
+                    //这道多选题没有选择答案
+                    continue ;
+                }
+                //选了答案，需要判断答案对不对
+                List<Integer> a2 = (List) ta2;//[1,2]
+
+                //a1 和 a2 中存储的答案（选项序号），一定都是从小到大排列的。
+                if(a1.size() != a2.size()){
+                    //答案数量不对
+                    continue ;
+                }
+
+                //答案数量对上了，内容需要逐一比较
+                for(int index=0;index<a1.size();index++){
+                    if(!a1.get(index).equals(a2.get(index).toString())){
+                        //有一个答案不一样，此题不对
+                        continue ;
+                    }
+                }
+
+                //代码至此，有答案，与正确答案数量一致，与正确答案内容一致
+                question.setEndScore(question.getScore()) ;
+            }
+
+            if("填空题".equals(question.getType()) || "综合题".equals(question.getType())) {
+                //需要从review中获得得分
+                //注意：第一次批阅时，填空题和综合题还没有更新过分数
+                //     所以是null,所以score45.size=0
+                if(score45.size() == 0){
+                    //此时还没有填空题和综合题得分
+                    question.setEndScore(0);
+                }else{
+                    question.setEndScore( score45.get(j++) );
+                }
+            }
+
+
+            i++ ;
+        }
+
     }
 
 }
