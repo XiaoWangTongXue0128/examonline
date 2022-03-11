@@ -17,14 +17,15 @@
 
 <div class="content-box">
     <input type="hidden" id="exam-id" th:value="${examId}" />
+    <div class="alert alert-info" role="alert">
+        <span th:text="${exam.name}"></span>
+        <span class="right">
+            <button class="btn btn-primary btn-sm">
+                <span class="glyphicon glyphicon-ok"></span> 提交
+            </button>
+        </span>
+    </div>
     <div class="page-list-part-1">
-        <div class="form-inline form-search">
-            <div class="right">
-                <button class="btn btn-primary">
-                    <span class="glyphicon glyphicon-ok"></span> 提交
-                </button>
-            </div>
-        </div>
         <table id="classGrid" class="table">
             <thead>
                 <tr>
@@ -71,7 +72,7 @@
                     <td th:text="${student.className}"></td>
                     <td th:text="${student.score}"></td>
                     <td>
-                        <select>
+                        <select th:onchange="page.changeStudentStatus(this,[[${student.studentId}]])">
                             <option th:selected="${student.status=='已完成'}">已完成</option>
                             <option th:selected="${student.status=='缺考'}">缺考</option>
                             <option th:selected="${student.status=='作弊'}">作弊</option>

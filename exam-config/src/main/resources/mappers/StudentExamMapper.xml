@@ -468,4 +468,15 @@
             and exam_id=#{examId}
             and exam_group = #{className}
   </select>
+
+  <select id="findInterruptStudents" resultType="studentExamMap">
+    select
+      <include refid="Base_Column_List"></include>
+    from
+      t_student_exam
+    where
+      exam_id = #{examId}
+      and status = '考试中'
+  </select>
+
 </mapper>

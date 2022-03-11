@@ -6,6 +6,8 @@ import com.duyi.examonline.dao.*;
 import com.duyi.examonline.domain.*;
 import com.duyi.examonline.domain.dto.StudentExamDTO;
 import com.duyi.examonline.domain.vo.PageVO;
+import com.duyi.examonline.domain.vo.QuestionVO;
+import com.duyi.examonline.domain.vo.StudentExamVO;
 import com.duyi.examonline.service.ExamService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -39,6 +41,11 @@ public class ExamServiceImpl implements ExamService {
 
     @Autowired
     private QuestionMapper questionMapper ;
+
+    /**
+     * 这个线程池用你来并行批阅客观答案
+     */
+    private static ExecutorService pool = Executors.newFixedThreadPool(10);
 
     @Override
     public PageVO findByPage(int page, int rows, Map condition) {
@@ -991,6 +998,14 @@ public class ExamServiceImpl implements ExamService {
 
         studentExamMapper.updateByPrimaryKeySelective(se);
 
+        //计算当前这一个学生的客观题分数
+        pool.execute(()->{
+            //此时查询考生的考试信息可能还是考试中
+            StudentExam se1 = studentExamMapper.findStudentExamById(se.getExamId(),se.getStudentId());
+            calculateObjectiveQuestion(se1);
+        });
+
+
         //检测更新本轮考试的状态
         //  时长考试，由管理员手动控制完成状态
         //  区间考试，可以自动控制完成状态
@@ -1037,7 +1052,18 @@ public class ExamServiceImpl implements ExamService {
 
 
     private void handleStudentStatusForFinish(Long examId){
-        //处于考试中的学生，就可以设置为已完成
+        //提前计算一下所有断线同学的客观题分数（处于考试中，又不能自己完成的）
+        //找到考试中的那些学生，然后利用多线程实现客观题分数的自动批阅
+        //因为是多线程，所以对于接下来的考试状态的修改（已完成，缺考）没有影响
+        List<StudentExam> students = studentExamMapper.findInterruptStudents(examId);
+        for(StudentExam student : students){
+            pool.execute(()->{
+                calculateObjectiveQuestion(student);
+            });
+        }
+
+
+        //处于考试中的学生，就可以设置为已完成(断线)
         studentExamMapper.updateFinishByExam(examId);
         //处于未考试的学生，就可以设置为缺考
         studentExamMapper.updateMissByExam(examId);
@@ -1052,5 +1078,81 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public List<StudentExamDTO> findStudentsByExamAndClass(Long examId, String className) {
         return studentExamMapper.findStudentsByExamAndClass(examId,className);
+    }
+
+    @Override
+    public void changeStudentStatus(Long examId, Long studentId, String status) {
+        studentExamMapper.changeStatus(examId,studentId,status);
+    }
+
+
+    /**
+     * 计算当前学生客观题分数
+     */
+    private void calculateObjectiveQuestion(StudentExam se){
+        String pagePath = se.getPagePath();
+        pagePath = CommonData.PAGE_ROOT_PATH + pagePath ;
+        List<QuestionVO> questionVOS = CommonUtil.readPage(pagePath);
+
+        //se中包含了自定义答案
+        //这些答案被存储在5个属性中answer1-answer5
+        //需要将其组成在一个集合中，并且与上面questionVOS对应
+        StudentExamVO studentExamVO = new StudentExamVO(se);
+        List<Object> answerList = studentExamVO.getAnswerList();
+
+
+        //记录总分
+        int totalSocre = 0 ;
+
+        int index = 0 ;
+        for(QuestionVO question : questionVOS){
+            String type = question.getType();
+            if("单选题".equals(type) || "判断题".equals(type)){
+                //只有1个答案
+                String a1 = question.getAnswerList().get(0);
+                String a2 = answerList.get(index).toString();
+                if(a1.equals(a2)){
+                    //正确
+                    totalSocre += question.getScore() ;
+                }
+            }
+
+            if("多选题".equals(type)){
+                //只有1个答案
+                List<String> a1 = question.getAnswerList(); //["1","2"]
+                Object ta2 = answerList.get(index);
+                if(ta2.toString().equals("-1")){
+                    //这道多选题没有选择答案
+                    continue ;
+                }
+                //选了答案，需要判断答案对不对
+                List<Integer> a2 = (List) ta2;//[1,2]
+
+                //a1 和 a2 中存储的答案（选项序号），一定都是从小到大排列的。
+                if(a1.size() != a2.size()){
+                    //答案数量不对
+                    continue ;
+                }
+
+                //答案数量对上了，内容需要逐一比较
+                for(int i=0;i<a1.size();i++){
+                    if(!a1.get(i).equals(a2.get(i).toString())){
+                        //有一个答案不一样，此题不对
+                        continue ;
+                    }
+                }
+
+                //代码至此，有答案，与正确答案数量一致，与正确答案内容一致
+                totalSocre += question.getScore() ;
+            }
+
+            index++ ;
+        }
+
+        //代码至此，就计算了客观的分数，需要更新
+        se.setScore(totalSocre);
+        se.setStatus(null);
+        studentExamMapper.updateByPrimaryKeySelective(se);
+
     }
 }

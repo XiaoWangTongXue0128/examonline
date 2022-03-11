@@ -883,6 +883,8 @@ public class ExamController extends BaseController {
         List<Map> classes = examService.findClassesByExam(id);
         model.addAttribute("classes",classes);
         model.addAttribute("examId",id);
+        Exam exam = examService.findById(id);
+        model.addAttribute("exam",exam);
         return "exam/pageList" ;
     }
 
@@ -891,6 +893,12 @@ public class ExamController extends BaseController {
         List<StudentExamDTO> students = examService.findStudentsByExamAndClass(examId, className);
         model.addAttribute("students",students);
         return "exam/pageList::#studentGrid";
+    }
+
+    @RequestMapping("/changeStudentStatus")
+    @ResponseBody
+    public void changeStudentStatus(Long examId , Long studentId , String status){
+        examService.changeStudentStatus(examId,studentId,status);
     }
 
 }

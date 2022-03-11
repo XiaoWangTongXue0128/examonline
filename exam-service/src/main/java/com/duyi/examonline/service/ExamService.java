@@ -92,4 +92,6 @@ public interface ExamService {
 
 
     List<StudentExamDTO> findStudentsByExamAndClass(Long examId ,String className) ;
+
+    void changeStudentStatus(Long examId , Long studentId , String status) ;
 }

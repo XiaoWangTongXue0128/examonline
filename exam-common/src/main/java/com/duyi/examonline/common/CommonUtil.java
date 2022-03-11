@@ -5,10 +5,11 @@ import com.duyi.examonline.domain.vo.PageVO;
 import com.duyi.examonline.domain.vo.QuestionVO;
 import com.github.pagehelper.PageInfo;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 public final class CommonUtil {
 
@@ -51,6 +52,61 @@ public final class CommonUtil {
     public static String getSystemDateString(String pattern){
         SimpleDateFormat df = new SimpleDateFormat(pattern);
         return df.format(new Date());
+    }
+
+    public static List<QuestionVO> readPage(String pagePath){
+        List<QuestionVO> questions = new ArrayList<>();
+        try {
+
+            FileReader r = new FileReader(pagePath);
+            StringBuilder content = new StringBuilder( );
+            char[] cs = new char[0x100] ;
+            int length  ;
+            while( (length = r.read(cs)) != -1){
+                content.append(new String(cs,0,length));
+            }
+
+
+            String[] array = content.toString().split(CommonData.QUESTION_OPTION_SEPARATOR);
+
+
+            int index = 0 ;
+            int no = 1 ;//题号
+            QuestionVO question = null  ;
+            for(String value : array){
+                if(index == 0){
+                    //一道新的考题
+                    question = new QuestionVO() ;
+                    question.setIndex(no++);
+                    questions.add(question) ;
+                    question.setType( value ) ;
+                }else if(index == 1){
+                    question.setScore( Integer.valueOf(value) );
+                }else if(index == 2){
+                    question.setSubject(value);
+                }else if(index == 3){
+                    question.setOptionList( Arrays.asList( value.split(CommonData.SPLIT_SEPARATOR)) );
+                }else if(index == 4){
+                    //value是答案
+                    question.setAnswerList( Arrays.asList( value.split(CommonData.SPLIT_SEPARATOR) ) );
+                }else if(index == 5){
+                    //分隔符，当前这道题操作完毕
+                    index = 0 ;
+                    continue;
+                }
+
+                index++ ;
+
+            }
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return questions ;
     }
 
 }
