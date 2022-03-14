@@ -1071,4 +1071,10 @@ public class ExamController extends BaseController {
 
     }
 
+
+    @RequestMapping("/review")
+    @ResponseBody
+    public void review(StudentExam studentExam){
+        examService.review(studentExam);
+    }
 }

@@ -36,7 +36,7 @@ public class QuestionVO implements Serializable {
     /**
      * 批阅考卷时记录考题的批阅信息（针对于填空题和综合题）
      */
-    private String review = "" ;
+    private String review = "无" ;
 
     public int getIndex() {
         return index;

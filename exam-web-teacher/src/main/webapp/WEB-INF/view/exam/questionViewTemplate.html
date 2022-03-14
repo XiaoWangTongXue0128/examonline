@@ -11,8 +11,8 @@
                     <label> <span class="static-question-index" th:text="${question.index}"></span>.<span class="static-question-type" th:text="${question.type}"></span></label>
                 </div>
                 <div class="form-group right">
-                    <input class="score-box" th:value="${question.endScore}"  th:disabled="${question.type!='填空题' && question.type!='综合题'}"/>
-                    <a th:unless="${question.type!='填空题' && question.type!='综合题'}" href="#">
+                    <input th:class="${'score-box '+(question.type=='填空题'?' score-box-4':(question.type=='综合题'?' score-box-5':''))} " th:value="${question.endScore}"  th:disabled="${question.type!='填空题' && question.type!='综合题'}" onfocus="this.select()" onchange="page.review()" />
+                    <a th:unless="${question.type!='填空题' && question.type!='综合题'}" th:href="|javascript:page.toStartReview(${questionStat.index})|">
                         <span></span> 批阅
                     </a>
                 </div>
@@ -96,6 +96,9 @@
                         </div>
                     </th:block>
                 </li>
+                <li th:if="${question.type=='填空题'}" style="display:none">
+                    <div class="review-hidden-box review-hidden-box-4" th:utext="${question.review}">无</div>
+                </li>
 
 
 
@@ -112,6 +115,10 @@
                     <th:block th:unless="${question.endAnswerList == null}">
                         <div class="left-option-text" th:utext="${question.endAnswerList.get(0)}"></div>
                     </th:block>
+                </li>
+
+                <li th:if="${question.type=='综合题'}" style="display:none">
+                    <div class="review-hidden-box review-hidden-box-5" th:utext="${question.review}">无</div>
                 </li>
 
             </ul>

@@ -1155,4 +1155,9 @@ public class ExamServiceImpl implements ExamService {
         studentExamMapper.updateByPrimaryKeySelective(se);
 
     }
+
+    @Override
+    public void review(StudentExam studentExam) {
+        studentExamMapper.updateByPrimaryKeySelective(studentExam);
+    }
 }
