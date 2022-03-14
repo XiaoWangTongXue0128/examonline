@@ -49,6 +49,7 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
         <result column="code" jdbcType="VARCHAR" property="code" />
         <result column="sname" jdbcType="VARCHAR" property="sname" />
+      <result column="ename" jdbcType="VARCHAR" property="ename" />
     </resultMap>
 
   <sql id="Base_Column_List">
@@ -479,4 +480,28 @@
       and status = '考试中'
   </select>
 
+
+  <select id="findStudentExamYears" resultType="int">
+    select
+      year(ifnull(e.start_time,e.create_time)) year
+    from
+      t_student_exam se
+      inner join t_exam e on se.exam_id = e.id
+    group by se.student_id,year having se.student_id = #{studentId}
+    order by year desc
+  </select>
+
+  <select id="findStudentScores" resultMap="studentExamDTOMap">
+    select
+      e.name ename,
+      se.start_time,
+      se.score,
+      se.status
+    from
+      t_student_exam se
+      inner join t_exam e on se.exam_id = e.id
+                          and se.student_id=#{studentId}
+                          and year(ifnull(e.start_time,e.create_time)) = #{year}
+
+  </select>
 </mapper>

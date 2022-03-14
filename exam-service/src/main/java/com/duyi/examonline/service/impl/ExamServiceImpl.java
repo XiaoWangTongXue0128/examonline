@@ -1169,4 +1169,14 @@ public class ExamServiceImpl implements ExamService {
         exam.setYl1("提交");
         examMapper.updateByPrimaryKeySelective(exam);
     }
+
+    @Override
+    public List<Integer> findStudentExamYears(Long studentId) {
+        return studentExamMapper.findStudentExamYears(studentId);
+    }
+
+    @Override
+    public List<StudentExamDTO> findStudentScores(Long studentId, Integer year) {
+        return studentExamMapper.findStudentScores(studentId,year);
+    }
 }

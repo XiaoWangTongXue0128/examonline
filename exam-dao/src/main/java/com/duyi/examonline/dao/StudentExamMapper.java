@@ -63,4 +63,8 @@ public interface StudentExamMapper {
     List<StudentExamDTO> findStudentsByExamAndClass(@Param("examId")Long examId , @Param("className")String className);
 
     List<StudentExam> findInterruptStudents(Long examId) ;
+
+    List<Integer> findStudentExamYears(Long studentId);
+
+    List<StudentExamDTO> findStudentScores(@Param("studentId")Long studentId , @Param("year")Integer year) ;
 }

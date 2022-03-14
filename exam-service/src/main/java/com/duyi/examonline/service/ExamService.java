@@ -98,4 +98,8 @@ public interface ExamService {
     void review(StudentExam studentExam) ;
 
     void submit(Long examId) ;
+
+    List<Integer> findStudentExamYears(Long studentId);
+
+    List<StudentExamDTO> findStudentScores(Long studentId , Integer year) ;
 }

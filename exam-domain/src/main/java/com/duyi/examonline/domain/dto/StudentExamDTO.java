@@ -49,9 +49,15 @@ public class StudentExamDTO {
 
     private Date updateTime;
 
+
+
     private String code ;//学号
 
     private String sname ;//学生姓名
+
+    private String ename ;//考试名称
+
+
 
     public StudentExamDTO(Long examId, Long studentId, String examGroup, String status, Date startTime, Date endTime, String answer1, String answer2, String answer3, String answer4, String answer5, String review4, String review5, Integer score, String pagePath, String yl1, String yl2, String yl3, String yl4, Date createTime, Date updateTime, String code, String sname) {
         this.examId = examId;
@@ -271,5 +277,13 @@ public class StudentExamDTO {
      */
     public String getClassName() {
         return examGroup;
+    }
+
+    public String getEname() {
+        return ename;
+    }
+
+    public void setEname(String ename) {
+        this.ename = ename;
     }
 }
