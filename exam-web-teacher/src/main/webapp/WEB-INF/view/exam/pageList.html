@@ -20,8 +20,11 @@
     <div class="alert alert-info" role="alert">
         <span th:text="${exam.name}"></span>
         <span class="right">
-            <button class="btn btn-primary btn-sm">
+            <button id="exam-submit-btn" class="btn btn-primary btn-sm" onclick="page.toSubmit()">
                 <span class="glyphicon glyphicon-ok"></span> 提交
+            </button>
+            <button class="btn btn-primary btn-sm">
+                <span class="glyphicon glyphicon-ok"></span> 导出成绩
             </button>
         </span>
     </div>
@@ -86,8 +89,14 @@
                 </tr>
             </tbody>
         </table>
-
     </div>
+
+    <script>
+        var submitStatus = '[[${exam.yl1}]]' ;
+        if(submitStatus == '提交'){
+            page.setExamSubmitStatus() ;
+        }
+    </script>
 
 </div>
 

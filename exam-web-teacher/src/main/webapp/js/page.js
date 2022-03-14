@@ -8,6 +8,10 @@ page.toStudentList = function(className){
 
     $.post('exam/studentPageList.html',param,function(view){
         $('#studentGrid').replaceWith(view);
+
+        if(submitStatus == '提交'){
+            page.setExamSubmitStatus();
+        }
     });
 }
 
@@ -77,7 +81,7 @@ page.toStartReview = function(no){
     var defaultText = $('.left-part:eq('+no+') .left-options li:last .review-hidden-box').html();
 
     main.showDefaultDialog({
-        title:'批阅信息填写',
+        title:'第'+(no+1)+'题批阅信息填写',
         content:'<div id="review-editor"></div>',
         submit:function(){
             //将文本输入框内容获得并写入隐藏区域（review-hidden-box）
@@ -90,9 +94,40 @@ page.toStartReview = function(no){
         }
     });
 
+    if(submitStatus == '提交'){
+        $('#review-editor').html(defaultText);
+        $('#common-modal-submit').remove();
+        return ;
+    }
+
     var e = new E('#review-editor');
     editorDefaultInit(e);
     e.create();
     e.txt.html(defaultText);
 
+}
+
+page.toSubmit = function(){
+    if(!confirm('提交后不能再修改，是否确认提交？')){
+        return ;
+    }
+
+    $.post('exam/submit',{examId:$('#exam-id').val()},function(){
+        alert('提交成功') ;
+
+        //需要处理提交后的批阅信息状态
+        page.setExamSubmitStatus();
+    });
+}
+
+page.setExamSubmitStatus = function(){
+    // 取消提交按钮
+    $('#exam-submit-btn').remove();
+    // 固定学生考试状态，下拉框设置不可用
+    $('.page-list-part-2 select').prop('disabled',true);
+}
+
+
+page.setPageSubmitStatus = function(){
+    $('.score-box').prop('disabled',true);
 }

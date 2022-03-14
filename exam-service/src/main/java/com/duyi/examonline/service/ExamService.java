@@ -96,4 +96,6 @@ public interface ExamService {
     void changeStudentStatus(Long examId , Long studentId , String status) ;
 
     void review(StudentExam studentExam) ;
+
+    void submit(Long examId) ;
 }

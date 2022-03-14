@@ -1077,4 +1077,10 @@ public class ExamController extends BaseController {
     public void review(StudentExam studentExam){
         examService.review(studentExam);
     }
+
+    @RequestMapping("/submit")
+    @ResponseBody
+    public void submit(Long examId){
+        examService.submit(examId);
+    }
 }

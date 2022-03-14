@@ -11,6 +11,7 @@ import com.duyi.examonline.domain.vo.StudentExamVO;
 import com.duyi.examonline.service.ExamService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.ExampleWhereClauseElementGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1159,5 +1160,13 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public void review(StudentExam studentExam) {
         studentExamMapper.updateByPrimaryKeySelective(studentExam);
+    }
+
+    @Override
+    public void submit(Long examId) {
+        Exam exam = new Exam();
+        exam.setId(examId);
+        exam.setYl1("提交");
+        examMapper.updateByPrimaryKeySelective(exam);
     }
 }
