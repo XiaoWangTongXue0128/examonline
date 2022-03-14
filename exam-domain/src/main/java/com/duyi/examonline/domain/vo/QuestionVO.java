@@ -28,6 +28,16 @@ public class QuestionVO implements Serializable {
      */
     private int endScore ;
 
+    /**
+     * 批阅考卷时记录学生的自定义答案，以供显示
+     */
+    private List<String> endAnswerList ;
+
+    /**
+     * 批阅考卷时记录考题的批阅信息（针对于填空题和综合题）
+     */
+    private String review = "" ;
+
     public int getIndex() {
         return index;
     }
@@ -82,6 +92,22 @@ public class QuestionVO implements Serializable {
 
     public void setEndScore(int endScore) {
         this.endScore = endScore;
+    }
+
+    public List<String> getEndAnswerList() {
+        return endAnswerList;
+    }
+
+    public void setEndAnswerList(List<String> endAnswerList) {
+        this.endAnswerList = endAnswerList;
+    }
+
+    public String getReview() {
+        return review;
+    }
+
+    public void setReview(String review) {
+        this.review = review;
     }
 
     public QuestionVO(int index, String type, String subject, List<String> optionList, List<String> answerList) {

@@ -49,4 +49,16 @@ public class Test3 {
         System.out.println(Arrays.toString(array));
     }
 
+    /**
+     * 指定分割上限
+     */
+    @Test
+    public void t4(){
+        String s1 = "a," ;
+        System.out.println(Arrays.toString(s1.split(",")));
+        System.out.println(Arrays.toString(s1.split(",",2)));
+        System.out.println(s1.split(",",2).length);
+    }
+
+
 }

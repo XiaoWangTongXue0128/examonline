@@ -918,7 +918,7 @@ public class ExamController extends BaseController {
 
 
         //考题装载前，需要对每一道考题初始化得分
-        handleQuestionScore(questionVOS,studentExamVO);
+        handleQuestionInit(questionVOS,studentExamVO);
 
         model.addAttribute("questionVOS",questionVOS) ;
         model.addAttribute("studentExamVO",studentExamVO) ;
@@ -928,23 +928,35 @@ public class ExamController extends BaseController {
         return "exam/page" ;
     }
 
-    private void handleQuestionScore(List<QuestionVO> questionVOS,StudentExamVO studentExamVO){
+    /**
+     * 对考卷页面展示的考题做初始化处理
+     *      考题的得分计算        questionVO.answerList 和 studentExamVO.answerList + StudentExamVO.review
+     *      考题自定义答案的装载   studentVO.answerList
+     *      考题批阅信息的装载     studentExamVO.review()
+     * @param questionVOS
+     * @param studentExamVO
+     */
+    private void handleQuestionInit(List<QuestionVO> questionVOS,StudentExamVO studentExamVO){
         //记录考题的索引
         int i = 0 ;
 
         //获得并存储主观题的得分
         //从2个review中获得，准备装入一个list集合
         //要明白，这个list集合中存储的分数顺序，和考题中填空题与综合题的顺序一致。
-        //从review中获得主观题得分？？
+        //从review中获得主观题得分和批阅信息
         // 存储主观题索引
         int j = 0 ;
         List<Integer> score45 = new ArrayList<>();
+        List<String> review45 = new ArrayList<>();
         String review4 = studentExamVO.getStudentExam().getReview4();
         if(review4 != null && !"".equals(review4)){
             //["5,xxx","6,xxx"]
             String[] array = review4.split(CommonData.SPLIT_SEPARATOR);
             for(String s : array){
-                score45.add( Integer.parseInt(s.split(",")[0]) ) ;
+                //s=5,aa,a,a,a,a,,a
+                String[] as = s.split(",",2);
+                score45.add( Integer.parseInt(as[0]) ) ;
+                review45.add( as[1] ) ;
             }
         }
         String review5 = studentExamVO.getStudentExam().getReview5();
@@ -952,7 +964,10 @@ public class ExamController extends BaseController {
             //["5,xxx","6,xxx"]
             String[] array = review5.split(CommonData.SPLIT_SEPARATOR);
             for(String s : array){
-                score45.add( Integer.parseInt(s.split(",")[0]) );
+                //s=5,aa,a,a,a,a,,a
+                String[] as = s.split(",",2);
+                score45.add( Integer.parseInt(as[0]) ) ;
+                review45.add( as[1] ) ;
             }
         }
 
@@ -961,12 +976,26 @@ public class ExamController extends BaseController {
          * 装载所有的自定义答案，但我们只需要客观题部分来计算考题的最终得分。还缺主观的得分
          */
         List<Object> answerList = studentExamVO.getAnswerList();
-        for(QuestionVO question : questionVOS){
+        if(answerList.size() == 0){
+            //没有任何答案，基本就是缺考，所有分数为0，此时自定义答案为null，review为null
+            return ;
+        }
+        loop:for(QuestionVO question : questionVOS){
             String type = question.getType();
             if("单选题".equals(type) || "判断题".equals(type)){
                 //只有1个答案
                 String a1 = question.getAnswerList().get(0);
                 String a2 = answerList.get(i).toString();
+                if(!a2.equals("-1")){
+                    //有自定义答案  null ， list
+                    List<String> list = Arrays.asList(a2);
+                    question.setEndAnswerList(list);
+//                    List<String> list = new ArrayList<>();
+//                    list.add(a2);
+//                    question.setEndAnswerList(list);
+                }
+
+
                 if(a1.equals(a2)){
                     //正确
                     question.setEndScore(question.getScore());
@@ -979,14 +1008,23 @@ public class ExamController extends BaseController {
                 Object ta2 = answerList.get(i);
                 if(ta2.toString().equals("-1")){
                     //这道多选题没有选择答案
+                    i++;
                     continue ;
                 }
                 //选了答案，需要判断答案对不对
                 List<Integer> a2 = (List) ta2;//[1,2]
+                //存储自定义答案
+                List<String> endAnswerList = new ArrayList();
+                for(Integer a : a2){
+                    endAnswerList.add(a.toString());
+                }
+                question.setEndAnswerList(endAnswerList);
+
 
                 //a1 和 a2 中存储的答案（选项序号），一定都是从小到大排列的。
                 if(a1.size() != a2.size()){
                     //答案数量不对
+                    i++;
                     continue ;
                 }
 
@@ -994,15 +1032,26 @@ public class ExamController extends BaseController {
                 for(int index=0;index<a1.size();index++){
                     if(!a1.get(index).equals(a2.get(index).toString())){
                         //有一个答案不一样，此题不对
-                        continue ;
+                        i++;
+                        continue loop ;
                     }
                 }
 
                 //代码至此，有答案，与正确答案数量一致，与正确答案内容一致
                 question.setEndScore(question.getScore()) ;
+
             }
 
             if("填空题".equals(question.getType()) || "综合题".equals(question.getType())) {
+                //虽然填空题和综合题的得分来自于review记载（score45）
+                //但在页面上需要展示学生答案。学生的自定义答案也需要
+                if("填空题".equals(question.getType())){
+                    question.setEndAnswerList( (List)answerList.get(i));
+                }else{
+                    List<String> list = Arrays.asList(answerList.get(i).toString());
+                    question.setEndAnswerList( list );
+                }
+
                 //需要从review中获得得分
                 //注意：第一次批阅时，填空题和综合题还没有更新过分数
                 //     所以是null,所以score45.size=0
@@ -1010,7 +1059,9 @@ public class ExamController extends BaseController {
                     //此时还没有填空题和综合题得分
                     question.setEndScore(0);
                 }else{
-                    question.setEndScore( score45.get(j++) );
+                    question.setEndScore( score45.get(j) );
+                    question.setReview(review45.get(j));
+                    j++;
                 }
             }
 
