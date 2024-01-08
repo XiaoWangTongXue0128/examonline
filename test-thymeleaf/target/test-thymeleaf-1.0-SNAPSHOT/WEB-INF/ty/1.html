@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Document</title>
+    </head>
+    <body>
+        ------><input value="zzt" th:value="${name}" />
+        <br/>
+        ------><input value="40" th:value="${age}" />
+        <hr/>
+        <div th:utext="${name}" ></div>
+        <hr/>
+        <div>
+            [(${name})]
+        </div>
+        <hr/>
+
+        <div th:if="${age>=18}" style="color:red;">[[${age}]]</div>
+
+        <div th:unless="${age>=18}" style="color:green;">[[${age}]]</div>
+
+        <hr/>
+
+        <div th:each="n:${names}" >[[${nStat.index+1}]].[[${n}]]</div>
+        <hr/>
+
+        <th:block th:each="n:${names}" >
+            <div th:text="${n}"></div>
+        </th:block>
+
+        <hr/>
+
+        <div id="a2" th:insert="comm::aa" style="color:blue;"></div>
+        <hr/>
+
+        <div th:text="${age > 18}"></div>
+        <div th:text="${age} > 18"></div>
+
+        <div th:text="${age > 18 and age < 20}"></div>
+
+
+        <div th:text="${name != null}"></div>
+        <div th:text="${name == null}"></div>
+
+        <div th:text="${age + 10}"></div>
+
+        <hr/>
+
+        <div th:utext="${name + ' good'}"></div>
+        <div th:utext="${name} + ' is good'"></div>
+        <div th:utext="|${name} is good|"></div>
+
+        <hr/>
+
+        <div th:text="${names[0]}"></div>
+        <div th:text="${car.cname}"></div>
+        <div th:text="${car['cname']}"></div>
+        <div th:text="${car.getCname()}"></div>
+
+        <hr/>
+
+        <div th:text="${session.username}"></div>
+
+        <hr/>
+
+        <div th:text="${#dates.format(today,'YYY-MM-dd HH:mm')}"></div>
+
+        <div th:text="${#strings.replace(name,'b','i')}"></div>
+
+        <div th:each="i:${#numbers.sequence(1,10)}">
+            [[${i}]]
+        </div>
+
+        <a href="/test1" th:href="@{/test1(uname=${name},age=${age})}" >test1</a>
+
+        <hr/>
+        <lable>[[#{label}]]</lable>
+    </body>
+</html>

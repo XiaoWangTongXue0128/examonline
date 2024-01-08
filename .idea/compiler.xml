@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="exam-domain" />
+        <module name="exam-common" />
+        <module name="exam-web-student" />
+        <module name="test-thymeleaf" />
+        <module name="exam-test" />
+        <module name="exam-dao" />
+        <module name="exam-config" />
+        <module name="exam-service" />
+        <module name="exam-web-teacher" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="exam-common" target="1.8" />
+      <module name="exam-config" target="1.8" />
+      <module name="exam-dao" target="1.8" />
+      <module name="exam-domain" target="1.8" />
+      <module name="exam-parent" target="1.8" />
+      <module name="exam-service" target="1.8" />
+      <module name="exam-test" target="1.8" />
+      <module name="exam-web-student" target="1.8" />
+      <module name="exam-web-teacher" target="1.8" />
+      <module name="test-thymeleaf" target="1.5" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_STRING" value="-encoding utf-8" />
+  </component>
+</project>
